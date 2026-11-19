@@ -555,6 +555,20 @@ class _Builder:
         dt = local_datetime(d, minute, self.offset, rng.randint(0, 59))
         return dt, self.p_first <= d <= self.p_last
 
+    def _inside_edge_instant(self, side: str) -> _dt.datetime:
+        """Instant on the first/last local day of the period whose UTC date
+        differs from the local date (if offset != 0; else just next to the
+        boundary). Always locally inside the period."""
+        rng, o = self.rng, self.off_min
+        d = self.p_first if side == "start" else self.p_last
+        if o > 0:
+            minute = rng.randint(1, o - 1)
+        elif o < 0:
+            minute = rng.randint(24 * 60 + o + 1, 24 * 60 - 1)
+        else:
+            minute = rng.randint(0, 25) if side == "start" else rng.randint(24 * 60 - 25, 24 * 60 - 1)
+        return local_datetime(d, minute, self.offset, rng.randint(0, 59))
+
     def _near_boundary_instant(self) -> _dt.datetime:
         rng = self.rng
         end_date = self.h.period_end.date()
@@ -657,17 +671,38 @@ class _Builder:
         # (b) Near-boundary pool (candidates for wrong_period / fx / combos).
         reserved = 2 * dis["repeated_amounts"] + dis["split_payments"] + dis["advances"] + 2
         budget = max(0, min(n_inv // 2 - len(self.specs), n_inv - len(self.specs) - reserved))
-        nb_inv = min(budget, 3 + err["wrong_period"] + combos["duplicate_plus_period"]
+        # Dedicated candidates for the fx_partial_payment_boundary combo come
+        # first so a small budget cannot starve them (zero when the combo is off,
+        # which keeps every other configuration's baseline unchanged).
+        nb_combo = min(budget, 2 * combos["fx_partial_payment_boundary"]) if self.foreign else 0
+        nb_inv = min(budget - nb_combo, 3 + err["wrong_period"] + combos["duplicate_plus_period"]
                      + (err["fx_conversion"] + 1) // 2)
-        nb_pay = min(max(0, budget - nb_inv), 2 + 2 * combos["fx_partial_payment_boundary"]
+        nb_pay = min(max(0, budget - nb_inv - nb_combo), 2 + 2 * combos["fx_partial_payment_boundary"]
                      + (err["fx_conversion"] + 1) // 2 + err["payment_allocation"] // 2)
-        for _ in range(nb_inv):
-            if self.off_min and rng.random() < 0.5:
+        # wrong_period "UTC trap" candidates: some edge invoices are written in
+        # +00:00 (the RNG draw sequence is unchanged; only the representation).
+        n_trap = (err["wrong_period"] + 2) // 3 if self.off_min else 0
+        want_trap = n_trap
+        for k in range(nb_inv):
+            edge = bool(self.off_min) and (rng.random() < 0.5 or k < n_trap)
+            if edge:
                 inst, _inside = self._edge_instant(rng.choice(("start", "end")))
             else:
                 inst = self._near_boundary_instant()
             spec = self._spec(inst, self._currency(0.5), tags=["near_boundary"])
+            if edge and want_trap > 0:
+                spec["utc_repr"] = True
+                spec["tags"].append("utc_trap")
+                want_trap -= 1
             self._plain_payment(spec, unpaid_prob=0.25)
+        for _ in range(nb_combo):
+            # Foreign-currency receipt in the period next to a boundary, local
+            # date != UTC date, fully allocated to one invoice.
+            inst = self._inside_edge_instant(rng.choice(("start", "end")))
+            issued = self._instant(max(self.d_first, inst.date() - days(rng.randint(4, 15))))
+            spec = self._spec(issued, rng.choice(self.foreign))
+            spec["pays"].append({"dt": inst, "pct": 100, "utc_repr": rng.random() < 0.5,
+                                 "tags": ["near_boundary", "fx_combo"]})
         for _ in range(nb_pay):
             if self.off_min and rng.random() < 0.6:
                 inst, _inside = self._edge_instant(rng.choice(("start", "end")))
@@ -702,6 +737,39 @@ class _Builder:
             self._plain_payment(a, 0.1)
             self._plain_payment(b, 0.1)
             self.records.append({"kind": "repeated_amounts", "specs": [a, b]})
+
+        # (c2) Same-customer twins for duplicate_invoice targets: a regular
+        # in-period invoice ``a`` plus a correct distractor ``b`` (different
+        # invoice, same customer, same lines/total) issued a few days later, so
+        # "same amount, same customer" alone never identifies a duplicate.
+        # (c3) Pairs for the duplicate_plus_period combo: two regular invoices
+        # of one customer with equal totals. Both only when configured.
+        def room() -> int:
+            return n_inv - len(self.specs) - 2
+
+        n_twins = err["duplicate_invoice"] if dis["repeated_amounts"] else 0
+        n_pairs = combos["duplicate_plus_period"]
+        for k in range(n_twins + n_pairs):
+            if room() < 2:
+                break
+            twin = k < n_twins
+            d1 = self._date_between(self.p_first, self.p_last - days(5))
+            if d1 is None:
+                break
+            a = self._spec(self._instant(d1), tags=["twin_source"] if twin else ["combo_pair"])
+            if twin:
+                d2 = d1 + days(rng.randint(1, 4))
+            else:
+                d2 = self._date_between(max(d1 + days(1), self.p_last - days(6)), self.p_last)
+            b = self._spec(self._instant(d2), a["currency"], a["entity"],
+                           tags=["repeated_amount", "distractor", "twin"] if twin
+                           else ["combo_pair"])
+            b["copy_from"] = a
+            self._plain_payment(a, 0.1)
+            self._plain_payment(b, 0.1)
+            if twin:
+                self.records.append({"kind": "repeated_amounts", "subtype": "same_customer_twin",
+                                     "specs": [a, b]})
 
         # (d) Split payments: one invoice settled by 2-3 payments, Σ = total.
         for _ in range(dis["split_payments"]):
@@ -896,8 +964,14 @@ class _Builder:
                             "company offset is +00:00; event placed next to the boundary"})
             elif kind == "repeated_amounts":
                 a, b = (s["invoice"] for s in rec["specs"])
-                out.update({"doc_ids": sorted([a.doc_id, b.doc_id]), "currency": a.currency,
-                            "total_minor": a.total_minor,
+                if rec.get("subtype") == "same_customer_twin":
+                    # Only ``b`` is a distractor; ``a`` is a regular document
+                    # (a candidate for duplicate_invoice).
+                    out.update({"subtype": "same_customer_twin", "doc_ids": [b.doc_id],
+                                "twin_of": a.doc_id})
+                else:
+                    out["doc_ids"] = sorted([a.doc_id, b.doc_id])
+                out.update({"currency": a.currency, "total_minor": a.total_minor,
                             "same_entity": a.entity_id == b.entity_id})
             elif kind == "split_payments":
                 inv = rec["spec"]["invoice"]
