@@ -15,7 +15,7 @@ Stages (each printed as `[stage] PASS/FAIL/SKIP (Xs)`):
 5. `fresh-gen` - generate each `configs/examples/*.json`, verify with fincheck;
    prints per-episode generation time and peak RSS against the limits
    (2 CPU, 4 GB, 60 s/episode).
-5. `env` - runs `python -m $FINCASE_ENV_CHECK` (default `fincase_env.check`) if
+6. `env` - runs `python -m $FINCASE_ENV_CHECK` (default `fincase_env.check`) if
    importable, otherwise `SKIP` (does not fail the run).
 
 Exit code is non-zero if any stage FAILs. In Docker:
