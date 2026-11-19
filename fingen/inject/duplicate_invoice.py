@@ -12,8 +12,8 @@ same-amount twin (a different, correct invoice; built by the baseline when
 from __future__ import annotations
 
 from . import InjectionContext, InjectionError, register
-from ._common import (can_duplicate, has_twin, not_reserved_for_others, pick, post_duplicate,
-                      spares_foreign)
+from ._common import (can_duplicate, candidates, has_twin, not_reserved_for_others, pick,
+                      post_duplicate, spares_foreign)
 
 NAME = "duplicate_invoice"
 
@@ -23,7 +23,7 @@ def inject_duplicate_invoice(ctx: InjectionContext, count: int) -> list:
     h = ctx.history
     issues = []
     for _ in range(count):
-        docs = [d for d in ctx.candidates("invoice") if can_duplicate(h, d)]
+        docs = [d for d in candidates(ctx, "invoice") if can_duplicate(h, d)]
         spare = spares_foreign(ctx)
         inv = pick(ctx, docs,
                    lambda d: not_reserved_for_others(d, NAME) and has_twin(h, d) and spare(d),

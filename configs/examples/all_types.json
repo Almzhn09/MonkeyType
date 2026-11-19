@@ -1,36 +1,16 @@
 {
-  "seed": 33001,
-  "split": "example",
-  "timezone": "Asia/Dubai",
-  "base_currency": "JPY",
-  "foreign_currencies": [
-    "KZT",
-    "EUR"
-  ],
-  "period": {
-    "start_month": "2026-08",
-    "months": 1
-  },
-  "size": {
-    "invoices": 69,
-    "background_entries": 177
-  },
-  "rounding_mode": "half_even",
-  "distractors": {
-    "split_payments": 2,
-    "refunds": 1,
-    "advances": 2,
-    "repeated_amounts": 3,
-    "utc_boundary": 2
-  },
-  "errors": {
-    "duplicate_invoice": 1,
-    "payment_allocation": 1,
-    "fx_conversion": 1,
-    "wrong_period": 1
-  },
-  "combos": {
-    "fx_partial_payment_boundary": 1,
-    "duplicate_plus_period": 1
-  }
+  "config_version": "1",
+  "schema_version": "1.0",
+  "seed": 5107,
+  "split": "train",
+  "size": {"invoices": 60, "background_entries": 120},
+  "period": {"start_month": "2026-03", "months": 1},
+  "timezone": "Asia/Almaty",
+  "base_currency": "KZT",
+  "foreign_currencies": ["EUR", "USD"],
+  "rounding_mode": "half_up",
+  "errors": {"duplicate_invoice": 2, "payment_allocation": 2, "fx_conversion": 2, "wrong_period": 2},
+  "combos": {"fx_partial_payment_boundary": 1, "duplicate_plus_period": 1},
+  "distractors": {"split_payments": 2, "refunds": 1, "repeated_amounts": 2, "utc_boundary": 2, "advances": 1},
+  "transform": null
 }

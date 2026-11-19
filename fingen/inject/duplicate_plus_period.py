@@ -13,7 +13,7 @@ import datetime as _dt
 import itertools
 
 from . import InjectionContext, InjectionError, register
-from ._common import business_ts, can_duplicate, move_posting, period_first_last, post_duplicate
+from ._common import business_ts, can_duplicate, candidates, move_posting, post_duplicate
 from .wrong_period import _posted_on_issue_date
 
 NAME = "duplicate_plus_period"
@@ -24,7 +24,7 @@ def inject_duplicate_plus_period(ctx: InjectionContext, count: int) -> list:
     h, rng = ctx.history, ctx.rng
     issues = []
     for _ in range(count):
-        invs = [d for d in ctx.candidates("invoice") if _posted_on_issue_date(h, d)]
+        invs = [d for d in candidates(ctx, "invoice") if _posted_on_issue_date(h, d)]
         pairs = [(a, b) for a, b in itertools.permutations(invs, 2)
                  if a.entity_id == b.entity_id and can_duplicate(h, a)]
         tiers = (
@@ -47,7 +47,6 @@ def inject_duplicate_plus_period(ctx: InjectionContext, count: int) -> list:
         ctx.claim(b.doc_id, wp_id)
         dup = post_duplicate(ctx, a, dup_id, "duplicate_invoice",
                              note=f" (combo {NAME}, step 1/2; sibling {b.doc_id})")
-        _first, _last = period_first_last(h)
         d = h.period_end.date() + _dt.timedelta(days=rng.randint(0, 5))
         cause = (f"wrong_period[late_posting] (combo {NAME}, step 2/2; sibling {a.doc_id}): "
                  f"in-period invoice issued {h.local_date(b.issued_at)} posted after "

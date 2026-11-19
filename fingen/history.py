@@ -566,7 +566,8 @@ class _Builder:
         elif o < 0:
             minute = rng.randint(24 * 60 + o + 1, 24 * 60 - 1)
         else:
-            minute = rng.randint(0, 25) if side == "start" else rng.randint(24 * 60 - 25, 24 * 60 - 1)
+            minute = rng.randint(0, 25) if side == "start" else \
+                rng.randint(24 * 60 - 25, 24 * 60 - 1)
         return local_datetime(d, minute, self.offset, rng.randint(0, 59))
 
     def _near_boundary_instant(self) -> _dt.datetime:
@@ -677,9 +678,11 @@ class _Builder:
         # which keeps every other configuration's baseline unchanged).
         n_fxc = combos["fx_partial_payment_boundary"] if self.foreign else 0
         nb_combo = min(2 * n_fxc, max(budget, n_fxc))
-        nb_inv = min(max(0, budget - nb_combo), 3 + err["wrong_period"] + combos["duplicate_plus_period"]
+        nb_inv = min(max(0, budget - nb_combo),
+                     3 + err["wrong_period"] + combos["duplicate_plus_period"]
                      + (err["fx_conversion"] + 1) // 2)
-        nb_pay = min(max(0, budget - nb_inv - nb_combo), 2 + 2 * combos["fx_partial_payment_boundary"]
+        nb_pay = min(max(0, budget - nb_inv - nb_combo),
+                     2 + 2 * combos["fx_partial_payment_boundary"]
                      + (err["fx_conversion"] + 1) // 2 + err["payment_allocation"] // 2)
         # wrong_period "UTC trap" candidates: some edge invoices are written in
         # +00:00 (the RNG draw sequence is unchanged; only the representation).

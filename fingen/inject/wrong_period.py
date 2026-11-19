@@ -20,8 +20,8 @@ from __future__ import annotations
 import datetime as _dt
 
 from . import InjectionContext, InjectionError, register
-from ._common import (business_ts, move_posting, not_reserved_for_others, period_first_last,
-                      pick, sole_entry)
+from ._common import (business_ts, candidates, move_posting, not_reserved_for_others,
+                      period_first_last, pick, sole_entry)
 from ..timeutil import as_ts, format_ts, tzinfo, utc_date
 
 NAME = "wrong_period"
@@ -63,7 +63,7 @@ def choose(ctx: InjectionContext, variant: str):
     end = h.period_end.date()
     own = lambda d: not_reserved_for_others(d, NAME)  # noqa: E731
     if variant == "utc_trap":
-        docs = [d for d in ctx.candidates("invoice", in_period=False)
+        docs = [d for d in candidates(ctx, "invoice", in_period=False)
                 if _posted_on_issue_date(h, d) and utc_trap_ts(h, d)]
         inv = pick(ctx, docs, lambda d: own(d) and "utc_trap" in d.tags, own)
         if inv is None:
@@ -72,7 +72,7 @@ def choose(ctx: InjectionContext, variant: str):
         return inv, ts, (f"issued_at {inv.issued_at} (local date {h.local_date(inv.issued_at)}) "
                          f"posted by its UTC date {utc_date(inv.issued_at)}")
     if variant == "late_posting":
-        docs = [d for d in ctx.candidates("invoice") if _posted_on_issue_date(h, d)]
+        docs = [d for d in candidates(ctx, "invoice") if _posted_on_issue_date(h, d)]
         inv = pick(ctx, docs, lambda d: own(d) and "utc_trap" not in d.tags
                    and h.local_date(d.issued_at) >= last - _dt.timedelta(days=6),
                    lambda d: own(d) and "utc_trap" not in d.tags, own)
@@ -87,7 +87,7 @@ def choose(ctx: InjectionContext, variant: str):
             why = "posted after period_end"
         return inv, business_ts(ctx, d), f"in-period invoice issued {issued} {why} on {d}"
     if variant == "early_posting":
-        docs = [d for d in ctx.candidates("invoice", in_period=False)
+        docs = [d for d in candidates(ctx, "invoice", in_period=False)
                 if not h.in_period(d.issued_at) and _posted_on_issue_date(h, d)]
         inv = pick(ctx, docs, lambda d: own(d) and "utc_trap" not in d.tags
                    and _days_to_boundary(h, d) <= 7,
