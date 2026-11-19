@@ -1,0 +1,32 @@
+{
+  "episode_id": "EP-CHK-A08",
+  "findings": [
+    {
+      "affected_ids": [
+        "DA1K9"
+      ],
+      "claimed_amount_minor": 2500000,
+      "currency": "KZT",
+      "evidence_ids": [
+        "DA1K9",
+        "R78CE762",
+        "R7DD2FD7"
+      ],
+      "explanation": "Invoice INV-77-041 (2 500 000 KZT) has two AR/revenue postings on 2026-03-04; the second overstates AR by 2 500 000.",
+      "type": "duplicate_invoice"
+    },
+    {
+      "affected_ids": [
+        "PB1T3"
+      ],
+      "claimed_amount_minor": 40746667,
+      "currency": "KZT",
+      "evidence_ids": [
+        "PB1T3",
+        "R006E024"
+      ],
+      "explanation": "PAY-3101 refs cover the full 2300.00 EUR, but the 40 746 667 KZT for INV-77-045 was credited to unapplied instead of AR.",
+      "type": "payment_allocation"
+    }
+  ]
+}

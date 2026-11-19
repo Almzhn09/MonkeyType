@@ -1,0 +1,50 @@
+{
+  "base_currency": "KZT",
+  "episode_id": "EP-CHK-A08",
+  "issues": [
+    {
+      "affected_ids": [
+        "DA1K9"
+      ],
+      "currency": "KZT",
+      "evidence_sets": [
+        [
+          "DA1K9",
+          "R78CE762",
+          "R7DD2FD7"
+        ],
+        [
+          "DA1K9",
+          "RB5ED1B2",
+          "R2590D00"
+        ]
+      ],
+      "expected_amount_minor": 2500000,
+      "issue_id": "ISS-7Q1",
+      "tolerance_minor": 0,
+      "type": "duplicate_invoice"
+    },
+    {
+      "affected_ids": [
+        "PB1T3"
+      ],
+      "currency": "KZT",
+      "evidence_sets": [
+        [
+          "PB1T3",
+          "R006E024"
+        ],
+        [
+          "PB1T3",
+          "R366EE6E",
+          "R48E8AA2"
+        ]
+      ],
+      "expected_amount_minor": 40746667,
+      "issue_id": "ISS-9M4",
+      "tolerance_minor": 0,
+      "type": "payment_allocation"
+    }
+  ],
+  "schema_version": "1.0"
+}
