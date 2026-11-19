@@ -3,7 +3,10 @@
 from collections import defaultdict
 from random import Random
 
-from .schema import ISSUE_TYPES, TABLES, record_id
+from fincheck.load import Public
+from fincheck.recompute import reconcile as check_public
+
+from .schema import ISSUE_TYPES, TABLES, V1_ISSUE_TYPES, record_id
 
 POLICIES = ("random", "reconcile", "mark_all", "oracle")
 
@@ -44,18 +47,29 @@ def random_explorer(request, initial, seed):
         entry = page(request, table).get("result", [])
         if entry:
             chosen = random.choice(entry)
-            request({"action": "get_record", "table": table, "id": record_id(table, chosen)})
+            key = record_id(table, chosen)
+            if table == "fx" and initial["manifest"]["schema_version"] == "1.0":
+                key = "FX:" + key
+            request({"action": "get_record", "table": table, "id": key})
     return []
 
 
 def reconcile(request, initial, seed):
     tables = {}
     budget = initial["steps_remaining"]
-    for table in ("invoices", "payments", "ledger"):
+    v1 = initial["manifest"]["schema_version"] == "1.0"
+    names = ("invoices", "payments", "ledger", "fx") if v1 else ("invoices", "payments", "ledger")
+    for table in names:
         records, budget = rows(request, table, budget)
         if records is None:
             return []
         tables[table] = records
+    if v1:
+        public = Public(
+            initial["manifest"], initial["policy"], tables["ledger"], tables["invoices"],
+            tables["payments"], tables["fx"],
+        )
+        return check_public(public)[:30]
     invoices = {row["invoice_id"]: row for row in tables["invoices"]}
     debits = defaultdict(list)
     credits = defaultdict(list)
@@ -109,11 +123,12 @@ def reconcile(request, initial, seed):
 
 def mark_all(request, initial, seed):
     records = page(request, "ledger").get("result", [])
+    types = V1_ISSUE_TYPES if initial["manifest"]["schema_version"] == "1.0" else ISSUE_TYPES
     return [
         finding(kind, [row["row_id"]], max(row["debit_minor"], row["credit_minor"]),
                 row["currency"], [row["row_id"]], "Broad accusation control.")
         for row in records[:8]
-        for kind in ISSUE_TYPES
+        for kind in types
     ][:30]
 
 

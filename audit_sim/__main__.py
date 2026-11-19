@@ -8,16 +8,34 @@ import sys
 import tempfile
 import unittest
 
+from fincheck.load import SchemaError
+from fincheck.verify import discover
+
 from .data import load_json
 from .fixtures import dump_json, dump_jsonl, make_dev
 from .policies import POLICIES
+from .release import prepare_release
 from .runner import WorkerProtocolError, run_policy
 
 
-def episodes(directory):
+def episodes(directory, *, private_directory=None, split=None):
+    if private_directory is not None:
+        if split is not None:
+            raise ValueError("Select either --private or --split")
+        return [(directory, private_directory)]
     if (directory / "public" / "manifest.json").is_file():
-        return [directory]
-    found = sorted(path.parent.parent for path in directory.glob("*/public/manifest.json"))
+        if split is not None:
+            raise ValueError("--split requires a dataset root")
+        return [(directory, None)]
+    if (directory / "public").is_dir() or (directory / "private").is_dir():
+        pairs, problems = discover(str(directory))
+        if problems:
+            raise ValueError("\n".join(problems))
+        found = [(Path(pub), Path(prv)) for pub, prv in pairs if split is None or Path(pub).parent.name == split]
+    else:
+        if split is not None:
+            raise ValueError("--split requires a dataset root")
+        found = [(path.parent.parent, None) for path in sorted(directory.glob("*/public/manifest.json"))]
     if not found:
         raise ValueError(f"No episode manifests at {directory}")
     return found
@@ -42,13 +60,13 @@ def summarize(reports, choices):
 
 
 def evaluate(directory, *, choices=POLICIES, mode="closed", policy_seed=0,
-             timeout=60.0, tolerances=None, output=None):
+             timeout=60.0, tolerances=None, output=None, split=None, private_directory=None):
     reports = []
     trajectories = []
-    for episode in episodes(directory):
+    for episode, private in episodes(directory, split=split, private_directory=private_directory):
         for policy in choices:
             report, trajectory = run_policy(
-                episode, policy, mode=mode, policy_seed=policy_seed,
+                episode, policy, private_directory=private, mode=mode, policy_seed=policy_seed,
                 timeout=timeout, tolerances=tolerances,
             )
             reports.append(report)
@@ -121,6 +139,8 @@ def main():
     fixtures.add_argument("directory", type=Path)
     run = commands.add_parser("run", help="Evaluate an episode or a directory of episodes")
     run.add_argument("directory", type=Path)
+    run.add_argument("--split", help="Select a split under public/ and private/")
+    run.add_argument("--private", type=Path, help="Private directory when the positional path is public")
     run.add_argument("--policy", choices=(*POLICIES, "all"), default="all")
     run.add_argument("--mode", choices=("closed", "train"), default="closed")
     run.add_argument("--policy-seed", type=int, default=0)
@@ -130,6 +150,8 @@ def main():
     demo_parser = commands.add_parser("demo", help="Show two paired terminal demonstrations")
     demo_parser.add_argument("--output", type=Path)
     commands.add_parser("verify", help="Run tests and the dev integration check")
+    release = commands.add_parser("release", help="Verify and optionally export all submission data")
+    release.add_argument("--output", type=Path)
     args = parser.parse_args()
 
     try:
@@ -140,14 +162,16 @@ def main():
                 args.directory, choices=POLICIES if args.policy == "all" else (args.policy,),
                 mode=args.mode, policy_seed=args.policy_seed, timeout=args.timeout,
                 tolerances=load_json(args.tolerances) if args.tolerances else None,
-                output=args.output,
+                output=args.output, split=args.split, private_directory=args.private,
             )
             print(json.dumps(summary, indent=2))
         elif args.command == "demo":
             demo(args.output)
         elif args.command == "verify":
             return verify()
-    except (ValueError, OSError, KeyError, WorkerProtocolError) as error:
+        elif args.command == "release":
+            print(json.dumps(prepare_release(evaluate, args.output), indent=2))
+    except (ValueError, OSError, KeyError, SchemaError, WorkerProtocolError) as error:
         print(f"audit_sim: {error}", file=sys.stderr)
         return 1
     return 0

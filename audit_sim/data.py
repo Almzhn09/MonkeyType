@@ -7,6 +7,8 @@ from decimal import Decimal, InvalidOperation
 import json
 from pathlib import Path
 
+from fincheck.load import fx_key as v1_fx_key, load_private, load_public
+
 from .schema import ISSUE_TYPES, TABLES, is_currency, is_id, record_id, valid_ids
 
 MANIFEST_FIELDS = (
@@ -99,10 +101,14 @@ class Episode:
     issues: tuple
 
     @classmethod
-    def load(cls, directory):
+    def load(cls, directory, private_directory=None):
         root = Path(directory)
+        if private_directory is not None:
+            return cls.load_v1(root, Path(private_directory))
         public = root / "public"
         incoming = load_json(public / "manifest.json")
+        if incoming["schema_version"] == "1.0":
+            return cls.load_v1(public, root / "private")
         manifest = {field: incoming[field] for field in MANIFEST_FIELDS}
         version = manifest["schema_version"]
         if type(version) not in (str, int) or version not in (1, "1"):
@@ -186,7 +192,37 @@ class Episode:
             issue_ids.add(issue["issue_id"])
         return cls(manifest, policy, tables, records, documents, frozenset(evidence_ids), tuple(issues))
 
+    @classmethod
+    def load_v1(cls, public_directory, private_directory):
+        public = load_public(str(public_directory))
+        private = load_private(str(private_directory))
+        truth = private.truth
+        if any(truth[key] != public.manifest[key] for key in ("episode_id", "base_currency")):
+            raise ValueError("Truth belongs to another episode")
+        evidence_ids = frozenset(public.id_space())
+        issues = tuple(truth["issues"])
+        if len(issues) > 30:
+            raise ValueError("Too many issues to submit in one episode")
+        if any(
+            len(set(issue["affected_ids"])) != 1 or issue["affected_ids"][0] not in public.docs
+            or any(not evidence_ids.issuperset(ids) for ids in issue["evidence_sets"])
+            for issue in issues
+        ):
+            raise ValueError("Truth contains unavailable documents or evidence")
+        tables = {
+            "ledger": public.ledger, "invoices": public.invoices,
+            "payments": public.payments, "fx": public.fx_rows,
+        }
+        records = {
+            "ledger": public.rows_by_id, "invoices": public.invoice_by_iid,
+            "payments": public.payment_by_pid, "fx": {
+                v1_fx_key(row["date"], row["source_currency"], row["target_currency"]): row
+                for row in public.fx_rows
+            },
+        }
+        return cls(public.manifest, public.policy, tables, records, public.docs, evidence_ids, issues)
+
 
 def load_episode(seed, config):
     """Static datasets are selected explicitly; generation plugs in via the loader callback."""
-    return Episode.load(config["episode"])
+    return Episode.load(config["episode"], config.get("private"))
