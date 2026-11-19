@@ -1,6 +1,6 @@
 """A10: payment_allocation — a fully allocated receipt (Σrefs = amount) whose
 Cr AR allocation is missing entirely (``missing``) or partly (``partial``:
-one ref dropped, or one ref applied short); the unallocated part sits on Cr
+one AR line applied short); the unallocated part sits on Cr
 unapplied with ``invoice_id`` null and the payment_id kept, so the entry stays
 balanced.
 
@@ -13,7 +13,8 @@ the other payments of the same invoice remain correct.
 from __future__ import annotations
 
 from . import InjectionContext, InjectionError, register
-from ._common import can_misallocate, misallocate, not_reserved_for_others, pick, spares_foreign
+from ._common import (can_misallocate, candidates, misallocate, not_reserved_for_others, pick,
+                      spares_foreign)
 
 NAME = "payment_allocation"
 VARIANTS = ("missing", "partial")
@@ -26,7 +27,7 @@ def inject_payment_allocation(ctx: InjectionContext, count: int) -> list:
     issues = []
     for i in range(count):
         variant = VARIANTS[(start + i) % len(VARIANTS)]
-        docs = [d for d in ctx.candidates("payment") if can_misallocate(h, d)]
+        docs = [d for d in candidates(ctx, "payment") if can_misallocate(h, d)]
         spare = spares_foreign(ctx)
         pay = pick(ctx, docs,
                    lambda d: not_reserved_for_others(d, NAME) and spare(d)

@@ -108,7 +108,7 @@ def st_release(output):
 def main():
     global VERBOSE
     ap = argparse.ArgumentParser(description=__doc__)
-    ap.add_argument("--quick", action="store_true", help="skip the two extra example checks")
+    ap.add_argument("--quick", action="store_true", help="skip the extra example checks")
     ap.add_argument("--verbose", action="store_true")
     ap.add_argument("--output", type=Path, help="Export the source code, checked episodes and trajectories")
     a = ap.parse_args()
@@ -119,7 +119,8 @@ def main():
         print("[fresh-gen] SKIP (--quick)")
     else:
         st_fresh()
-    st_release(a.output.resolve() if a.output else None)
+    can_export = all(status == "PASS" for _, status in RESULTS)
+    st_release(a.output.resolve() if a.output and can_export else None)
     print(f"peak RSS (self+children): {peak_rss_mb():.0f} MB")
     failed = [n for n, s in RESULTS if s == "FAIL"]
     print("RESULT: " + ("FAIL (" + ", ".join(failed) + ")" if failed else "OK"))
