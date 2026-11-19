@@ -38,6 +38,6 @@ python3 -m fincheck verify --all .audit-sim/episodes
 python3 -m audit_sim run .audit-sim/episodes --split dev --output .audit-sim/dev-results
 ```
 
-Для одного эпизода с раздельными каталогами передайте `python3 -m audit_sim run PUBLIC --private PRIVATE`. Политики `random`, `reconcile`, `mark_all` и `oracle` запускаются на одних данных. `--policy` выбирает одну из них. В режиме `closed` итог остаётся у оценщика, в режиме `train` терминальная награда записывается в траекторию. Oracle работает на доверенной стороне, и его ответы исключены из публичного журнала.
+Для одного эпизода с раздельными каталогами передайте `python3 -m audit_sim run PUBLIC --private PRIVATE`. Политики `random`, `reconcile`, `mark_all` и `oracle` запускаются на одних данных. `--policy` выбирает одну из них. В режиме `closed` итог остаётся у оценщика, в режиме `train` политика получает терминальную награду, которая также записывается в траекторию. Oracle работает на доверенной стороне, и его ответы исключены из публичного журнала.
 
 [Контракт данных v1.0](docs/CONTRACT.md) · [Дизайн, награда и ограничения](docs/DESIGN.md) · [Единая проверка](scripts/README.md)

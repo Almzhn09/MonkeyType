@@ -6,8 +6,10 @@ from datetime import date, datetime
 from decimal import Decimal, InvalidOperation
 import json
 from pathlib import Path
+from tempfile import TemporaryDirectory
 
 from fincheck.load import fx_key as v1_fx_key, load_private, load_public
+from fingen.generate import generate_episode
 
 from .schema import ISSUE_TYPES, TABLES, is_currency, is_id, record_id, valid_ids
 
@@ -224,5 +226,10 @@ class Episode:
 
 
 def load_episode(seed, config):
-    """Static datasets are selected explicitly; generation plugs in via the loader callback."""
-    return Episode.load(config["episode"], config.get("private"))
+    """Load a saved episode or generate one using the trusted reset inputs."""
+    if "episode" in config:
+        return Episode.load(config["episode"], config.get("private"))
+    generation_config = config if seed is None else config | {"seed": seed}
+    with TemporaryDirectory(prefix="audit-reset-") as directory:
+        _, public, private = generate_episode(generation_config, directory)
+        return Episode.load(public, private)

@@ -109,20 +109,28 @@ def _run_worker(env, policy, policy_seed, initial, trajectory):
             while not (env.terminated or env.truncated):
                 action = read_message(output_fd, env.deadline)
                 previous_steps = env.steps
-                observation, reward, terminated, truncated, _ = env.step(action)
-                if env.steps > previous_steps:
-                    trajectory.append({
-                        "episode_id": env.episode_id,
-                        "step": env.steps,
-                        "action": action,
-                        "observation": observation,
-                        "reward": reward,
-                        "terminated": terminated,
-                        "truncated": truncated,
-                    })
-                if not (terminated or truncated):
-                    send_message(input_fd, observation, env.deadline)
-        except TimeoutError:
+                observation, reward, terminated, truncated, info = env.step(action)
+                if env.steps == previous_steps:
+                    break
+                outcome = {
+                    "observation": observation,
+                    "reward": reward,
+                    "terminated": terminated,
+                    "truncated": truncated,
+                    "info": info,
+                }
+                trajectory.append({
+                    "episode_id": env.episode_id,
+                    "step": env.steps,
+                    "action": action,
+                    **{name: value for name, value in outcome.items() if name != "info"},
+                })
+                send_message(input_fd, outcome, env.deadline)
+            if env.terminated or env.reason == "step_limit":
+                wait_time = max(0.0, env.deadline - monotonic())
+                if process.wait(timeout=wait_time) != 0:
+                    raise WorkerProtocolError("Policy failed after the terminal transition")
+        except (TimeoutError, subprocess.TimeoutExpired):
             env.truncate("timeout")
         except (WorkerProtocolError, BrokenPipeError) as error:
             # Infrastructure failures must reach the verification command, not score as silence.
