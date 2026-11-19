@@ -25,7 +25,7 @@ from __future__ import annotations
 import datetime as _dt
 
 from . import InjectionContext, InjectionError, register
-from ._common import (apply_rescale, can_misallocate, correct_key_amount, fx_issue,
+from ._common import (apply_rescale, can_misallocate, candidates, correct_key_amount, fx_issue,
                       has_utc_edge, misallocate, pick, rescaled, rows_of, sole_entry)
 from ..timeutil import utc_date
 
@@ -70,7 +70,7 @@ def inject_fx_partial_payment_boundary(ctx: InjectionContext, count: int) -> lis
     h = ctx.history
     issues = []
     for _ in range(count):
-        docs = [d for d in ctx.candidates("payment") if _plan(h, d, False)]
+        docs = [d for d in candidates(ctx, "payment") if _plan(h, d, False)]
         utc_ok = {d.doc_id for d in docs if _plan(h, d, True)}
         pay = pick(ctx, docs, lambda d: d.doc_id in utc_ok and "fx_combo" in d.tags,
                    lambda d: d.doc_id in utc_ok and "near_boundary" in d.tags,

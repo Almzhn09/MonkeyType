@@ -26,6 +26,14 @@ RESERVED_TAGS: dict[str, str] = {
 
 # --------------------------------------------------------------------------- selection
 
+def candidates(ctx: InjectionContext, kind: str | None = None, *, in_period: bool = True) -> list:
+    """``ctx.candidates`` minus every document named in a distractor record
+    (``history.distractors``), e.g. correct multi-invoice payments that carry
+    no ``distractor`` tag: injections never consume a distractor."""
+    listed = {d for rec in ctx.history.distractors for d in rec["doc_ids"]}
+    return [d for d in ctx.candidates(kind, in_period=in_period) if d.doc_id not in listed]
+
+
 def not_reserved_for_others(doc, owner: str) -> bool:
     return all(t not in doc.tags or RESERVED_TAGS[t] == owner for t in RESERVED_TAGS)
 
@@ -244,8 +252,8 @@ def can_misallocate(h: History, pay) -> bool:
 
 def misallocate(ctx: InjectionContext, pay: Payment, variant: str, issue_id: str, type_: str,
                 note: str = ""):
-    """Move all (``missing``) or part (``partial``) of the payment's Cr AR
-    allocation to Cr unapplied (invoice_id null, payment_id kept). The entry
+    """Move all (``missing``) or part (``partial``: one AR line applied short)
+    of the payment's Cr AR allocation to Cr unapplied (invoice_id null, payment_id kept). The entry
     stays balanced. Returns the Issue (amount = Σ Cr unapplied)."""
     h = ctx.history
     rng = ctx.rng
@@ -264,26 +272,19 @@ def misallocate(ctx: InjectionContext, pay: Payment, variant: str, issue_id: str
         ctx.modify_row(first.row_id, {**to_unapplied, "credit_minor": total}, role="unapplied",
                        issue_id=issue_id, type_=type_, cause=cause)
     elif variant == "partial":
-        if len(ar_rows) >= 2 and rng.random() < 0.5:
-            r = rng.choice(ar_rows)
-            cause = (f"{type_}[partial/ref_dropped]{note}: payment {pay.payment_id} ref to "
-                     f"{r.invoice_id} not applied; its part credited to unapplied")
-            ctx.modify_row(r.row_id, dict(to_unapplied), role="unapplied",
-                           issue_id=issue_id, type_=type_, cause=cause)
-        else:
-            usable = [r for r in ar_rows if r.credit_minor >= 2]
-            if not usable:
-                raise InjectionError(f"payment {pay.doc_id}: AR lines too small to split")
-            r = rng.choice(usable)
-            x = r.credit_minor * rng.randint(15, 85) // 100
-            x = max(1, min(r.credit_minor - 1, x))
-            cause = (f"{type_}[partial/short_applied]{note}: payment {pay.payment_id} applied "
-                     f"only {r.credit_minor - x} of {r.credit_minor} to {r.invoice_id}; "
-                     f"rest {x} credited to unapplied")
-            ctx.modify_row(r.row_id, {"credit_minor": r.credit_minor - x}, issue_id=issue_id,
-                           type_=type_, cause=cause)
-            ctx.add_row(entry, r.timestamp, "unapplied", 0, x, issue_id=issue_id, type_=type_,
-                        cause=cause, entity_id=pay.entity_id, payment_id=pay.payment_id)
+        usable = [r for r in ar_rows if r.credit_minor >= 2]
+        if not usable:
+            raise InjectionError(f"payment {pay.doc_id}: AR lines too small to split")
+        r = rng.choice(usable)
+        x = r.credit_minor * rng.randint(15, 85) // 100
+        x = max(1, min(r.credit_minor - 1, x))
+        cause = (f"{type_}[partial]{note}: payment {pay.payment_id} applied only "
+                 f"{r.credit_minor - x} of {r.credit_minor} to {r.invoice_id}; rest {x} "
+                 f"credited to unapplied")
+        ctx.modify_row(r.row_id, {"credit_minor": r.credit_minor - x}, issue_id=issue_id,
+                       type_=type_, cause=cause)
+        ctx.add_row(entry, r.timestamp, "unapplied", 0, x, issue_id=issue_id, type_=type_,
+                    cause=cause, entity_id=pay.entity_id, payment_id=pay.payment_id)
     else:
         raise InjectionError(f"unknown payment_allocation variant {variant!r}")
     un = rows_of(h, entry, "unapplied", "cr")

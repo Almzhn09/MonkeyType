@@ -1,0 +1,16 @@
+{
+  "config_version": "1",
+  "schema_version": "1.0",
+  "seed": 5101,
+  "split": "train",
+  "size": {"invoices": 40, "background_entries": 80},
+  "period": {"start_month": "2026-03", "months": 1},
+  "timezone": "Asia/Almaty",
+  "base_currency": "KZT",
+  "foreign_currencies": ["EUR", "USD"],
+  "rounding_mode": "half_up",
+  "errors": {"duplicate_invoice": 3, "payment_allocation": 0, "fx_conversion": 0, "wrong_period": 0},
+  "combos": {"fx_partial_payment_boundary": 0, "duplicate_plus_period": 0},
+  "distractors": {"split_payments": 2, "refunds": 1, "repeated_amounts": 2, "utc_boundary": 2, "advances": 1},
+  "transform": null
+}
