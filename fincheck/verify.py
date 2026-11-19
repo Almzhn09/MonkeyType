@@ -114,9 +114,13 @@ def _check_baseline(pub, prv, rep):
         rep.errors += [f"(b) baseline already has a discrepancy: {f['type']} "
                        f"{f['affected_ids']} {f['claimed_amount_minor']}"]
     bs = prv.provenance["baseline_sha256"]
+    # baseline_sha256[ledger.csv] is over the canonical form (rows sorted by
+    # (timestamp, row_id), CONTRACT §6), so it is defined for permuted ledgers too; the
+    # formatting check therefore compares lines regardless of their order.
     for name, h in sorted(bs.items()):
         if name == "ledger.csv":
-            if render_ledger(pub.ledger) == pub.raw["ledger.csv"]:
+            if sorted(render_ledger(pub.ledger).split(b"\n")) == \
+                    sorted(pub.raw["ledger.csv"].split(b"\n")):
                 if sha256_bytes(render_ledger(base_rows)) != h:
                     rep.errors.append("(b) baseline_sha256[ledger.csv] does not match the "
                                       "ledger rebuilt from provenance changes")
@@ -281,6 +285,7 @@ def verify_episode(public_dir: str, private_dir: str, check_dirnames: bool = Fal
         rep.errors += [f"(a) private: {e}" for e in exc.errors]
     if pub is None or prv is None:
         return rep
+    rep.warnings += pub.warnings + prv.warnings
     eid = pub.manifest["episode_id"]
     rep.episode_id = eid
     rep.issues = len(prv.truth["issues"])

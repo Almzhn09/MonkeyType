@@ -5,7 +5,7 @@ import tempfile
 import unittest
 
 from fincheck.fixtures import builder as fx
-from fincheck.load import SchemaError, load_private, load_public
+from fincheck.load import SchemaError, load_private, load_public, row_sort_key
 
 
 class LoadCase(unittest.TestCase):
@@ -51,6 +51,32 @@ class TestLoadGood(LoadCase):
         self.assertEqual(len(prv.truth["issues"]), 2)
 
 
+class TestLoadOrderNotSemantic(LoadCase):
+    """CONTRACT §2: row/document order and JSON key order are not semantic -> warnings."""
+
+    def test_unsorted_json_keys(self):
+        lines = self.read("payments.jsonl").splitlines()
+        obj = json.loads(lines[0])
+        lines[0] = json.dumps(dict(reversed(list(obj.items()))))  # keys in reverse order
+        self.write("payments.jsonl", "\n".join(lines) + "\n")
+        pub = load_public(self.pub)
+        self.assertTrue(any("payments.jsonl: JSON keys not in sorted order" in w
+                            for w in pub.warnings), pub.warnings)
+
+    def test_unsorted_rows_and_documents(self):
+        rows = self.read("ledger.csv").splitlines()
+        self.write("ledger.csv", "\n".join([rows[0]] + rows[1:][::-1]) + "\n")
+        docs = self.read("invoices.jsonl").splitlines()
+        self.write("invoices.jsonl", "\n".join(docs[::-1]) + "\n")
+        before = load_public(self.pub)
+        self.assertTrue(any("ledger.csv: rows not sorted" in w for w in before.warnings))
+        self.assertTrue(any("invoices.jsonl: documents not sorted" in w
+                            for w in before.warnings))
+        # in-memory ledger is canonical (sorted), whatever the file order
+        self.assertEqual(len(before.ledger), 26)
+        self.assertEqual(before.ledger, sorted(before.ledger, key=row_sort_key))
+
+
 class TestLoadErrors(LoadCase):
     def test_sha_mismatch(self):
         self.write("fx.csv", self.read("fx.csv") + "", rehash=False)
@@ -73,12 +99,6 @@ class TestLoadErrors(LoadCase):
             '"total_minor": 2500000', '"total_minor": 2500001', 1))
         self.assertSchemaError("Σ line amount_minor")
 
-    def test_unsorted_json_keys(self):
-        lines = self.read("payments.jsonl").splitlines()
-        obj = json.loads(lines[0])
-        lines[0] = json.dumps(dict(reversed(list(obj.items()))))  # keys in reverse order
-        self.write("payments.jsonl", "\n".join(lines) + "\n")
-        self.assertSchemaError("not sorted")
 
     def test_debit_and_credit(self):
         rows = self.read("ledger.csv").splitlines()
