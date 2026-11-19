@@ -1,0 +1,42 @@
+{
+  "accounts": {
+    "ar": "1274",
+    "bank": "1024",
+    "expense": [
+      "7286",
+      "7755",
+      "7841",
+      "7845"
+    ],
+    "revenue": "4075",
+    "unapplied": "2298"
+  },
+  "allocation": {
+    "rounding_remainder": "last_ref",
+    "rule": "per_invoice_refs",
+    "unapplied_account_role": "unapplied"
+  },
+  "base_currency": "JPY",
+  "episode_id": "EP-FGVSDJWZWCMN",
+  "fx": {
+    "date_rule": "event_local_date",
+    "rate_direction": "target_per_source",
+    "target_currency": "JPY"
+  },
+  "period": {
+    "end": "2026-02-01T00:00:00+09:00",
+    "end_exclusive": true,
+    "start": "2026-01-01T00:00:00+09:00",
+    "timezone": "Asia/Tokyo",
+    "utc_offset": "+09:00"
+  },
+  "recognition": {
+    "invoice": "issued_at_local_date",
+    "payment": "timestamp_local_date"
+  },
+  "rounding": {
+    "mode": "half_up",
+    "scope": "per_conversion"
+  },
+  "schema_version": "1.0"
+}

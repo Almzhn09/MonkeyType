@@ -1,0 +1,41 @@
+{
+  "accounts": {
+    "ar": "1201.28",
+    "bank": "1094.11",
+    "expense": [
+      "6118.13",
+      "6807.24",
+      "7605.03"
+    ],
+    "revenue": "4078.10",
+    "unapplied": "2228.04"
+  },
+  "allocation": {
+    "rounding_remainder": "last_ref",
+    "rule": "per_invoice_refs",
+    "unapplied_account_role": "unapplied"
+  },
+  "base_currency": "GBP",
+  "episode_id": "EP-E7KTTYKF56FB",
+  "fx": {
+    "date_rule": "event_local_date",
+    "rate_direction": "target_per_source",
+    "target_currency": "GBP"
+  },
+  "period": {
+    "end": "2026-05-01T00:00:00+05:30",
+    "end_exclusive": true,
+    "start": "2026-04-01T00:00:00+05:30",
+    "timezone": "Asia/Kolkata",
+    "utc_offset": "+05:30"
+  },
+  "recognition": {
+    "invoice": "issued_at_local_date",
+    "payment": "timestamp_local_date"
+  },
+  "rounding": {
+    "mode": "half_even",
+    "scope": "per_conversion"
+  },
+  "schema_version": "1.0"
+}

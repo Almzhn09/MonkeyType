@@ -1,0 +1,37 @@
+{
+  "base_currency": "EUR",
+  "company": {
+    "name": "Emamirex Provisions Pte Ltd"
+  },
+  "counts": {
+    "documents": 107,
+    "entries": 307,
+    "fx_rates": 112,
+    "invoices": 60,
+    "ledger_rows": 669,
+    "payments": 47
+  },
+  "currency_exponents": {
+    "EUR": 2,
+    "USD": 2
+  },
+  "episode_id": "EP-9SPXM04SNV4G",
+  "extract_end": "2026-08-11T00:00:00+00:00",
+  "extract_start": "2026-04-21T00:00:00+00:00",
+  "files": {
+    "fx.csv": "962e325ab26ce0e9849d03e85323ac0734bee0a4bf5f73a46c63171efa82fa26",
+    "invoices.jsonl": "334fac42560f901dd74725be287399407bf91d6ed9251cfee5d9f5388e09af75",
+    "ledger.csv": "07aca1fa7bc71fe6a6cb16ef724f25745500198b5a4bbc1bf50cd71a65cecf7a",
+    "payments.jsonl": "37228bb16ecf3493ba76fad0a8ce9e3bf06966f4d27f4dcaf7808b69fdc16074",
+    "policy.json": "3295dbff9b855d1fb5ddf15394194952bc66cd1762d91520bccc1a2eacc9b5a2"
+  },
+  "period_end": "2026-08-01T00:00:00+00:00",
+  "period_start": "2026-05-01T00:00:00+00:00",
+  "rounding": {
+    "mode": "half_up",
+    "scope": "per_conversion"
+  },
+  "schema_version": "1.0",
+  "timezone": "Etc/UTC",
+  "utc_offset": "+00:00"
+}

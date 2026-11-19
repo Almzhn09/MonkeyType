@@ -1,0 +1,38 @@
+{
+  "base_currency": "USD",
+  "company": {
+    "name": "Lenmirar Creative S.A.S."
+  },
+  "counts": {
+    "documents": 114,
+    "entries": 335,
+    "fx_rates": 100,
+    "invoices": 65,
+    "ledger_rows": 734,
+    "payments": 49
+  },
+  "currency_exponents": {
+    "EUR": 2,
+    "GBP": 2,
+    "USD": 2
+  },
+  "episode_id": "EP-8F6RQGE7VT1P",
+  "extract_end": "2026-07-11T00:00:00+05:30",
+  "extract_start": "2026-05-22T00:00:00+05:30",
+  "files": {
+    "fx.csv": "9e782d956ccd8eb6d895c556d4843ecd878bb88e659a3b61c4d1211650eb33f7",
+    "invoices.jsonl": "2df714bc0c5d7a13d3b695a0ad14e7d24519b43b260f4a8c11132c1c277dc4bc",
+    "ledger.csv": "0ceeff6def38c05e07c6e1e21eabb4963fdad645706a72bd6749f371301b107f",
+    "payments.jsonl": "55a08a5fc302b5626c3b3dc9581ee8d81ee3f9500d486513f09eaffb9a4715d5",
+    "policy.json": "a61b49b7bb3030e4978f5838ff002ba50bc6fbbc22bca9e45783f982a7a435ff"
+  },
+  "period_end": "2026-07-01T00:00:00+05:30",
+  "period_start": "2026-06-01T00:00:00+05:30",
+  "rounding": {
+    "mode": "half_even",
+    "scope": "per_conversion"
+  },
+  "schema_version": "1.0",
+  "timezone": "Asia/Kolkata",
+  "utc_offset": "+05:30"
+}

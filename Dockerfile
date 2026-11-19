@@ -21,9 +21,7 @@ WORKDIR /app
 COPY fingen/ fingen/
 COPY fincheck/ fincheck/
 COPY configs/ configs/
-# episodes/ may not exist in a fresh checkout; COPY of a missing dir would fail the
-# build, so create it and mount real episodes at run time instead.
-RUN mkdir -p episodes
+COPY episodes/ episodes/
 COPY tests/ tests/
 COPY scripts/ scripts/
 COPY docs/ docs/

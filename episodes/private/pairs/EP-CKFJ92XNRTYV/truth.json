@@ -1,0 +1,205 @@
+{
+  "base_currency": "KZT",
+  "episode_id": "EP-CKFJ92XNRTYV",
+  "issues": [
+    {
+      "affected_ids": [
+        "FILE_SPY3MPB3N"
+      ],
+      "currency": "KZT",
+      "evidence_sets": [
+        [
+          "FILE_SPY3MPB3N",
+          "R_6WEMHTN",
+          "FX:2026-08-21:USD:KZT"
+        ]
+      ],
+      "expected_amount_minor": 68039,
+      "issue_id": "FND_1H6DTS",
+      "tolerance_minor": 1,
+      "type": "fx_conversion"
+    },
+    {
+      "affected_ids": [
+        "FILE_Q1HMSNQDH"
+      ],
+      "currency": "KZT",
+      "evidence_sets": [
+        [
+          "FILE_Q1HMSNQDH",
+          "R_NS6GXKJ",
+          "FX:2026-08-01:EUR:KZT"
+        ]
+      ],
+      "expected_amount_minor": 57887,
+      "issue_id": "FND_2QJRWW",
+      "tolerance_minor": 1,
+      "type": "fx_conversion"
+    },
+    {
+      "affected_ids": [
+        "FILE_QY4W90ZX9"
+      ],
+      "currency": "KZT",
+      "evidence_sets": [
+        [
+          "FILE_QY4W90ZX9",
+          "R_FC7721A"
+        ],
+        [
+          "FILE_QY4W90ZX9",
+          "R_D25BKVS"
+        ]
+      ],
+      "expected_amount_minor": 117352000,
+      "issue_id": "FND_6B7NVE",
+      "tolerance_minor": 0,
+      "type": "payment_allocation"
+    },
+    {
+      "affected_ids": [
+        "FILE_5APAZ70N6"
+      ],
+      "currency": "KZT",
+      "evidence_sets": [
+        [
+          "FILE_5APAZ70N6",
+          "R_DY5PAR4"
+        ],
+        [
+          "FILE_5APAZ70N6",
+          "R_D55CMY1",
+          "R_PCZAKDK"
+        ]
+      ],
+      "expected_amount_minor": 43179534,
+      "issue_id": "FND_6PF0YA",
+      "tolerance_minor": 0,
+      "type": "payment_allocation"
+    },
+    {
+      "affected_ids": [
+        "FILE_8BX3YTHY0"
+      ],
+      "currency": "KZT",
+      "evidence_sets": [
+        [
+          "FILE_8BX3YTHY0",
+          "R_G86G6WR"
+        ],
+        [
+          "FILE_8BX3YTHY0",
+          "R_XMT90T6"
+        ]
+      ],
+      "expected_amount_minor": 302872378,
+      "issue_id": "FND_DFYZKV",
+      "tolerance_minor": 0,
+      "type": "wrong_period"
+    },
+    {
+      "affected_ids": [
+        "FILE_YA8E78V3D"
+      ],
+      "currency": "KZT",
+      "evidence_sets": [
+        [
+          "FILE_YA8E78V3D",
+          "R_2V5H04V",
+          "FX:2026-09-27:USD:KZT"
+        ],
+        [
+          "FILE_YA8E78V3D",
+          "R_AJZ03P1",
+          "FX:2026-09-27:USD:KZT"
+        ]
+      ],
+      "expected_amount_minor": 480000,
+      "issue_id": "FND_DW56SN",
+      "tolerance_minor": 1,
+      "type": "fx_conversion"
+    },
+    {
+      "affected_ids": [
+        "FILE_5APAZ70N6"
+      ],
+      "currency": "KZT",
+      "evidence_sets": [
+        [
+          "FILE_5APAZ70N6",
+          "R_D55CMY1",
+          "FX:2026-07-01:EUR:KZT"
+        ]
+      ],
+      "expected_amount_minor": 110621,
+      "issue_id": "FND_G2N7ZV",
+      "tolerance_minor": 1,
+      "type": "fx_conversion"
+    },
+    {
+      "affected_ids": [
+        "FILE_K6F6D0XT3"
+      ],
+      "currency": "KZT",
+      "evidence_sets": [
+        [
+          "FILE_K6F6D0XT3",
+          "R_06SRSY4",
+          "R_A7CJ8W6"
+        ],
+        [
+          "FILE_K6F6D0XT3",
+          "R_05396CN",
+          "R_Y3XV3SB"
+        ]
+      ],
+      "expected_amount_minor": 306178818,
+      "issue_id": "FND_T95BMY",
+      "tolerance_minor": 0,
+      "type": "duplicate_invoice"
+    },
+    {
+      "affected_ids": [
+        "FILE_14DT99WJG"
+      ],
+      "currency": "KZT",
+      "evidence_sets": [
+        [
+          "FILE_14DT99WJG",
+          "R_M8AM4F1"
+        ],
+        [
+          "FILE_14DT99WJG",
+          "R_GC0106N"
+        ]
+      ],
+      "expected_amount_minor": 1031641766,
+      "issue_id": "FND_TKYFX1",
+      "tolerance_minor": 0,
+      "type": "wrong_period"
+    },
+    {
+      "affected_ids": [
+        "FILE_V27PPJFK3"
+      ],
+      "currency": "KZT",
+      "evidence_sets": [
+        [
+          "FILE_V27PPJFK3",
+          "R_X8YQ5N5",
+          "R_9J50RKG"
+        ],
+        [
+          "FILE_V27PPJFK3",
+          "R_8MXHG92",
+          "R_2WYYM5Z"
+        ]
+      ],
+      "expected_amount_minor": 2457000,
+      "issue_id": "FND_X2JHJX",
+      "tolerance_minor": 0,
+      "type": "duplicate_invoice"
+    }
+  ],
+  "schema_version": "1.0"
+}

@@ -1,0 +1,41 @@
+{
+  "accounts": {
+    "ar": "1223",
+    "bank": "1072",
+    "expense": [
+      "6020",
+      "7385",
+      "7697"
+    ],
+    "revenue": "4133",
+    "unapplied": "2220"
+  },
+  "allocation": {
+    "rounding_remainder": "last_ref",
+    "rule": "per_invoice_refs",
+    "unapplied_account_role": "unapplied"
+  },
+  "base_currency": "JPY",
+  "episode_id": "EP-GR689D24DYSG",
+  "fx": {
+    "date_rule": "event_local_date",
+    "rate_direction": "target_per_source",
+    "target_currency": "JPY"
+  },
+  "period": {
+    "end": "2026-09-01T00:00:00+09:00",
+    "end_exclusive": true,
+    "start": "2026-08-01T00:00:00+09:00",
+    "timezone": "Asia/Tokyo",
+    "utc_offset": "+09:00"
+  },
+  "recognition": {
+    "invoice": "issued_at_local_date",
+    "payment": "timestamp_local_date"
+  },
+  "rounding": {
+    "mode": "half_even",
+    "scope": "per_conversion"
+  },
+  "schema_version": "1.0"
+}

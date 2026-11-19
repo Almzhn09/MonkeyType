@@ -1,0 +1,259 @@
+{
+  "baseline_sha256": {
+    "fx.csv": "09056fb4b9be7148e5274a4ad394f0aaee486e6aa2b1c94ea655065834b5d11c",
+    "invoices.jsonl": "d14fdd4ef82be2d51eb4f61e075d06eeec026f78a4f3c622118c8af131366ca7",
+    "ledger.csv": "a3f12eb676d26bc6f46496e7979d6c2250e8dbafd6b21aea3dccadefafaf40f9",
+    "manifest.json": "e88b359ca8faf31236d7a265a7f98eda3faf3ea10ec9fb9c5926ec5c85e948f9",
+    "payments.jsonl": "f4fa85ca97bf7c83795f4e8c9f44fe6fde0b1748792ca4d32f08dd85a908dde1",
+    "policy.json": "9428d95ebaff2f9762f0688e2dcd0c63ba7baa80d37daba5000f2a0bb8716938"
+  },
+  "changes": [
+    {
+      "after": {
+        "account": "1223",
+        "credit_minor": 0,
+        "currency": "JPY",
+        "debit_minor": 1704000,
+        "entity_id": "CP-SM12Q0G",
+        "entry_id": "JNL-J9M4BF",
+        "invoice_id": "INVC-4SD9B88",
+        "payment_id": null,
+        "row_id": "LN-CQKHDH8BC",
+        "timestamp": "2026-08-29T18:25:33+09:00"
+      },
+      "before": null,
+      "cause": "duplicate_invoice[repost]: invoice INVC-4SD9B88 (issued 2026-08-26) posted a second time on 2026-08-29 as a new entry with the same amounts",
+      "issue_id": "ISX-0GNVQJA",
+      "op": "add_row",
+      "order": 0,
+      "target": "LN-CQKHDH8BC",
+      "type": "duplicate_invoice"
+    },
+    {
+      "after": {
+        "account": "4133",
+        "credit_minor": 1704000,
+        "currency": "JPY",
+        "debit_minor": 0,
+        "entity_id": "CP-SM12Q0G",
+        "entry_id": "JNL-J9M4BF",
+        "invoice_id": "INVC-4SD9B88",
+        "payment_id": null,
+        "row_id": "LN-7P0TSCD69",
+        "timestamp": "2026-08-29T18:25:33+09:00"
+      },
+      "before": null,
+      "cause": "duplicate_invoice[repost]: invoice INVC-4SD9B88 (issued 2026-08-26) posted a second time on 2026-08-29 as a new entry with the same amounts",
+      "issue_id": "ISX-0GNVQJA",
+      "op": "add_row",
+      "order": 1,
+      "target": "LN-7P0TSCD69",
+      "type": "duplicate_invoice"
+    },
+    {
+      "after": {
+        "account": "1223",
+        "credit_minor": 0,
+        "currency": "JPY",
+        "debit_minor": 28131,
+        "entity_id": "CP-MRSXJ34",
+        "entry_id": "JNL-B8XEJB",
+        "invoice_id": "INVC-BX72KDK",
+        "payment_id": null,
+        "row_id": "LN-WNSHFK9YS",
+        "timestamp": "2026-08-13T10:04:39+09:00"
+      },
+      "before": null,
+      "cause": "duplicate_invoice[repost]: invoice INVC-BX72KDK (issued 2026-08-05) posted a second time on 2026-08-13 as a new entry with the same amounts",
+      "issue_id": "ISX-T5206DX",
+      "op": "add_row",
+      "order": 2,
+      "target": "LN-WNSHFK9YS",
+      "type": "duplicate_invoice"
+    },
+    {
+      "after": {
+        "account": "4133",
+        "credit_minor": 28131,
+        "currency": "JPY",
+        "debit_minor": 0,
+        "entity_id": "CP-MRSXJ34",
+        "entry_id": "JNL-B8XEJB",
+        "invoice_id": "INVC-BX72KDK",
+        "payment_id": null,
+        "row_id": "LN-ACNHEMHK4",
+        "timestamp": "2026-08-13T10:04:39+09:00"
+      },
+      "before": null,
+      "cause": "duplicate_invoice[repost]: invoice INVC-BX72KDK (issued 2026-08-05) posted a second time on 2026-08-13 as a new entry with the same amounts",
+      "issue_id": "ISX-T5206DX",
+      "op": "add_row",
+      "order": 3,
+      "target": "LN-ACNHEMHK4",
+      "type": "duplicate_invoice"
+    }
+  ],
+  "config": {
+    "base_currency": "JPY",
+    "combos": {
+      "duplicate_plus_period": 0,
+      "fx_partial_payment_boundary": 0
+    },
+    "config_version": "1",
+    "distractors": {
+      "advances": 1,
+      "refunds": 1,
+      "repeated_amounts": 2,
+      "split_payments": 2,
+      "utc_boundary": 2
+    },
+    "errors": {
+      "duplicate_invoice": 2,
+      "fx_conversion": 0,
+      "payment_allocation": 0,
+      "wrong_period": 0
+    },
+    "foreign_currencies": [
+      "USD"
+    ],
+    "period": {
+      "months": 1,
+      "start_month": "2026-08"
+    },
+    "rounding_mode": "half_even",
+    "schema_version": "1.0",
+    "seed": 2101,
+    "size": {
+      "background_entries": 50,
+      "invoices": 28
+    },
+    "split": "dev",
+    "timezone": "Asia/Tokyo",
+    "transform": {
+      "kind": "pair",
+      "permute": true,
+      "rename": true,
+      "seed": 121951201
+    }
+  },
+  "config_sha256": "356077a7f22322c93c305049ee3e3567c50df49368b1beaef57591d3e4b118d7",
+  "distractors": [
+    {
+      "currency": "JPY",
+      "doc_ids": [
+        "DSRC-MM1XPMS"
+      ],
+      "kind": "advances",
+      "subtype": "prepayment",
+      "unapplied_minor": 58000
+    },
+    {
+      "doc_ids": [
+        "DSRC-8XH10XF"
+      ],
+      "invoice_ids": [
+        "INVC-WQYXB7P",
+        "INVC-H8C232D"
+      ],
+      "kind": "multi_invoice_payment"
+    },
+    {
+      "amount_minor": -34220,
+      "currency": "JPY",
+      "doc_ids": [
+        "DSRC-12AZBSY",
+        "DSRC-MM1XPMS"
+      ],
+      "kind": "refunds"
+    },
+    {
+      "currency": "USD",
+      "doc_ids": [
+        "DSRC-39YVNPT",
+        "DSRC-V3FSKPT"
+      ],
+      "kind": "repeated_amounts",
+      "same_entity": true,
+      "total_minor": 99000
+    },
+    {
+      "currency": "USD",
+      "doc_ids": [
+        "DSRC-MHCRKPC",
+        "DSRC-1QNDQYE"
+      ],
+      "kind": "repeated_amounts",
+      "same_entity": false,
+      "total_minor": 251000
+    },
+    {
+      "currency": "JPY",
+      "doc_ids": [
+        "DSRC-D7XXBCV"
+      ],
+      "kind": "repeated_amounts",
+      "same_entity": true,
+      "subtype": "same_customer_twin",
+      "total_minor": 1704000,
+      "twin_of": "DSRC-4E9G2WW"
+    },
+    {
+      "currency": "USD",
+      "doc_ids": [
+        "DSRC-KKZ2RQ1"
+      ],
+      "kind": "repeated_amounts",
+      "same_entity": true,
+      "subtype": "same_customer_twin",
+      "total_minor": 17680,
+      "twin_of": "DSRC-4FPAWEP"
+    },
+    {
+      "doc_ids": [
+        "DSRC-NG4KS0S",
+        "DSRC-ZABM43C",
+        "DSRC-RAHB033",
+        "DSRC-60GW3ET"
+      ],
+      "invoice_id": "INVC-XS7EBXG",
+      "kind": "split_payments"
+    },
+    {
+      "doc_ids": [
+        "DSRC-AJNPME0",
+        "DSRC-MFCW253",
+        "DSRC-M8C6HXX"
+      ],
+      "invoice_id": "INVC-HGWZ87F",
+      "kind": "split_payments"
+    },
+    {
+      "boundary": "period_start",
+      "doc_ids": [
+        "DSRC-Y844HMV"
+      ],
+      "doc_timestamp": "2026-07-31T18:50:53+00:00",
+      "kind": "utc_boundary",
+      "local_date": "2026-08-01",
+      "local_in_period": true,
+      "note": "posted on the local date; UTC date differs",
+      "utc_date": "2026-07-31"
+    },
+    {
+      "boundary": "period_start",
+      "doc_ids": [
+        "DSRC-B6SJZJK"
+      ],
+      "doc_timestamp": "2026-07-31T19:49:51+00:00",
+      "kind": "utc_boundary",
+      "local_date": "2026-08-01",
+      "local_in_period": true,
+      "note": "posted on the local date; UTC date differs",
+      "utc_date": "2026-07-31"
+    }
+  ],
+  "episode_id": "EP-GR689D24DYSG",
+  "generator_version": "fingen-0.1.0",
+  "schema_version": "1.0",
+  "seed": 2101
+}

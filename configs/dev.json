@@ -1,0 +1,393 @@
+{
+  "episodes": [
+    {
+      "config_version": "1",
+      "schema_version": "1.0",
+      "seed": 2101,
+      "split": "dev",
+      "size": {
+        "invoices": 28,
+        "background_entries": 50
+      },
+      "period": {
+        "start_month": "2026-08",
+        "months": 1
+      },
+      "timezone": "Asia/Tokyo",
+      "base_currency": "JPY",
+      "foreign_currencies": [
+        "USD"
+      ],
+      "rounding_mode": "half_even",
+      "errors": {
+        "duplicate_invoice": 2,
+        "payment_allocation": 0,
+        "fx_conversion": 0,
+        "wrong_period": 0
+      },
+      "combos": {
+        "fx_partial_payment_boundary": 0,
+        "duplicate_plus_period": 0
+      },
+      "distractors": {
+        "split_payments": 2,
+        "refunds": 1,
+        "repeated_amounts": 2,
+        "utc_boundary": 2,
+        "advances": 1
+      },
+      "transform": null
+    },
+    {
+      "config_version": "1",
+      "schema_version": "1.0",
+      "seed": 2102,
+      "split": "dev",
+      "size": {
+        "invoices": 55,
+        "background_entries": 180
+      },
+      "period": {
+        "start_month": "2026-03",
+        "months": 1
+      },
+      "timezone": "Etc/UTC",
+      "base_currency": "USD",
+      "foreign_currencies": [
+        "EUR",
+        "KZT"
+      ],
+      "rounding_mode": "half_up",
+      "errors": {
+        "duplicate_invoice": 0,
+        "payment_allocation": 1,
+        "fx_conversion": 0,
+        "wrong_period": 0
+      },
+      "combos": {
+        "fx_partial_payment_boundary": 0,
+        "duplicate_plus_period": 0
+      },
+      "distractors": {
+        "split_payments": 2,
+        "refunds": 1,
+        "repeated_amounts": 2,
+        "utc_boundary": 2,
+        "advances": 1
+      },
+      "transform": null
+    },
+    {
+      "config_version": "1",
+      "schema_version": "1.0",
+      "seed": 2103,
+      "split": "dev",
+      "size": {
+        "invoices": 48,
+        "background_entries": 140
+      },
+      "period": {
+        "start_month": "2026-10",
+        "months": 2
+      },
+      "timezone": "Asia/Almaty",
+      "base_currency": "KZT",
+      "foreign_currencies": [
+        "EUR",
+        "USD"
+      ],
+      "rounding_mode": "half_even",
+      "errors": {
+        "duplicate_invoice": 0,
+        "payment_allocation": 0,
+        "fx_conversion": 2,
+        "wrong_period": 0
+      },
+      "combos": {
+        "fx_partial_payment_boundary": 0,
+        "duplicate_plus_period": 0
+      },
+      "distractors": {
+        "split_payments": 2,
+        "refunds": 1,
+        "repeated_amounts": 2,
+        "utc_boundary": 2,
+        "advances": 1
+      },
+      "transform": null
+    },
+    {
+      "config_version": "1",
+      "schema_version": "1.0",
+      "seed": 2104,
+      "split": "dev",
+      "size": {
+        "invoices": 42,
+        "background_entries": 90
+      },
+      "period": {
+        "start_month": "2026-01",
+        "months": 3
+      },
+      "timezone": "America/Bogota",
+      "base_currency": "EUR",
+      "foreign_currencies": [
+        "USD",
+        "GBP"
+      ],
+      "rounding_mode": "half_up",
+      "errors": {
+        "duplicate_invoice": 0,
+        "payment_allocation": 0,
+        "fx_conversion": 0,
+        "wrong_period": 3
+      },
+      "combos": {
+        "fx_partial_payment_boundary": 0,
+        "duplicate_plus_period": 0
+      },
+      "distractors": {
+        "split_payments": 2,
+        "refunds": 1,
+        "repeated_amounts": 2,
+        "utc_boundary": 2,
+        "advances": 1
+      },
+      "transform": null
+    },
+    {
+      "config_version": "1",
+      "schema_version": "1.0",
+      "seed": 2105,
+      "split": "dev",
+      "size": {
+        "invoices": 14,
+        "background_entries": 0
+      },
+      "period": {
+        "start_month": "2026-04",
+        "months": 1
+      },
+      "timezone": "Asia/Kolkata",
+      "base_currency": "GBP",
+      "foreign_currencies": [
+        "EUR"
+      ],
+      "rounding_mode": "half_even",
+      "errors": {
+        "duplicate_invoice": 0,
+        "payment_allocation": 0,
+        "fx_conversion": 0,
+        "wrong_period": 0
+      },
+      "combos": {
+        "fx_partial_payment_boundary": 0,
+        "duplicate_plus_period": 0
+      },
+      "distractors": {
+        "split_payments": 1,
+        "refunds": 0,
+        "repeated_amounts": 1,
+        "utc_boundary": 1,
+        "advances": 0
+      },
+      "transform": null
+    },
+    {
+      "config_version": "1",
+      "schema_version": "1.0",
+      "seed": 2106,
+      "split": "dev",
+      "size": {
+        "invoices": 90,
+        "background_entries": 650
+      },
+      "period": {
+        "start_month": "2026-05",
+        "months": 2
+      },
+      "timezone": "Asia/Almaty",
+      "base_currency": "KZT",
+      "foreign_currencies": [
+        "EUR",
+        "USD"
+      ],
+      "rounding_mode": "half_up",
+      "errors": {
+        "duplicate_invoice": 0,
+        "payment_allocation": 0,
+        "fx_conversion": 0,
+        "wrong_period": 0
+      },
+      "combos": {
+        "fx_partial_payment_boundary": 0,
+        "duplicate_plus_period": 0
+      },
+      "distractors": {
+        "split_payments": 2,
+        "refunds": 1,
+        "repeated_amounts": 2,
+        "utc_boundary": 2,
+        "advances": 1
+      },
+      "transform": null
+    },
+    {
+      "config_version": "1",
+      "schema_version": "1.0",
+      "seed": 2107,
+      "split": "dev",
+      "size": {
+        "invoices": 44,
+        "background_entries": 100
+      },
+      "period": {
+        "start_month": "2026-11",
+        "months": 1
+      },
+      "timezone": "Asia/Dubai",
+      "base_currency": "KWD",
+      "foreign_currencies": [
+        "USD",
+        "EUR",
+        "GBP"
+      ],
+      "rounding_mode": "half_up",
+      "errors": {
+        "duplicate_invoice": 0,
+        "payment_allocation": 0,
+        "fx_conversion": 0,
+        "wrong_period": 0
+      },
+      "combos": {
+        "fx_partial_payment_boundary": 1,
+        "duplicate_plus_period": 0
+      },
+      "distractors": {
+        "split_payments": 2,
+        "refunds": 1,
+        "repeated_amounts": 2,
+        "utc_boundary": 2,
+        "advances": 1
+      },
+      "transform": null
+    },
+    {
+      "config_version": "1",
+      "schema_version": "1.0",
+      "seed": 2108,
+      "split": "dev",
+      "size": {
+        "invoices": 38,
+        "background_entries": 110
+      },
+      "period": {
+        "start_month": "2026-02",
+        "months": 3
+      },
+      "timezone": "Asia/Tokyo",
+      "base_currency": "CNY",
+      "foreign_currencies": [
+        "USD",
+        "JPY"
+      ],
+      "rounding_mode": "half_even",
+      "errors": {
+        "duplicate_invoice": 0,
+        "payment_allocation": 0,
+        "fx_conversion": 0,
+        "wrong_period": 0
+      },
+      "combos": {
+        "fx_partial_payment_boundary": 0,
+        "duplicate_plus_period": 1
+      },
+      "distractors": {
+        "split_payments": 2,
+        "refunds": 1,
+        "repeated_amounts": 2,
+        "utc_boundary": 2,
+        "advances": 1
+      },
+      "transform": null
+    },
+    {
+      "config_version": "1",
+      "schema_version": "1.0",
+      "seed": 2109,
+      "split": "dev",
+      "size": {
+        "invoices": 65,
+        "background_entries": 220
+      },
+      "period": {
+        "start_month": "2026-06",
+        "months": 1
+      },
+      "timezone": "Asia/Kolkata",
+      "base_currency": "USD",
+      "foreign_currencies": [
+        "EUR",
+        "GBP"
+      ],
+      "rounding_mode": "half_even",
+      "errors": {
+        "duplicate_invoice": 1,
+        "payment_allocation": 2,
+        "fx_conversion": 2,
+        "wrong_period": 1
+      },
+      "combos": {
+        "fx_partial_payment_boundary": 1,
+        "duplicate_plus_period": 0
+      },
+      "distractors": {
+        "split_payments": 3,
+        "refunds": 1,
+        "repeated_amounts": 3,
+        "utc_boundary": 3,
+        "advances": 1
+      },
+      "transform": null
+    },
+    {
+      "config_version": "1",
+      "schema_version": "1.0",
+      "seed": 2110,
+      "split": "dev",
+      "size": {
+        "invoices": 95,
+        "background_entries": 450
+      },
+      "period": {
+        "start_month": "2026-07",
+        "months": 3
+      },
+      "timezone": "Etc/UTC",
+      "base_currency": "KZT",
+      "foreign_currencies": [
+        "EUR",
+        "USD"
+      ],
+      "rounding_mode": "half_up",
+      "errors": {
+        "duplicate_invoice": 1,
+        "payment_allocation": 1,
+        "fx_conversion": 3,
+        "wrong_period": 1
+      },
+      "combos": {
+        "fx_partial_payment_boundary": 1,
+        "duplicate_plus_period": 1
+      },
+      "distractors": {
+        "split_payments": 2,
+        "refunds": 1,
+        "repeated_amounts": 3,
+        "utc_boundary": 5,
+        "advances": 2
+      },
+      "transform": null
+    }
+  ]
+}

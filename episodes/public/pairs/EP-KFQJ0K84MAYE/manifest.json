@@ -1,0 +1,39 @@
+{
+  "base_currency": "KZT",
+  "company": {
+    "name": "Kazhyia Cargo Lines PLC"
+  },
+  "counts": {
+    "documents": 134,
+    "entries": 387,
+    "fx_rates": 246,
+    "invoices": 70,
+    "ledger_rows": 834,
+    "payments": 64
+  },
+  "currency_exponents": {
+    "CNY": 2,
+    "EUR": 2,
+    "KZT": 2,
+    "USD": 2
+  },
+  "episode_id": "EP-KFQJ0K84MAYE",
+  "extract_end": "2026-09-11T00:00:00+05:00",
+  "extract_start": "2026-06-21T00:00:00+05:00",
+  "files": {
+    "fx.csv": "a44dcf5777c7ebce9ec1ad58f3e685c866c66f87e96af48b76f30b52613641f9",
+    "invoices.jsonl": "55716486d894e62b7bd4eeac5d7765ad0f1c40bd87a74704178bea5cec682399",
+    "ledger.csv": "851e6572222c1160db9813bee08f8464d66e7d8aee8a4c19ee3f0e3bb80a519a",
+    "payments.jsonl": "edfd5d3576ca19cad6f7bb580420b29b642bae260e41b8d76a2aa1049aa33af6",
+    "policy.json": "e5d74f25a0817df1bff24f62ba25404b88a0bdc15895cc2676fd1902c50d9a09"
+  },
+  "period_end": "2026-09-01T00:00:00+05:00",
+  "period_start": "2026-07-01T00:00:00+05:00",
+  "rounding": {
+    "mode": "half_up",
+    "scope": "per_conversion"
+  },
+  "schema_version": "1.0",
+  "timezone": "Asia/Almaty",
+  "utc_offset": "+05:00"
+}

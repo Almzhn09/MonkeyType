@@ -1,0 +1,617 @@
+{
+  "baseline_sha256": {
+    "fx.csv": "a44dcf5777c7ebce9ec1ad58f3e685c866c66f87e96af48b76f30b52613641f9",
+    "invoices.jsonl": "55716486d894e62b7bd4eeac5d7765ad0f1c40bd87a74704178bea5cec682399",
+    "ledger.csv": "2d15b693bd506c7687c8b58e3f805c0e4f7f6254300032388aff1fe0dea2c471",
+    "manifest.json": "4d749606c13f7d8f7e77118f6ec5f870b9d562da1b3f25c278b3ae3d6e9601cd",
+    "payments.jsonl": "edfd5d3576ca19cad6f7bb580420b29b642bae260e41b8d76a2aa1049aa33af6",
+    "policy.json": "e5d74f25a0817df1bff24f62ba25404b88a0bdc15895cc2676fd1902c50d9a09"
+  },
+  "changes": [
+    {
+      "after": {
+        "account": "L1239",
+        "credit_minor": 0,
+        "currency": "KZT",
+        "debit_minor": 37786938,
+        "entity_id": "CPXJZ4",
+        "entry_id": "JEY9RJSC1S9",
+        "invoice_id": "BILLKAGNT",
+        "payment_id": null,
+        "row_id": "JLK0MZ6B",
+        "timestamp": "2026-08-30T18:09:09+05:00"
+      },
+      "before": null,
+      "cause": "duplicate_invoice[repost] (combo duplicate_plus_period, step 1/2; sibling DKDJ5J1HWP7): invoice BILLKAGNT (issued 2026-08-28) posted a second time on 2026-08-30 as a new entry with the same amounts",
+      "issue_id": "CASE-GPFDE5",
+      "op": "add_row",
+      "order": 0,
+      "target": "JLK0MZ6B",
+      "type": "duplicate_invoice"
+    },
+    {
+      "after": {
+        "account": "G4108",
+        "credit_minor": 37786938,
+        "currency": "KZT",
+        "debit_minor": 0,
+        "entity_id": "CPXJZ4",
+        "entry_id": "JEY9RJSC1S9",
+        "invoice_id": "BILLKAGNT",
+        "payment_id": null,
+        "row_id": "JLNV5EV9",
+        "timestamp": "2026-08-30T18:09:09+05:00"
+      },
+      "before": null,
+      "cause": "duplicate_invoice[repost] (combo duplicate_plus_period, step 1/2; sibling DKDJ5J1HWP7): invoice BILLKAGNT (issued 2026-08-28) posted a second time on 2026-08-30 as a new entry with the same amounts",
+      "issue_id": "CASE-GPFDE5",
+      "op": "add_row",
+      "order": 1,
+      "target": "JLNV5EV9",
+      "type": "duplicate_invoice"
+    },
+    {
+      "after": {
+        "account": "L1239",
+        "credit_minor": 0,
+        "currency": "KZT",
+        "debit_minor": 37891445,
+        "entity_id": "CPXJZ4",
+        "entry_id": "JE68KDFYJD5",
+        "invoice_id": "BILLHN1J2",
+        "payment_id": null,
+        "row_id": "JLHX9QWM",
+        "timestamp": "2026-09-04T19:07:10+05:00"
+      },
+      "before": {
+        "account": "L1239",
+        "credit_minor": 0,
+        "currency": "KZT",
+        "debit_minor": 37891445,
+        "entity_id": "CPXJZ4",
+        "entry_id": "JE68KDFYJD5",
+        "invoice_id": "BILLHN1J2",
+        "payment_id": null,
+        "row_id": "JLHX9QWM",
+        "timestamp": "2026-07-12T16:56:17+05:00"
+      },
+      "cause": "wrong_period[late_posting] (combo duplicate_plus_period, step 2/2; sibling DKDW8J51XBT): in-period invoice issued 2026-07-12 posted after period_end on 2026-09-04",
+      "issue_id": "CASE-6S752E",
+      "op": "modify_row",
+      "order": 2,
+      "target": "JLHX9QWM",
+      "type": "wrong_period"
+    },
+    {
+      "after": {
+        "account": "G4108",
+        "credit_minor": 37891445,
+        "currency": "KZT",
+        "debit_minor": 0,
+        "entity_id": "CPXJZ4",
+        "entry_id": "JE68KDFYJD5",
+        "invoice_id": "BILLHN1J2",
+        "payment_id": null,
+        "row_id": "JLEWP8XW",
+        "timestamp": "2026-09-04T19:07:10+05:00"
+      },
+      "before": {
+        "account": "G4108",
+        "credit_minor": 37891445,
+        "currency": "KZT",
+        "debit_minor": 0,
+        "entity_id": "CPXJZ4",
+        "entry_id": "JE68KDFYJD5",
+        "invoice_id": "BILLHN1J2",
+        "payment_id": null,
+        "row_id": "JLEWP8XW",
+        "timestamp": "2026-07-12T16:56:17+05:00"
+      },
+      "cause": "wrong_period[late_posting] (combo duplicate_plus_period, step 2/2; sibling DKDW8J51XBT): in-period invoice issued 2026-07-12 posted after period_end on 2026-09-04",
+      "issue_id": "CASE-6S752E",
+      "op": "modify_row",
+      "order": 3,
+      "target": "JLEWP8XW",
+      "type": "wrong_period"
+    },
+    {
+      "after": {
+        "account": "L1239",
+        "credit_minor": 0,
+        "currency": "KZT",
+        "debit_minor": 136780000,
+        "entity_id": "CPQP35",
+        "entry_id": "JEGKJBR192Y",
+        "invoice_id": "BILL43Y04",
+        "payment_id": null,
+        "row_id": "JL32CH09",
+        "timestamp": "2026-07-16T10:37:04+05:00"
+      },
+      "before": null,
+      "cause": "duplicate_invoice[repost]: invoice BILL43Y04 (issued 2026-07-05) posted a second time on 2026-07-16 as a new entry with the same amounts",
+      "issue_id": "CASE-BE6E9J",
+      "op": "add_row",
+      "order": 4,
+      "target": "JL32CH09",
+      "type": "duplicate_invoice"
+    },
+    {
+      "after": {
+        "account": "G4108",
+        "credit_minor": 136780000,
+        "currency": "KZT",
+        "debit_minor": 0,
+        "entity_id": "CPQP35",
+        "entry_id": "JEGKJBR192Y",
+        "invoice_id": "BILL43Y04",
+        "payment_id": null,
+        "row_id": "JL8Y1Z9X",
+        "timestamp": "2026-07-16T10:37:04+05:00"
+      },
+      "before": null,
+      "cause": "duplicate_invoice[repost]: invoice BILL43Y04 (issued 2026-07-05) posted a second time on 2026-07-16 as a new entry with the same amounts",
+      "issue_id": "CASE-BE6E9J",
+      "op": "add_row",
+      "order": 5,
+      "target": "JL8Y1Z9X",
+      "type": "duplicate_invoice"
+    },
+    {
+      "after": {
+        "account": "L1239",
+        "credit_minor": 0,
+        "currency": "KZT",
+        "debit_minor": 27000000,
+        "entity_id": "CP8ZKY",
+        "entry_id": "JEM9F34P5HS",
+        "invoice_id": "BILLPMRND",
+        "payment_id": null,
+        "row_id": "JLH01PK8",
+        "timestamp": "2026-07-14T08:25:49+05:00"
+      },
+      "before": null,
+      "cause": "duplicate_invoice[repost]: invoice BILLPMRND (issued 2026-07-09) posted a second time on 2026-07-14 as a new entry with the same amounts",
+      "issue_id": "CASE-JRV0PW",
+      "op": "add_row",
+      "order": 6,
+      "target": "JLH01PK8",
+      "type": "duplicate_invoice"
+    },
+    {
+      "after": {
+        "account": "G4108",
+        "credit_minor": 27000000,
+        "currency": "KZT",
+        "debit_minor": 0,
+        "entity_id": "CP8ZKY",
+        "entry_id": "JEM9F34P5HS",
+        "invoice_id": "BILLPMRND",
+        "payment_id": null,
+        "row_id": "JLC50R38",
+        "timestamp": "2026-07-14T08:25:49+05:00"
+      },
+      "before": null,
+      "cause": "duplicate_invoice[repost]: invoice BILLPMRND (issued 2026-07-09) posted a second time on 2026-07-14 as a new entry with the same amounts",
+      "issue_id": "CASE-JRV0PW",
+      "op": "add_row",
+      "order": 7,
+      "target": "JLC50R38",
+      "type": "duplicate_invoice"
+    },
+    {
+      "after": {
+        "account": "L1239",
+        "credit_minor": 4200000,
+        "currency": "KZT",
+        "debit_minor": 0,
+        "entity_id": "CP0ZH2",
+        "entry_id": "JEAFHWBXTTG",
+        "invoice_id": "BILLDXP5T",
+        "payment_id": "PYGA5C1",
+        "row_id": "JLSNR5DV",
+        "timestamp": "2026-07-12T15:52:35+05:00"
+      },
+      "before": {
+        "account": "L1239",
+        "credit_minor": 10000000,
+        "currency": "KZT",
+        "debit_minor": 0,
+        "entity_id": "CP0ZH2",
+        "entry_id": "JEAFHWBXTTG",
+        "invoice_id": "BILLDXP5T",
+        "payment_id": "PYGA5C1",
+        "row_id": "JLSNR5DV",
+        "timestamp": "2026-07-12T15:52:35+05:00"
+      },
+      "cause": "payment_allocation[partial]: payment PYGA5C1 applied only 4200000 of 10000000 to BILLDXP5T; rest 5800000 credited to unapplied",
+      "issue_id": "CASE-274K3N",
+      "op": "modify_row",
+      "order": 8,
+      "target": "JLSNR5DV",
+      "type": "payment_allocation"
+    },
+    {
+      "after": {
+        "account": "A2228",
+        "credit_minor": 5800000,
+        "currency": "KZT",
+        "debit_minor": 0,
+        "entity_id": "CP0ZH2",
+        "entry_id": "JEAFHWBXTTG",
+        "invoice_id": null,
+        "payment_id": "PYGA5C1",
+        "row_id": "JL69SFC5",
+        "timestamp": "2026-07-12T15:52:35+05:00"
+      },
+      "before": null,
+      "cause": "payment_allocation[partial]: payment PYGA5C1 applied only 4200000 of 10000000 to BILLDXP5T; rest 5800000 credited to unapplied",
+      "issue_id": "CASE-274K3N",
+      "op": "add_row",
+      "order": 9,
+      "target": "JL69SFC5",
+      "type": "payment_allocation"
+    },
+    {
+      "after": {
+        "account": "L1239",
+        "credit_minor": 0,
+        "currency": "KZT",
+        "debit_minor": 262468353,
+        "entity_id": "CPX7NH",
+        "entry_id": "JEGJ9VXKH75",
+        "invoice_id": "BILLC4G3J",
+        "payment_id": null,
+        "row_id": "JLWXVH6V",
+        "timestamp": "2026-07-01T01:44:44+05:00"
+      },
+      "before": {
+        "account": "L1239",
+        "credit_minor": 0,
+        "currency": "KZT",
+        "debit_minor": 261970211,
+        "entity_id": "CPX7NH",
+        "entry_id": "JEGJ9VXKH75",
+        "invoice_id": "BILLC4G3J",
+        "payment_id": null,
+        "row_id": "JLWXVH6V",
+        "timestamp": "2026-07-01T01:44:44+05:00"
+      },
+      "cause": "fx_conversion[utc_date]: invoice DKA0EHJ03DF converted at 447.86: rate of the UTC date 2026-06-30 (447.86) used instead of local date 2026-07-01 (447.01)",
+      "issue_id": "CASE-FZ3TSN",
+      "op": "modify_row",
+      "order": 10,
+      "target": "JLWXVH6V",
+      "type": "fx_conversion"
+    },
+    {
+      "after": {
+        "account": "G4108",
+        "credit_minor": 262468353,
+        "currency": "KZT",
+        "debit_minor": 0,
+        "entity_id": "CPX7NH",
+        "entry_id": "JEGJ9VXKH75",
+        "invoice_id": "BILLC4G3J",
+        "payment_id": null,
+        "row_id": "JL7KFRT7",
+        "timestamp": "2026-07-01T01:44:44+05:00"
+      },
+      "before": {
+        "account": "G4108",
+        "credit_minor": 261970211,
+        "currency": "KZT",
+        "debit_minor": 0,
+        "entity_id": "CPX7NH",
+        "entry_id": "JEGJ9VXKH75",
+        "invoice_id": "BILLC4G3J",
+        "payment_id": null,
+        "row_id": "JL7KFRT7",
+        "timestamp": "2026-07-01T01:44:44+05:00"
+      },
+      "cause": "fx_conversion[utc_date]: invoice DKA0EHJ03DF converted at 447.86: rate of the UTC date 2026-06-30 (447.86) used instead of local date 2026-07-01 (447.01)",
+      "issue_id": "CASE-FZ3TSN",
+      "op": "modify_row",
+      "order": 11,
+      "target": "JL7KFRT7",
+      "type": "fx_conversion"
+    },
+    {
+      "after": {
+        "account": "L1239",
+        "credit_minor": 0,
+        "currency": "KZT",
+        "debit_minor": 16560000,
+        "entity_id": "CPRR3J",
+        "entry_id": "JEWVMPTYVSG",
+        "invoice_id": "BILLZMWFJ",
+        "payment_id": null,
+        "row_id": "JLHV0TM1",
+        "timestamp": "2026-08-31T20:38:52+05:00"
+      },
+      "before": {
+        "account": "L1239",
+        "credit_minor": 0,
+        "currency": "KZT",
+        "debit_minor": 16560000,
+        "entity_id": "CPRR3J",
+        "entry_id": "JEWVMPTYVSG",
+        "invoice_id": "BILLZMWFJ",
+        "payment_id": null,
+        "row_id": "JLHV0TM1",
+        "timestamp": "2026-09-01T01:38:52+05:00"
+      },
+      "cause": "wrong_period[utc_trap]: issued_at 2026-08-31T20:38:52+00:00 (local date 2026-09-01) posted by its UTC date 2026-08-31",
+      "issue_id": "CASE-K1W103",
+      "op": "modify_row",
+      "order": 12,
+      "target": "JLHV0TM1",
+      "type": "wrong_period"
+    },
+    {
+      "after": {
+        "account": "G4108",
+        "credit_minor": 16560000,
+        "currency": "KZT",
+        "debit_minor": 0,
+        "entity_id": "CPRR3J",
+        "entry_id": "JEWVMPTYVSG",
+        "invoice_id": "BILLZMWFJ",
+        "payment_id": null,
+        "row_id": "JLMD4MRN",
+        "timestamp": "2026-08-31T20:38:52+05:00"
+      },
+      "before": {
+        "account": "G4108",
+        "credit_minor": 16560000,
+        "currency": "KZT",
+        "debit_minor": 0,
+        "entity_id": "CPRR3J",
+        "entry_id": "JEWVMPTYVSG",
+        "invoice_id": "BILLZMWFJ",
+        "payment_id": null,
+        "row_id": "JLMD4MRN",
+        "timestamp": "2026-09-01T01:38:52+05:00"
+      },
+      "cause": "wrong_period[utc_trap]: issued_at 2026-08-31T20:38:52+00:00 (local date 2026-09-01) posted by its UTC date 2026-08-31",
+      "issue_id": "CASE-K1W103",
+      "op": "modify_row",
+      "order": 13,
+      "target": "JLMD4MRN",
+      "type": "wrong_period"
+    }
+  ],
+  "config": {
+    "base_currency": "KZT",
+    "combos": {
+      "duplicate_plus_period": 1,
+      "fx_partial_payment_boundary": 0
+    },
+    "config_version": "1",
+    "distractors": {
+      "advances": 2,
+      "refunds": 2,
+      "repeated_amounts": 3,
+      "split_payments": 3,
+      "utc_boundary": 3
+    },
+    "errors": {
+      "duplicate_invoice": 2,
+      "fx_conversion": 1,
+      "payment_allocation": 1,
+      "wrong_period": 1
+    },
+    "foreign_currencies": [
+      "EUR",
+      "USD",
+      "CNY"
+    ],
+    "period": {
+      "months": 2,
+      "start_month": "2026-07"
+    },
+    "rounding_mode": "half_up",
+    "schema_version": "1.0",
+    "seed": 1109,
+    "size": {
+      "background_entries": 250,
+      "invoices": 70
+    },
+    "split": "train",
+    "timezone": "Asia/Almaty",
+    "transform": {
+      "kind": "pair",
+      "permute": true,
+      "rename": true,
+      "seed": 1414792418
+    }
+  },
+  "config_sha256": "7d493be527bbbceb10c2d3d5d038ec8a3b1a0b67af77a7b8bb95f339ce8ad81c",
+  "distractors": [
+    {
+      "currency": "KZT",
+      "doc_ids": [
+        "DKJD876CPR7",
+        "DKVAVC9QCMV"
+      ],
+      "kind": "advances",
+      "subtype": "overpayment",
+      "unapplied_minor": 12320000
+    },
+    {
+      "currency": "EUR",
+      "doc_ids": [
+        "DK0X09Q13HN"
+      ],
+      "kind": "advances",
+      "subtype": "prepayment",
+      "unapplied_minor": 36200
+    },
+    {
+      "doc_ids": [
+        "DKD1W0NA5GX"
+      ],
+      "invoice_ids": [
+        "BILLT1RBH",
+        "BILLWFKGZ"
+      ],
+      "kind": "multi_invoice_payment"
+    },
+    {
+      "doc_ids": [
+        "DKMMC5KBCB4"
+      ],
+      "invoice_ids": [
+        "BILLRFFW0",
+        "BILLV0P3N"
+      ],
+      "kind": "multi_invoice_payment"
+    },
+    {
+      "doc_ids": [
+        "DKTS5GMNPXS"
+      ],
+      "invoice_ids": [
+        "BILLC4G3J",
+        "BILLGK57Z"
+      ],
+      "kind": "multi_invoice_payment"
+    },
+    {
+      "amount_minor": -12320000,
+      "currency": "KZT",
+      "doc_ids": [
+        "DKFN35WGCGN",
+        "DKJD876CPR7"
+      ],
+      "kind": "refunds"
+    },
+    {
+      "amount_minor": -12670,
+      "currency": "EUR",
+      "doc_ids": [
+        "DK14GN5C8K0",
+        "DK0X09Q13HN"
+      ],
+      "kind": "refunds"
+    },
+    {
+      "currency": "KZT",
+      "doc_ids": [
+        "DKHAW6YASAY"
+      ],
+      "kind": "repeated_amounts",
+      "same_entity": true,
+      "subtype": "same_customer_twin",
+      "total_minor": 136780000,
+      "twin_of": "DKTRHBWVBNQ"
+    },
+    {
+      "currency": "USD",
+      "doc_ids": [
+        "DKPXVD7J5FB",
+        "DKT5WZT1BWQ"
+      ],
+      "kind": "repeated_amounts",
+      "same_entity": true,
+      "total_minor": 868570
+    },
+    {
+      "currency": "KZT",
+      "doc_ids": [
+        "DKG354WHV94",
+        "DK1SFDZW3R7"
+      ],
+      "kind": "repeated_amounts",
+      "same_entity": false,
+      "total_minor": 125556000
+    },
+    {
+      "currency": "KZT",
+      "doc_ids": [
+        "DKR59DC21NC"
+      ],
+      "kind": "repeated_amounts",
+      "same_entity": true,
+      "subtype": "same_customer_twin",
+      "total_minor": 27000000,
+      "twin_of": "DK6SC8QSCKS"
+    },
+    {
+      "currency": "KZT",
+      "doc_ids": [
+        "DK6JRZ1VHWG",
+        "DKC64EP1FDZ"
+      ],
+      "kind": "repeated_amounts",
+      "same_entity": false,
+      "total_minor": 119000000
+    },
+    {
+      "doc_ids": [
+        "DKCV3A8BCPY",
+        "DKFRZKDCAH3",
+        "DK0ZZ5Z7TVE"
+      ],
+      "invoice_id": "BILLRPYB5",
+      "kind": "split_payments"
+    },
+    {
+      "doc_ids": [
+        "DKHPNYKDNAG",
+        "DKRTAVD1DTM",
+        "DKPHRMFBTSV"
+      ],
+      "invoice_id": "BILLJQ0ZA",
+      "kind": "split_payments"
+    },
+    {
+      "doc_ids": [
+        "DKY09P8SV3S",
+        "DKS9EX995QP",
+        "DKTJ0N4CZG4"
+      ],
+      "invoice_id": "BILLXS7TQ",
+      "kind": "split_payments"
+    },
+    {
+      "boundary": "period_start",
+      "doc_ids": [
+        "DKPVRX9G2GM"
+      ],
+      "doc_timestamp": "2026-06-30T20:18:03+00:00",
+      "kind": "utc_boundary",
+      "local_date": "2026-07-01",
+      "local_in_period": true,
+      "note": "posted on the local date; UTC date differs",
+      "utc_date": "2026-06-30"
+    },
+    {
+      "boundary": "period_start",
+      "doc_ids": [
+        "DKK9ATBHH98"
+      ],
+      "doc_timestamp": "2026-06-30T19:49:22+00:00",
+      "kind": "utc_boundary",
+      "local_date": "2026-07-01",
+      "local_in_period": true,
+      "note": "posted on the local date; UTC date differs",
+      "utc_date": "2026-06-30"
+    },
+    {
+      "boundary": "period_end",
+      "doc_ids": [
+        "DKGQM9A8JMN"
+      ],
+      "doc_timestamp": "2026-08-31T20:40:27+00:00",
+      "kind": "utc_boundary",
+      "local_date": "2026-09-01",
+      "local_in_period": false,
+      "note": "posted on the local date; UTC date differs",
+      "utc_date": "2026-08-31"
+    }
+  ],
+  "episode_id": "EP-KFQJ0K84MAYE",
+  "generator_version": "fingen-0.1.0",
+  "schema_version": "1.0",
+  "seed": 1109
+}

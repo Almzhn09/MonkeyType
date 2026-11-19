@@ -1,0 +1,29 @@
+{
+  "base_currency": "KZT",
+  "episode_id": "EP-KQNSCMFY2S47",
+  "issues": [
+    {
+      "affected_ids": [
+        "SRCN54XGD"
+      ],
+      "currency": "KZT",
+      "evidence_sets": [
+        [
+          "SRCN54XGD",
+          "TXRZQNJTT",
+          "TXSZBT1AC"
+        ],
+        [
+          "SRCN54XGD",
+          "TXB1TANRK",
+          "TXQDRVR8B"
+        ]
+      ],
+      "expected_amount_minor": 590000000,
+      "issue_id": "CASE-DDDFFK",
+      "tolerance_minor": 0,
+      "type": "duplicate_invoice"
+    }
+  ],
+  "schema_version": "1.0"
+}

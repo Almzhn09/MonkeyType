@@ -1,0 +1,41 @@
+{
+  "accounts": {
+    "ar": "1279.12",
+    "bank": "1049.22",
+    "expense": [
+      "7400.06",
+      "7405.20",
+      "7566.25"
+    ],
+    "revenue": "4066.30",
+    "unapplied": "2332.01"
+  },
+  "allocation": {
+    "rounding_remainder": "last_ref",
+    "rule": "per_invoice_refs",
+    "unapplied_account_role": "unapplied"
+  },
+  "base_currency": "USD",
+  "episode_id": "EP-22ZXRRD8SC",
+  "fx": {
+    "date_rule": "event_local_date",
+    "rate_direction": "target_per_source",
+    "target_currency": "USD"
+  },
+  "period": {
+    "end": "2026-08-01T00:00:00-05:00",
+    "end_exclusive": true,
+    "start": "2026-06-01T00:00:00-05:00",
+    "timezone": "America/Bogota",
+    "utc_offset": "-05:00"
+  },
+  "recognition": {
+    "invoice": "issued_at_local_date",
+    "payment": "timestamp_local_date"
+  },
+  "rounding": {
+    "mode": "half_even",
+    "scope": "per_conversion"
+  },
+  "schema_version": "1.0"
+}

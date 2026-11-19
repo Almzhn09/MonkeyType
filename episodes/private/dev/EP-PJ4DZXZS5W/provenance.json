@@ -1,0 +1,211 @@
+{
+  "baseline_sha256": {
+    "fx.csv": "1019c76df6a0be8f19a5efa1ed9f3042864cd84d1a5dde0cc1c16749f06ac0eb",
+    "invoices.jsonl": "8f4837cb938c58edf1da40d7f4d9da880802772d4bfa9ec6b2b42a580efd2f4b",
+    "ledger.csv": "759a391be8ec34d05e8f6aa8234941b6d96b800028ecc494ad140eb113299c4d",
+    "manifest.json": "fbe652dfb7dea1752f328b88aec9d63ff9d1e889d6d1553c4a21616f0ab90dcb",
+    "payments.jsonl": "13b69d6dab2ad88bf2cbe6ba2db89eb5eea7bad0451b42425ad739e5b0fe6f05",
+    "policy.json": "0b39f192358e2ab0a9b49e178c4d010dc712430187f99e784e2a5ceb8dce0ec2"
+  },
+  "changes": [
+    {
+      "after": {
+        "account": "1232",
+        "credit_minor": 210835,
+        "currency": "USD",
+        "debit_minor": 0,
+        "entity_id": "ENT-FB4RC0",
+        "entry_id": "GLE-NAKSR54D",
+        "invoice_id": "SI-9P19R",
+        "payment_id": "PMT-2026-GGWS681",
+        "row_id": "JL-PS7H1N",
+        "timestamp": "2026-03-24T14:00:58+00:00"
+      },
+      "before": {
+        "account": "1232",
+        "credit_minor": 296950,
+        "currency": "USD",
+        "debit_minor": 0,
+        "entity_id": "ENT-FB4RC0",
+        "entry_id": "GLE-NAKSR54D",
+        "invoice_id": "SI-9P19R",
+        "payment_id": "PMT-2026-GGWS681",
+        "row_id": "JL-PS7H1N",
+        "timestamp": "2026-03-24T14:00:58+00:00"
+      },
+      "cause": "payment_allocation[partial]: payment PMT-2026-GGWS681 applied only 210835 of 296950 to SI-9P19R; rest 86115 credited to unapplied",
+      "issue_id": "ISS-NK9DCK",
+      "op": "modify_row",
+      "order": 0,
+      "target": "JL-PS7H1N",
+      "type": "payment_allocation"
+    },
+    {
+      "after": {
+        "account": "2201",
+        "credit_minor": 86115,
+        "currency": "USD",
+        "debit_minor": 0,
+        "entity_id": "ENT-FB4RC0",
+        "entry_id": "GLE-NAKSR54D",
+        "invoice_id": null,
+        "payment_id": "PMT-2026-GGWS681",
+        "row_id": "JL-52G9H8",
+        "timestamp": "2026-03-24T14:00:58+00:00"
+      },
+      "before": null,
+      "cause": "payment_allocation[partial]: payment PMT-2026-GGWS681 applied only 210835 of 296950 to SI-9P19R; rest 86115 credited to unapplied",
+      "issue_id": "ISS-NK9DCK",
+      "op": "add_row",
+      "order": 1,
+      "target": "JL-52G9H8",
+      "type": "payment_allocation"
+    }
+  ],
+  "config": {
+    "base_currency": "USD",
+    "combos": {
+      "duplicate_plus_period": 0,
+      "fx_partial_payment_boundary": 0
+    },
+    "config_version": "1",
+    "distractors": {
+      "advances": 1,
+      "refunds": 1,
+      "repeated_amounts": 2,
+      "split_payments": 2,
+      "utc_boundary": 2
+    },
+    "errors": {
+      "duplicate_invoice": 0,
+      "fx_conversion": 0,
+      "payment_allocation": 1,
+      "wrong_period": 0
+    },
+    "foreign_currencies": [
+      "EUR",
+      "KZT"
+    ],
+    "period": {
+      "months": 1,
+      "start_month": "2026-03"
+    },
+    "rounding_mode": "half_up",
+    "schema_version": "1.0",
+    "seed": 2102,
+    "size": {
+      "background_entries": 180,
+      "invoices": 55
+    },
+    "split": "dev",
+    "timezone": "Etc/UTC",
+    "transform": null
+  },
+  "config_sha256": "60238646b3d3b189de3b5f9e0b9fc2b81cebea9da506b2263bbcf16a2db4942c",
+  "distractors": [
+    {
+      "currency": "KZT",
+      "doc_ids": [
+        "SRC-QESM3PXJM"
+      ],
+      "kind": "advances",
+      "subtype": "prepayment",
+      "unapplied_minor": 2040000
+    },
+    {
+      "doc_ids": [
+        "SRC-ER0TWE9AZ"
+      ],
+      "invoice_ids": [
+        "SI-EXCM1",
+        "SI-XFBS2"
+      ],
+      "kind": "multi_invoice_payment"
+    },
+    {
+      "doc_ids": [
+        "SRC-RKDCVTN48"
+      ],
+      "invoice_ids": [
+        "SI-62JTS",
+        "SI-97946"
+      ],
+      "kind": "multi_invoice_payment"
+    },
+    {
+      "amount_minor": -795600,
+      "currency": "KZT",
+      "doc_ids": [
+        "SRC-Q06DCWTKJ",
+        "SRC-QESM3PXJM"
+      ],
+      "kind": "refunds"
+    },
+    {
+      "currency": "USD",
+      "doc_ids": [
+        "SRC-BMH4YKY0M",
+        "SRC-SB0X6P4DY"
+      ],
+      "kind": "repeated_amounts",
+      "same_entity": false,
+      "total_minor": 48000
+    },
+    {
+      "currency": "USD",
+      "doc_ids": [
+        "SRC-RE4T6M70X",
+        "SRC-Z2KRT4J5V"
+      ],
+      "kind": "repeated_amounts",
+      "same_entity": true,
+      "total_minor": 396600
+    },
+    {
+      "doc_ids": [
+        "SRC-GBNKBPGRG",
+        "SRC-RZGDP4ZTT",
+        "SRC-TET07X8ZE"
+      ],
+      "invoice_id": "SI-EPY7G",
+      "kind": "split_payments"
+    },
+    {
+      "doc_ids": [
+        "SRC-ZSHVA6XFK",
+        "SRC-ZGYVSA5V2",
+        "SRC-ZHZFVNVRY"
+      ],
+      "invoice_id": "SI-RHX23",
+      "kind": "split_payments"
+    },
+    {
+      "boundary": "period_end",
+      "doc_ids": [
+        "SRC-P4715MQGY"
+      ],
+      "doc_timestamp": "2026-03-31T23:45:37+00:00",
+      "kind": "utc_boundary",
+      "local_date": "2026-03-31",
+      "local_in_period": true,
+      "note": "company offset is +00:00; event placed next to the boundary",
+      "utc_date": "2026-03-31"
+    },
+    {
+      "boundary": "period_start",
+      "doc_ids": [
+        "SRC-S4HV7JXAE"
+      ],
+      "doc_timestamp": "2026-03-01T00:17:37+00:00",
+      "kind": "utc_boundary",
+      "local_date": "2026-03-01",
+      "local_in_period": true,
+      "note": "company offset is +00:00; event placed next to the boundary",
+      "utc_date": "2026-03-01"
+    }
+  ],
+  "episode_id": "EP-PJ4DZXZS5W",
+  "generator_version": "fingen-0.1.0",
+  "schema_version": "1.0",
+  "seed": 2102
+}

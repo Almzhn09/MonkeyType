@@ -1,0 +1,38 @@
+{
+  "base_currency": "CNY",
+  "company": {
+    "name": "Ullunul Software LLP"
+  },
+  "counts": {
+    "documents": 77,
+    "entries": 188,
+    "fx_rates": 218,
+    "invoices": 38,
+    "ledger_rows": 402,
+    "payments": 39
+  },
+  "currency_exponents": {
+    "CNY": 2,
+    "JPY": 0,
+    "USD": 2
+  },
+  "episode_id": "EP-76TMH17DXJCC",
+  "extract_end": "2026-05-11T00:00:00+09:00",
+  "extract_start": "2026-01-22T00:00:00+09:00",
+  "files": {
+    "fx.csv": "6c6f7a36f6348e0b3415ab71dde4536a8c0732a471ca68a6f765b7258f1a7a67",
+    "invoices.jsonl": "c01520a61e1a98a510d74a5314dd393a71211b9b6f169b23f49f97b03c0815f4",
+    "ledger.csv": "7305a77d5b87bfdabc60918738195a3f368e06b555f817dede5d0be6d9dc66ad",
+    "payments.jsonl": "1ab1ac92f5656bac47c944c30e672504e16ee6cf94453998ef7055219aa81dfb",
+    "policy.json": "596be2244ffda8df34440a64436a919bd7a5a41b9c4f6b38a22c066beaa144fb"
+  },
+  "period_end": "2026-05-01T00:00:00+09:00",
+  "period_start": "2026-02-01T00:00:00+09:00",
+  "rounding": {
+    "mode": "half_even",
+    "scope": "per_conversion"
+  },
+  "schema_version": "1.0",
+  "timezone": "Asia/Tokyo",
+  "utc_offset": "+09:00"
+}

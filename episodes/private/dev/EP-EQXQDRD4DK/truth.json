@@ -1,0 +1,205 @@
+{
+  "base_currency": "KZT",
+  "episode_id": "EP-EQXQDRD4DK",
+  "issues": [
+    {
+      "affected_ids": [
+        "DK_HE3M5BK"
+      ],
+      "currency": "KZT",
+      "evidence_sets": [
+        [
+          "DK_HE3M5BK",
+          "JL_QN5R6FC",
+          "JL_DNPNDYA"
+        ],
+        [
+          "DK_HE3M5BK",
+          "JL_JQ4XMP5",
+          "JL_541Z1QT"
+        ]
+      ],
+      "expected_amount_minor": 306178818,
+      "issue_id": "ISS_08ENEY",
+      "tolerance_minor": 0,
+      "type": "duplicate_invoice"
+    },
+    {
+      "affected_ids": [
+        "DK_FMT3KF5"
+      ],
+      "currency": "KZT",
+      "evidence_sets": [
+        [
+          "DK_FMT3KF5",
+          "JL_PPEYDA8"
+        ],
+        [
+          "DK_FMT3KF5",
+          "JL_EAA04AS"
+        ]
+      ],
+      "expected_amount_minor": 1031641766,
+      "issue_id": "ISS_0YXXDR",
+      "tolerance_minor": 0,
+      "type": "wrong_period"
+    },
+    {
+      "affected_ids": [
+        "DK_7N0K0VZ"
+      ],
+      "currency": "KZT",
+      "evidence_sets": [
+        [
+          "DK_7N0K0VZ",
+          "JL_QNWC0NE"
+        ],
+        [
+          "DK_7N0K0VZ",
+          "JL_V6MDRW2"
+        ]
+      ],
+      "expected_amount_minor": 117352000,
+      "issue_id": "ISS_1TBVCT",
+      "tolerance_minor": 0,
+      "type": "payment_allocation"
+    },
+    {
+      "affected_ids": [
+        "DK_SNGGB6B"
+      ],
+      "currency": "KZT",
+      "evidence_sets": [
+        [
+          "DK_SNGGB6B",
+          "JL_NEHAADC",
+          "FX:2026-07-01:EUR:KZT"
+        ]
+      ],
+      "expected_amount_minor": 110621,
+      "issue_id": "ISS_3M0YES",
+      "tolerance_minor": 1,
+      "type": "fx_conversion"
+    },
+    {
+      "affected_ids": [
+        "DK_R764147"
+      ],
+      "currency": "KZT",
+      "evidence_sets": [
+        [
+          "DK_R764147",
+          "JL_NS33ZSK",
+          "FX:2026-08-01:EUR:KZT"
+        ]
+      ],
+      "expected_amount_minor": 57887,
+      "issue_id": "ISS_3MH2YW",
+      "tolerance_minor": 1,
+      "type": "fx_conversion"
+    },
+    {
+      "affected_ids": [
+        "DK_44Z66KV"
+      ],
+      "currency": "KZT",
+      "evidence_sets": [
+        [
+          "DK_44Z66KV",
+          "JL_2R57P7H",
+          "FX:2026-08-21:USD:KZT"
+        ]
+      ],
+      "expected_amount_minor": 68039,
+      "issue_id": "ISS_7285AP",
+      "tolerance_minor": 1,
+      "type": "fx_conversion"
+    },
+    {
+      "affected_ids": [
+        "DK_SNGGB6B"
+      ],
+      "currency": "KZT",
+      "evidence_sets": [
+        [
+          "DK_SNGGB6B",
+          "JL_NF02E0K"
+        ],
+        [
+          "DK_SNGGB6B",
+          "JL_NEHAADC",
+          "JL_DYH3K4W"
+        ]
+      ],
+      "expected_amount_minor": 43179534,
+      "issue_id": "ISS_7PMBWS",
+      "tolerance_minor": 0,
+      "type": "payment_allocation"
+    },
+    {
+      "affected_ids": [
+        "DK_32P13H9"
+      ],
+      "currency": "KZT",
+      "evidence_sets": [
+        [
+          "DK_32P13H9",
+          "JL_MJT9CD6"
+        ],
+        [
+          "DK_32P13H9",
+          "JL_R8QJ9BE"
+        ]
+      ],
+      "expected_amount_minor": 302872378,
+      "issue_id": "ISS_SNNCYD",
+      "tolerance_minor": 0,
+      "type": "wrong_period"
+    },
+    {
+      "affected_ids": [
+        "DK_Z9S370K"
+      ],
+      "currency": "KZT",
+      "evidence_sets": [
+        [
+          "DK_Z9S370K",
+          "JL_1RCQ99S",
+          "JL_CS4DAA3"
+        ],
+        [
+          "DK_Z9S370K",
+          "JL_2MNGW24",
+          "JL_EFPBEHT"
+        ]
+      ],
+      "expected_amount_minor": 2457000,
+      "issue_id": "ISS_W3GJZA",
+      "tolerance_minor": 0,
+      "type": "duplicate_invoice"
+    },
+    {
+      "affected_ids": [
+        "DK_GW6FDZR"
+      ],
+      "currency": "KZT",
+      "evidence_sets": [
+        [
+          "DK_GW6FDZR",
+          "JL_8XZ2T23",
+          "FX:2026-09-27:USD:KZT"
+        ],
+        [
+          "DK_GW6FDZR",
+          "JL_PZ39G3V",
+          "FX:2026-09-27:USD:KZT"
+        ]
+      ],
+      "expected_amount_minor": 480000,
+      "issue_id": "ISS_ZV79VA",
+      "tolerance_minor": 1,
+      "type": "fx_conversion"
+    }
+  ],
+  "schema_version": "1.0"
+}

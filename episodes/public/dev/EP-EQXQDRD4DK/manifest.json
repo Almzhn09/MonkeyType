@@ -1,0 +1,38 @@
+{
+  "base_currency": "KZT",
+  "company": {
+    "name": "Arrinex Transit S.A.S."
+  },
+  "counts": {
+    "documents": 166,
+    "entries": 618,
+    "fx_rates": 224,
+    "invoices": 95,
+    "ledger_rows": 1355,
+    "payments": 71
+  },
+  "currency_exponents": {
+    "EUR": 2,
+    "KZT": 2,
+    "USD": 2
+  },
+  "episode_id": "EP-EQXQDRD4DK",
+  "extract_end": "2026-10-11T00:00:00+00:00",
+  "extract_start": "2026-06-21T00:00:00+00:00",
+  "files": {
+    "fx.csv": "89c4c4a1f3ebc625a53cb0acd8b2d28062d4a20bd3434ae7a756221c102adb93",
+    "invoices.jsonl": "82bfc34a90e1b8ec3f09d0144562aa8faf2d947d141ea5f658e7e4eadb1b01d5",
+    "ledger.csv": "cc9b5f974413bb08cb533b020a59c20bc25197f35888c49524aaa61fecda55f9",
+    "payments.jsonl": "3b2dbf9e51ddd005d0210a44455e74a9c00ba7e54c71e2ca7c1eda20e97313bb",
+    "policy.json": "9255db32d2c44dfe9abad5ffbdde9be2b98a6bfadbe9ce49f6f368bef4349833"
+  },
+  "period_end": "2026-10-01T00:00:00+00:00",
+  "period_start": "2026-07-01T00:00:00+00:00",
+  "rounding": {
+    "mode": "half_up",
+    "scope": "per_conversion"
+  },
+  "schema_version": "1.0",
+  "timezone": "Etc/UTC",
+  "utc_offset": "+00:00"
+}

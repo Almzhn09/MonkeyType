@@ -1,0 +1,278 @@
+{
+  "baseline_sha256": {
+    "fx.csv": "c3997e983a0543c0eb40025bcb9e85fe1bbbe2d899006939d137e0cfdfc6ce28",
+    "invoices.jsonl": "e1b14e6d7c3e88c8ded7abf289f3b3a26f8dc3348096849d099012a0a267bd5e",
+    "ledger.csv": "be0a72863fd5e3051f3b8d53e4162527480a632758999e96a118f46074503989",
+    "manifest.json": "0e49fc79252bf0e4d421ca174cf4cde6cef230918a08f3f443cc09d5c38c74ae",
+    "payments.jsonl": "8ba909eec8afd3f493039e80c5c2b791545b1ddb3ee80899209c7fc126479e2d",
+    "policy.json": "f86024a6b6dea57af3b3fd29a36f78227ba7934a952fbe4ed33cdfcae1c5165a"
+  },
+  "changes": [
+    {
+      "after": {
+        "account": "1051",
+        "credit_minor": 0,
+        "currency": "KWD",
+        "debit_minor": 449523,
+        "entity_id": "PTY_78E1FG",
+        "entry_id": "JE_23KVZ597",
+        "invoice_id": null,
+        "payment_id": "PAY_ETSDSRX",
+        "row_id": "R_2WM3HD60",
+        "timestamp": "2026-11-30T01:50:32+04:00"
+      },
+      "before": {
+        "account": "1051",
+        "credit_minor": 0,
+        "currency": "KWD",
+        "debit_minor": 449747,
+        "entity_id": "PTY_78E1FG",
+        "entry_id": "JE_23KVZ597",
+        "invoice_id": null,
+        "payment_id": "PAY_ETSDSRX",
+        "row_id": "R_2WM3HD60",
+        "timestamp": "2026-11-30T01:50:32+04:00"
+      },
+      "cause": "fx_conversion[utc_date] (combo fx_partial_payment_boundary, step 1/2): payment PAY_ETSDSRX at 2026-11-29T21:50:32+00:00 (local 2026-11-30) converted at the UTC date 2026-11-29 rate 0.322933 instead of 0.323094",
+      "issue_id": "ISS_J615GW",
+      "op": "modify_row",
+      "order": 0,
+      "target": "R_2WM3HD60",
+      "type": "fx_conversion"
+    },
+    {
+      "after": {
+        "account": "1286",
+        "credit_minor": 449523,
+        "currency": "KWD",
+        "debit_minor": 0,
+        "entity_id": "PTY_78E1FG",
+        "entry_id": "JE_23KVZ597",
+        "invoice_id": "BILL_NAF8G",
+        "payment_id": "PAY_ETSDSRX",
+        "row_id": "R_3AKKPRH3",
+        "timestamp": "2026-11-30T01:50:32+04:00"
+      },
+      "before": {
+        "account": "1286",
+        "credit_minor": 449747,
+        "currency": "KWD",
+        "debit_minor": 0,
+        "entity_id": "PTY_78E1FG",
+        "entry_id": "JE_23KVZ597",
+        "invoice_id": "BILL_NAF8G",
+        "payment_id": "PAY_ETSDSRX",
+        "row_id": "R_3AKKPRH3",
+        "timestamp": "2026-11-30T01:50:32+04:00"
+      },
+      "cause": "fx_conversion[utc_date] (combo fx_partial_payment_boundary, step 1/2): payment PAY_ETSDSRX at 2026-11-29T21:50:32+00:00 (local 2026-11-30) converted at the UTC date 2026-11-29 rate 0.322933 instead of 0.323094",
+      "issue_id": "ISS_J615GW",
+      "op": "modify_row",
+      "order": 1,
+      "target": "R_3AKKPRH3",
+      "type": "fx_conversion"
+    },
+    {
+      "after": {
+        "account": "1286",
+        "credit_minor": 166324,
+        "currency": "KWD",
+        "debit_minor": 0,
+        "entity_id": "PTY_78E1FG",
+        "entry_id": "JE_23KVZ597",
+        "invoice_id": "BILL_NAF8G",
+        "payment_id": "PAY_ETSDSRX",
+        "row_id": "R_3AKKPRH3",
+        "timestamp": "2026-11-30T01:50:32+04:00"
+      },
+      "before": {
+        "account": "1286",
+        "credit_minor": 449523,
+        "currency": "KWD",
+        "debit_minor": 0,
+        "entity_id": "PTY_78E1FG",
+        "entry_id": "JE_23KVZ597",
+        "invoice_id": "BILL_NAF8G",
+        "payment_id": "PAY_ETSDSRX",
+        "row_id": "R_3AKKPRH3",
+        "timestamp": "2026-11-30T01:50:32+04:00"
+      },
+      "cause": "payment_allocation[partial] (combo fx_partial_payment_boundary, step 2/2, after the fx step): payment PAY_ETSDSRX applied only 166324 of 449523 to BILL_NAF8G; rest 283199 credited to unapplied",
+      "issue_id": "ISS_RVNHKY",
+      "op": "modify_row",
+      "order": 2,
+      "target": "R_3AKKPRH3",
+      "type": "payment_allocation"
+    },
+    {
+      "after": {
+        "account": "2399",
+        "credit_minor": 283199,
+        "currency": "KWD",
+        "debit_minor": 0,
+        "entity_id": "PTY_78E1FG",
+        "entry_id": "JE_23KVZ597",
+        "invoice_id": null,
+        "payment_id": "PAY_ETSDSRX",
+        "row_id": "R_DBYQMQPG",
+        "timestamp": "2026-11-30T01:50:32+04:00"
+      },
+      "before": null,
+      "cause": "payment_allocation[partial] (combo fx_partial_payment_boundary, step 2/2, after the fx step): payment PAY_ETSDSRX applied only 166324 of 449523 to BILL_NAF8G; rest 283199 credited to unapplied",
+      "issue_id": "ISS_RVNHKY",
+      "op": "add_row",
+      "order": 3,
+      "target": "R_DBYQMQPG",
+      "type": "payment_allocation"
+    }
+  ],
+  "config": {
+    "base_currency": "KWD",
+    "combos": {
+      "duplicate_plus_period": 0,
+      "fx_partial_payment_boundary": 1
+    },
+    "config_version": "1",
+    "distractors": {
+      "advances": 1,
+      "refunds": 1,
+      "repeated_amounts": 2,
+      "split_payments": 2,
+      "utc_boundary": 2
+    },
+    "errors": {
+      "duplicate_invoice": 0,
+      "fx_conversion": 0,
+      "payment_allocation": 0,
+      "wrong_period": 0
+    },
+    "foreign_currencies": [
+      "USD",
+      "EUR",
+      "GBP"
+    ],
+    "period": {
+      "months": 1,
+      "start_month": "2026-11"
+    },
+    "rounding_mode": "half_up",
+    "schema_version": "1.0",
+    "seed": 2107,
+    "size": {
+      "background_entries": 100,
+      "invoices": 44
+    },
+    "split": "dev",
+    "timezone": "Asia/Dubai",
+    "transform": null
+  },
+  "config_sha256": "9a1f8458e4438a29682f45ce91176440ac6090d30ebfd7834d6b6721d29bf6aa",
+  "distractors": [
+    {
+      "currency": "GBP",
+      "doc_ids": [
+        "DOC_D1Z09N",
+        "DOC_DT3TZ7"
+      ],
+      "kind": "advances",
+      "subtype": "overpayment",
+      "unapplied_minor": 11919
+    },
+    {
+      "doc_ids": [
+        "DOC_RZAF2V"
+      ],
+      "invoice_ids": [
+        "BILL_MYDFJ",
+        "BILL_0GJD3"
+      ],
+      "kind": "multi_invoice_payment"
+    },
+    {
+      "doc_ids": [
+        "DOC_T7Y7E0"
+      ],
+      "invoice_ids": [
+        "BILL_G1GTZ",
+        "BILL_MFA0E"
+      ],
+      "kind": "multi_invoice_payment"
+    },
+    {
+      "amount_minor": -11919,
+      "currency": "GBP",
+      "doc_ids": [
+        "DOC_PBMV8W",
+        "DOC_D1Z09N"
+      ],
+      "kind": "refunds"
+    },
+    {
+      "currency": "EUR",
+      "doc_ids": [
+        "DOC_76V9PR",
+        "DOC_KYPG7N"
+      ],
+      "kind": "repeated_amounts",
+      "same_entity": true,
+      "total_minor": 35800
+    },
+    {
+      "currency": "KWD",
+      "doc_ids": [
+        "DOC_8BVACZ",
+        "DOC_XQW2SR"
+      ],
+      "kind": "repeated_amounts",
+      "same_entity": true,
+      "total_minor": 40520
+    },
+    {
+      "doc_ids": [
+        "DOC_7RHP9R",
+        "DOC_BS7KZD",
+        "DOC_H4M85E",
+        "DOC_WFADD9"
+      ],
+      "invoice_id": "BILL_AYWE2",
+      "kind": "split_payments"
+    },
+    {
+      "doc_ids": [
+        "DOC_Y2N66Z",
+        "DOC_50MPDX",
+        "DOC_YJTQD5"
+      ],
+      "invoice_id": "BILL_XEV1P",
+      "kind": "split_payments"
+    },
+    {
+      "boundary": "period_start",
+      "doc_ids": [
+        "DOC_8Q5ST4"
+      ],
+      "doc_timestamp": "2026-10-31T22:06:21+00:00",
+      "kind": "utc_boundary",
+      "local_date": "2026-11-01",
+      "local_in_period": true,
+      "note": "posted on the local date; UTC date differs",
+      "utc_date": "2026-10-31"
+    },
+    {
+      "boundary": "period_end",
+      "doc_ids": [
+        "DOC_TWB33W"
+      ],
+      "doc_timestamp": "2026-11-30T20:27:10+00:00",
+      "kind": "utc_boundary",
+      "local_date": "2026-12-01",
+      "local_in_period": false,
+      "note": "posted on the local date; UTC date differs",
+      "utc_date": "2026-11-30"
+    }
+  ],
+  "episode_id": "EP-R9Z69ZTEJF",
+  "generator_version": "fingen-0.1.0",
+  "schema_version": "1.0",
+  "seed": 2107
+}

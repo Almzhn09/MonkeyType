@@ -1,0 +1,39 @@
+{
+  "base_currency": "KWD",
+  "company": {
+    "name": "Lendorar Technics K.K."
+  },
+  "counts": {
+    "documents": 79,
+    "entries": 179,
+    "fx_rates": 150,
+    "invoices": 44,
+    "ledger_rows": 387,
+    "payments": 35
+  },
+  "currency_exponents": {
+    "EUR": 2,
+    "GBP": 2,
+    "KWD": 3,
+    "USD": 2
+  },
+  "episode_id": "EP-R9Z69ZTEJF",
+  "extract_end": "2026-12-11T00:00:00+04:00",
+  "extract_start": "2026-10-22T00:00:00+04:00",
+  "files": {
+    "fx.csv": "c3997e983a0543c0eb40025bcb9e85fe1bbbe2d899006939d137e0cfdfc6ce28",
+    "invoices.jsonl": "e1b14e6d7c3e88c8ded7abf289f3b3a26f8dc3348096849d099012a0a267bd5e",
+    "ledger.csv": "d6ade2b3900a3ab0df6aefcb8e83fa32cddba9a37966c04b31e4102d63c2db21",
+    "payments.jsonl": "8ba909eec8afd3f493039e80c5c2b791545b1ddb3ee80899209c7fc126479e2d",
+    "policy.json": "f86024a6b6dea57af3b3fd29a36f78227ba7934a952fbe4ed33cdfcae1c5165a"
+  },
+  "period_end": "2026-12-01T00:00:00+04:00",
+  "period_start": "2026-11-01T00:00:00+04:00",
+  "rounding": {
+    "mode": "half_up",
+    "scope": "per_conversion"
+  },
+  "schema_version": "1.0",
+  "timezone": "Asia/Dubai",
+  "utc_offset": "+04:00"
+}

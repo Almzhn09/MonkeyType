@@ -1,0 +1,63 @@
+{
+  "base_currency": "JPY",
+  "episode_id": "EP-FGVSDJWZWCMN",
+  "issues": [
+    {
+      "affected_ids": [
+        "SRC-2RKNPFT"
+      ],
+      "currency": "JPY",
+      "evidence_sets": [
+        [
+          "SRC-2RKNPFT",
+          "GLR-KE3A5MK",
+          "FX:2026-01-19:EUR:JPY"
+        ]
+      ],
+      "expected_amount_minor": 366,
+      "issue_id": "ISX-4AGKZF",
+      "tolerance_minor": 1,
+      "type": "fx_conversion"
+    },
+    {
+      "affected_ids": [
+        "SRC-0XWXG2E"
+      ],
+      "currency": "JPY",
+      "evidence_sets": [
+        [
+          "SRC-0XWXG2E",
+          "GLR-6P1J643",
+          "FX:2026-01-03:USD:JPY"
+        ],
+        [
+          "SRC-0XWXG2E",
+          "GLR-B12TC05",
+          "FX:2026-01-03:USD:JPY"
+        ]
+      ],
+      "expected_amount_minor": 950,
+      "issue_id": "ISX-MBZT3J",
+      "tolerance_minor": 1,
+      "type": "fx_conversion"
+    },
+    {
+      "affected_ids": [
+        "SRC-S8Y39NN"
+      ],
+      "currency": "JPY",
+      "evidence_sets": [
+        [
+          "SRC-S8Y39NN",
+          "GLR-58SYWKK",
+          "FX:2026-01-01:EUR:JPY"
+        ]
+      ],
+      "expected_amount_minor": 254,
+      "issue_id": "ISX-T5YVV7",
+      "tolerance_minor": 1,
+      "type": "fx_conversion"
+    }
+  ],
+  "schema_version": "1.0"
+}

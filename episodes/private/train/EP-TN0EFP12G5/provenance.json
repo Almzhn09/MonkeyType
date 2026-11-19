@@ -1,0 +1,352 @@
+{
+  "baseline_sha256": {
+    "fx.csv": "5a08558d70c6f89577bda0f5e02559759efcbc3e31f97cd320e3b60473a8477f",
+    "invoices.jsonl": "99ea8614978062774e432df20f836a2895517a7dd7c460d2d7a27c0bf1a25767",
+    "ledger.csv": "376d0b0dd4627e9fd6e78c4be09806d9316aeceb4adbd983e27b94d5da88e196",
+    "manifest.json": "2eea7a668fdf8dcbc14721bf851a426a0eab07cd1c74ada8ea1486af8d8b4cb3",
+    "payments.jsonl": "0948042a1d49b4b79e67676a30bdffb43529a7b3564a09a9d45193dc8eed3151",
+    "policy.json": "9cff6cd8e31efb151121e1332bad437bd4422f848f07392281c4f9e5b9ce1d34"
+  },
+  "changes": [
+    {
+      "after": {
+        "account": "1024",
+        "credit_minor": 0,
+        "currency": "JPY",
+        "debit_minor": 202939,
+        "entity_id": "CP-9ZAA",
+        "entry_id": "E-SAEFHTG",
+        "invoice_id": null,
+        "payment_id": "TRF-2026-Z1FFG",
+        "row_id": "RR-NVGT5CF",
+        "timestamp": "2026-01-19T12:22:33+09:00"
+      },
+      "before": {
+        "account": "1024",
+        "credit_minor": 0,
+        "currency": "JPY",
+        "debit_minor": 202573,
+        "entity_id": "CP-9ZAA",
+        "entry_id": "E-SAEFHTG",
+        "invoice_id": null,
+        "payment_id": "TRF-2026-Z1FFG",
+        "row_id": "RR-NVGT5CF",
+        "timestamp": "2026-01-19T12:22:33+09:00"
+      },
+      "cause": "fx_conversion[adjacent_day]: payment DC-K5NPY3B converted at 166.63: rate of next day 2026-01-20 (166.63) used instead of 2026-01-19 (166.33)",
+      "issue_id": "ISS-RW9QAS",
+      "op": "modify_row",
+      "order": 0,
+      "target": "RR-NVGT5CF",
+      "type": "fx_conversion"
+    },
+    {
+      "after": {
+        "account": "1274",
+        "credit_minor": 202939,
+        "currency": "JPY",
+        "debit_minor": 0,
+        "entity_id": "CP-9ZAA",
+        "entry_id": "E-SAEFHTG",
+        "invoice_id": "INVC-02QBR08",
+        "payment_id": "TRF-2026-Z1FFG",
+        "row_id": "RR-JTCNE07",
+        "timestamp": "2026-01-19T12:22:33+09:00"
+      },
+      "before": {
+        "account": "1274",
+        "credit_minor": 202573,
+        "currency": "JPY",
+        "debit_minor": 0,
+        "entity_id": "CP-9ZAA",
+        "entry_id": "E-SAEFHTG",
+        "invoice_id": "INVC-02QBR08",
+        "payment_id": "TRF-2026-Z1FFG",
+        "row_id": "RR-JTCNE07",
+        "timestamp": "2026-01-19T12:22:33+09:00"
+      },
+      "cause": "fx_conversion[adjacent_day]: payment DC-K5NPY3B converted at 166.63: rate of next day 2026-01-20 (166.63) used instead of 2026-01-19 (166.33)",
+      "issue_id": "ISS-RW9QAS",
+      "op": "modify_row",
+      "order": 1,
+      "target": "RR-JTCNE07",
+      "type": "fx_conversion"
+    },
+    {
+      "after": {
+        "account": "1274",
+        "credit_minor": 0,
+        "currency": "JPY",
+        "debit_minor": 15739,
+        "entity_id": "CP-YW1K",
+        "entry_id": "E-2XN17X8",
+        "invoice_id": "INVC-J03W19W",
+        "payment_id": null,
+        "row_id": "RR-QH5N7Q3",
+        "timestamp": "2026-01-03T14:12:57+09:00"
+      },
+      "before": {
+        "account": "1274",
+        "credit_minor": 0,
+        "currency": "JPY",
+        "debit_minor": 14789,
+        "entity_id": "CP-YW1K",
+        "entry_id": "E-2XN17X8",
+        "invoice_id": "INVC-J03W19W",
+        "payment_id": null,
+        "row_id": "RR-QH5N7Q3",
+        "timestamp": "2026-01-03T14:12:57+09:00"
+      },
+      "cause": "fx_conversion[bad_rate]: invoice DC-BCTZRC2 converted at 165.67: wrong rate for 2026-01-03: digit mistyped (155.67 -> 165.67)",
+      "issue_id": "ISS-SVMN77",
+      "op": "modify_row",
+      "order": 2,
+      "target": "RR-QH5N7Q3",
+      "type": "fx_conversion"
+    },
+    {
+      "after": {
+        "account": "4075",
+        "credit_minor": 15739,
+        "currency": "JPY",
+        "debit_minor": 0,
+        "entity_id": "CP-YW1K",
+        "entry_id": "E-2XN17X8",
+        "invoice_id": "INVC-J03W19W",
+        "payment_id": null,
+        "row_id": "RR-7XXGG16",
+        "timestamp": "2026-01-03T14:12:57+09:00"
+      },
+      "before": {
+        "account": "4075",
+        "credit_minor": 14789,
+        "currency": "JPY",
+        "debit_minor": 0,
+        "entity_id": "CP-YW1K",
+        "entry_id": "E-2XN17X8",
+        "invoice_id": "INVC-J03W19W",
+        "payment_id": null,
+        "row_id": "RR-7XXGG16",
+        "timestamp": "2026-01-03T14:12:57+09:00"
+      },
+      "cause": "fx_conversion[bad_rate]: invoice DC-BCTZRC2 converted at 165.67: wrong rate for 2026-01-03: digit mistyped (155.67 -> 165.67)",
+      "issue_id": "ISS-SVMN77",
+      "op": "modify_row",
+      "order": 3,
+      "target": "RR-7XXGG16",
+      "type": "fx_conversion"
+    },
+    {
+      "after": {
+        "account": "1024",
+        "credit_minor": 0,
+        "currency": "JPY",
+        "debit_minor": 105169,
+        "entity_id": "CP-QTVY",
+        "entry_id": "E-RPG93JS",
+        "invoice_id": null,
+        "payment_id": "TRF-2026-KVK5G",
+        "row_id": "RR-H95CP2K",
+        "timestamp": "2026-01-01T03:58:24+09:00"
+      },
+      "before": {
+        "account": "1024",
+        "credit_minor": 0,
+        "currency": "JPY",
+        "debit_minor": 105423,
+        "entity_id": "CP-QTVY",
+        "entry_id": "E-RPG93JS",
+        "invoice_id": null,
+        "payment_id": "TRF-2026-KVK5G",
+        "row_id": "RR-H95CP2K",
+        "timestamp": "2026-01-01T03:58:24+09:00"
+      },
+      "cause": "fx_conversion[utc_date]: payment DC-DHR6Y4E converted at 165.36: rate of the UTC date 2025-12-31 (165.36) used instead of local date 2026-01-01 (165.76)",
+      "issue_id": "ISS-0CEN5A",
+      "op": "modify_row",
+      "order": 4,
+      "target": "RR-H95CP2K",
+      "type": "fx_conversion"
+    },
+    {
+      "after": {
+        "account": "1274",
+        "credit_minor": 105169,
+        "currency": "JPY",
+        "debit_minor": 0,
+        "entity_id": "CP-QTVY",
+        "entry_id": "E-RPG93JS",
+        "invoice_id": "INVC-2S5EJC4",
+        "payment_id": "TRF-2026-KVK5G",
+        "row_id": "RR-TF2S2HZ",
+        "timestamp": "2026-01-01T03:58:24+09:00"
+      },
+      "before": {
+        "account": "1274",
+        "credit_minor": 105423,
+        "currency": "JPY",
+        "debit_minor": 0,
+        "entity_id": "CP-QTVY",
+        "entry_id": "E-RPG93JS",
+        "invoice_id": "INVC-2S5EJC4",
+        "payment_id": "TRF-2026-KVK5G",
+        "row_id": "RR-TF2S2HZ",
+        "timestamp": "2026-01-01T03:58:24+09:00"
+      },
+      "cause": "fx_conversion[utc_date]: payment DC-DHR6Y4E converted at 165.36: rate of the UTC date 2025-12-31 (165.36) used instead of local date 2026-01-01 (165.76)",
+      "issue_id": "ISS-0CEN5A",
+      "op": "modify_row",
+      "order": 5,
+      "target": "RR-TF2S2HZ",
+      "type": "fx_conversion"
+    }
+  ],
+  "config": {
+    "base_currency": "JPY",
+    "combos": {
+      "duplicate_plus_period": 0,
+      "fx_partial_payment_boundary": 0
+    },
+    "config_version": "1",
+    "distractors": {
+      "advances": 1,
+      "refunds": 1,
+      "repeated_amounts": 2,
+      "split_payments": 2,
+      "utc_boundary": 2
+    },
+    "errors": {
+      "duplicate_invoice": 0,
+      "fx_conversion": 3,
+      "payment_allocation": 0,
+      "wrong_period": 0
+    },
+    "foreign_currencies": [
+      "USD",
+      "EUR"
+    ],
+    "period": {
+      "months": 1,
+      "start_month": "2026-01"
+    },
+    "rounding_mode": "half_up",
+    "schema_version": "1.0",
+    "seed": 1103,
+    "size": {
+      "background_entries": 100,
+      "invoices": 45
+    },
+    "split": "train",
+    "timezone": "Asia/Tokyo",
+    "transform": null
+  },
+  "config_sha256": "c45701dee3aeabfd75c459761d5cbe666eca7ac76bdb91e027d384924c6d6ba1",
+  "distractors": [
+    {
+      "currency": "JPY",
+      "doc_ids": [
+        "DC-DTZABR0",
+        "DC-6KAJG0K"
+      ],
+      "kind": "advances",
+      "subtype": "overpayment",
+      "unapplied_minor": 413
+    },
+    {
+      "doc_ids": [
+        "DC-GAY8SC1"
+      ],
+      "invoice_ids": [
+        "INVC-SCZB500",
+        "INVC-QM7Y53V"
+      ],
+      "kind": "multi_invoice_payment"
+    },
+    {
+      "doc_ids": [
+        "DC-V88PV4G"
+      ],
+      "invoice_ids": [
+        "INVC-JQKD69P",
+        "INVC-DJG4AQQ"
+      ],
+      "kind": "multi_invoice_payment"
+    },
+    {
+      "amount_minor": -413,
+      "currency": "JPY",
+      "doc_ids": [
+        "DC-382B40P",
+        "DC-DTZABR0"
+      ],
+      "kind": "refunds"
+    },
+    {
+      "currency": "USD",
+      "doc_ids": [
+        "DC-0YA3RPQ",
+        "DC-WKVTAZ0"
+      ],
+      "kind": "repeated_amounts",
+      "same_entity": true,
+      "total_minor": 220250
+    },
+    {
+      "currency": "JPY",
+      "doc_ids": [
+        "DC-7HNR6MS",
+        "DC-S3C7K6V"
+      ],
+      "kind": "repeated_amounts",
+      "same_entity": true,
+      "total_minor": 14800
+    },
+    {
+      "doc_ids": [
+        "DC-9B0P8JV",
+        "DC-MPEC7NT",
+        "DC-TZHAN9R"
+      ],
+      "invoice_id": "INVC-SMRAX6F",
+      "kind": "split_payments"
+    },
+    {
+      "doc_ids": [
+        "DC-NTVRZV6",
+        "DC-5KQW22W",
+        "DC-CXX5DKK",
+        "DC-WQBW0MQ"
+      ],
+      "invoice_id": "INVC-9GCAN1K",
+      "kind": "split_payments"
+    },
+    {
+      "boundary": "period_end",
+      "doc_ids": [
+        "DC-19SS5B3"
+      ],
+      "doc_timestamp": "2026-01-31T15:05:16+00:00",
+      "kind": "utc_boundary",
+      "local_date": "2026-02-01",
+      "local_in_period": false,
+      "note": "posted on the local date; UTC date differs",
+      "utc_date": "2026-01-31"
+    },
+    {
+      "boundary": "period_start",
+      "doc_ids": [
+        "DC-DCBVJD9"
+      ],
+      "doc_timestamp": "2025-12-31T17:51:03+00:00",
+      "kind": "utc_boundary",
+      "local_date": "2026-01-01",
+      "local_in_period": true,
+      "note": "posted on the local date; UTC date differs",
+      "utc_date": "2025-12-31"
+    }
+  ],
+  "episode_id": "EP-TN0EFP12G5",
+  "generator_version": "fingen-0.1.0",
+  "schema_version": "1.0",
+  "seed": 1103
+}
