@@ -13,7 +13,7 @@ the other payments of the same invoice remain correct.
 from __future__ import annotations
 
 from . import InjectionContext, InjectionError, register
-from ._common import can_misallocate, misallocate, not_reserved_for_others, pick
+from ._common import can_misallocate, misallocate, not_reserved_for_others, pick, spares_foreign
 
 NAME = "payment_allocation"
 VARIANTS = ("missing", "partial")
@@ -27,9 +27,11 @@ def inject_payment_allocation(ctx: InjectionContext, count: int) -> list:
     for i in range(count):
         variant = VARIANTS[(start + i) % len(VARIANTS)]
         docs = [d for d in ctx.candidates("payment") if can_misallocate(h, d)]
+        spare = spares_foreign(ctx)
         pay = pick(ctx, docs,
-                   lambda d: not_reserved_for_others(d, NAME)
+                   lambda d: not_reserved_for_others(d, NAME) and spare(d)
                    and not {"split", "partial"} & set(d.tags),
+                   lambda d: not_reserved_for_others(d, NAME) and spare(d),
                    lambda d: not_reserved_for_others(d, NAME))
         if pay is None:
             raise InjectionError("payment_allocation: no fully allocated in-period payment left")
