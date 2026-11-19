@@ -6,6 +6,7 @@ ISSUE_TYPES = (
     "fx_conversion",
     "reporting_period",
 )
+V1_ISSUE_TYPES = (*ISSUE_TYPES[:3], "wrong_period")
 TABLES = ("ledger", "invoices", "payments", "fx")
 
 

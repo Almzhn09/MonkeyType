@@ -61,13 +61,13 @@ def send_message(fd, payload, deadline):
             data = data[count:]
 
 
-def run_policy(directory, policy, *, mode="closed", seed=None, policy_seed=0,
+def run_policy(directory, policy, *, private_directory=None, mode="closed", seed=None, policy_seed=0,
                timeout=60.0, tolerances=None):
     if policy not in POLICIES:
         raise ValueError("Unknown policy")
     start = monotonic()
     env = AuditEnv(mode=mode, timeout=timeout, tolerances=tolerances)
-    initial, _ = env.reset(seed, {"episode": directory})
+    initial, _ = env.reset(seed, {"episode": directory, "private": private_directory})
     trajectory = []
     if policy == "oracle":
         env.step({"action": "submit", "findings": oracle_submission(env.episode)})

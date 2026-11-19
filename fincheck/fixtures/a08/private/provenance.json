@@ -1,0 +1,118 @@
+{
+  "baseline_sha256": {
+    "fx.csv": "bb9d8599f7fdf64192e6dbb1c1a74cff3651da0eedd8ab676bfb81653cc215b3",
+    "invoices.jsonl": "c36d9ef9bda72df5f53df7cd21b960107275caed381891be885b53defb8dab4b",
+    "ledger.csv": "fd9ab960d3d3c18ea5faf5e30e6c2017fc81a6ffc837c4ed27409dfb66059db1",
+    "payments.jsonl": "6bcaff5f06302e5afe3dad99fd3fc43aa8eceeb1975a76963c05be9807c595c6",
+    "policy.json": "5c19573fda3dfd43403a959e99e21de3e10000b90118405f8ee2d816fdb9f47e"
+  },
+  "changes": [
+    {
+      "after": {
+        "account": "1210",
+        "credit_minor": 0,
+        "currency": "KZT",
+        "debit_minor": 2500000,
+        "entity_id": "CN-RT5W",
+        "entry_id": "J8B97EE1",
+        "invoice_id": "INV-77-041",
+        "payment_id": null,
+        "row_id": "R7DD2FD7",
+        "timestamp": "2026-03-04T16:20:00+05:00"
+      },
+      "before": null,
+      "cause": "fixture change 1 for ISS-7Q1",
+      "issue_id": "ISS-7Q1",
+      "op": "add_row",
+      "order": 1,
+      "target": "R7DD2FD7",
+      "type": "duplicate_invoice"
+    },
+    {
+      "after": {
+        "account": "6010",
+        "credit_minor": 2500000,
+        "currency": "KZT",
+        "debit_minor": 0,
+        "entity_id": "CN-RT5W",
+        "entry_id": "J8B97EE1",
+        "invoice_id": "INV-77-041",
+        "payment_id": null,
+        "row_id": "R2590D00",
+        "timestamp": "2026-03-04T16:20:00+05:00"
+      },
+      "before": null,
+      "cause": "fixture change 2 for ISS-7Q1",
+      "issue_id": "ISS-7Q1",
+      "op": "add_row",
+      "order": 2,
+      "target": "R2590D00",
+      "type": "duplicate_invoice"
+    },
+    {
+      "after": null,
+      "before": {
+        "account": "1210",
+        "credit_minor": 40746667,
+        "currency": "KZT",
+        "debit_minor": 0,
+        "entity_id": "CN-QW2E",
+        "entry_id": "J7DC96F7",
+        "invoice_id": "INV-77-045",
+        "payment_id": "PAY-3101",
+        "row_id": "R3709843",
+        "timestamp": "2026-03-18T12:00:00+05:00"
+      },
+      "cause": "fixture change 3 for ISS-9M4",
+      "issue_id": "ISS-9M4",
+      "op": "delete_row",
+      "order": 3,
+      "target": "R3709843",
+      "type": "payment_allocation"
+    },
+    {
+      "after": {
+        "account": "3510",
+        "credit_minor": 40746667,
+        "currency": "KZT",
+        "debit_minor": 0,
+        "entity_id": "CN-QW2E",
+        "entry_id": "J7DC96F7",
+        "invoice_id": null,
+        "payment_id": "PAY-3101",
+        "row_id": "R006E024",
+        "timestamp": "2026-03-18T12:00:00+05:00"
+      },
+      "before": null,
+      "cause": "fixture change 4 for ISS-9M4",
+      "issue_id": "ISS-9M4",
+      "op": "add_row",
+      "order": 4,
+      "target": "R006E024",
+      "type": "payment_allocation"
+    }
+  ],
+  "config": {
+    "fixture": "EP-CHK-A08"
+  },
+  "config_sha256": "18617aeff51185f6172a381a9c935b31fbdd089936b79ec341f5df573f7f1b39",
+  "distractors": [
+    {
+      "doc_ids": [
+        "DA1K9",
+        "DA4Q2"
+      ],
+      "kind": "repeated_amounts"
+    },
+    {
+      "doc_ids": [
+        "PB3W1"
+      ],
+      "kind": "advances"
+    }
+  ],
+  "episode_id": "EP-CHK-A08",
+  "generator_version": "fincheck-fixture-1",
+  "schema_version": "1.0",
+  "seed": 0
+}

@@ -1,0 +1,37 @@
+{
+  "base_currency": "KZT",
+  "company": {
+    "name": "Altyn Dala Trading LLP"
+  },
+  "counts": {
+    "documents": 8,
+    "entries": 12,
+    "fx_rates": 37,
+    "invoices": 5,
+    "ledger_rows": 26,
+    "payments": 3
+  },
+  "currency_exponents": {
+    "EUR": 2,
+    "KZT": 2
+  },
+  "episode_id": "EP-CHK-A08",
+  "extract_end": "2026-04-04T00:00:00+05:00",
+  "extract_start": "2026-02-26T00:00:00+05:00",
+  "files": {
+    "fx.csv": "bb9d8599f7fdf64192e6dbb1c1a74cff3651da0eedd8ab676bfb81653cc215b3",
+    "invoices.jsonl": "c36d9ef9bda72df5f53df7cd21b960107275caed381891be885b53defb8dab4b",
+    "ledger.csv": "00acc0b8b6f342b0fc1fa856142b95fc63c79d9d7727ef9dc512299d70adfa45",
+    "payments.jsonl": "6bcaff5f06302e5afe3dad99fd3fc43aa8eceeb1975a76963c05be9807c595c6",
+    "policy.json": "5c19573fda3dfd43403a959e99e21de3e10000b90118405f8ee2d816fdb9f47e"
+  },
+  "period_end": "2026-04-01T00:00:00+05:00",
+  "period_start": "2026-03-01T00:00:00+05:00",
+  "rounding": {
+    "mode": "half_up",
+    "scope": "per_conversion"
+  },
+  "schema_version": "1.0",
+  "timezone": "Asia/Almaty",
+  "utc_offset": "+05:00"
+}

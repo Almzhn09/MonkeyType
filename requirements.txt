@@ -1,0 +1,3 @@
+# No third-party runtime dependencies: the project is Python 3.11 standard
+# library only (fingen, fincheck, tests, scripts). This file is intentionally
+# an empty pin file so `pip install -r requirements.txt` is a no-op.

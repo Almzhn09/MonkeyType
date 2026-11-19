@@ -2,9 +2,11 @@
 
 from dataclasses import dataclass
 
-from .schema import ISSUE_TYPES, is_currency, valid_ids
+from fincheck.load import canon_ids
 
-DEFAULT_TOLERANCES = dict.fromkeys(ISSUE_TYPES, 0)
+from .schema import ISSUE_TYPES, V1_ISSUE_TYPES, is_currency, valid_ids
+
+AMOUNT_TYPES = frozenset((*ISSUE_TYPES, *V1_ISSUE_TYPES))
 
 
 @dataclass(frozen=True)
@@ -39,7 +41,7 @@ def validate_submission(payload, episode_id):
 
 
 def canonical_ids(ids):
-    return tuple(sorted(set(ids)))
+    return tuple(canon_ids(ids))
 
 
 def key(item):
@@ -49,19 +51,21 @@ def key(item):
 def candidate_graph(findings, issues, evidence_ids, tolerances):
     """Rows are in submission order; columns in issue ID order."""
     issue_keys = [key(issue) for issue in issues]
-    requirements = [[frozenset(ids) for ids in issue["evidence_sets"]] for issue in issues]
+    available = frozenset(canonical_ids(evidence_ids))
+    requirements = [[frozenset(canonical_ids(ids)) for ids in issue["evidence_sets"]] for issue in issues]
     graph = []
     for finding in findings:
-        evidence = frozenset(finding["evidence_ids"])
+        evidence = frozenset(canonical_ids(finding["evidence_ids"]))
         finding_key = key(finding)
-        if not evidence <= evidence_ids or finding["type"] not in tolerances:
+        if not evidence <= available:
             graph.append([])
             continue
         graph.append([
             index
             for index, issue in enumerate(issues)
             if finding_key == issue_keys[index]
-            and abs(finding["claimed_amount_minor"] - issue["expected_amount_minor"]) <= tolerances[issue["type"]]
+            and abs(finding["claimed_amount_minor"] - issue["expected_amount_minor"])
+            <= tolerances.get(issue["type"], issue.get("tolerance_minor", 0))
             and any(needed <= evidence for needed in requirements[index])
         ])
     return graph
@@ -90,7 +94,7 @@ def score_submission(episode, payload, inspection_steps, tolerances=None):
     if not validate_submission(payload, episode.manifest["episode_id"]):
         return Score(0, 0, len(episode.issues), 0.0, 0.0, 0.0, -1.0, invalid_submission=True)
 
-    tolerances = DEFAULT_TOLERANCES if tolerances is None else tolerances
+    tolerances = {} if tolerances is None else tolerances
     findings = payload["findings"]
     issues = sorted(episode.issues, key=lambda issue: issue["issue_id"])
     unique = []

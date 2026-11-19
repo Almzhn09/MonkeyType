@@ -6,7 +6,7 @@ from time import monotonic
 from .calculator import calculate
 from .data import load_episode
 from .schema import TABLES, is_id
-from .scoring import DEFAULT_TOLERANCES, score_submission
+from .scoring import AMOUNT_TYPES, score_submission
 
 TASK = "Audit the financial records. Submit supported discrepancies with evidence IDs."
 PAGE_SIZE = 50
@@ -22,8 +22,8 @@ class AuditEnv:
             raise ValueError("Mode must be train or closed")
         self.loader = loader
         self.mode = mode
-        self.tolerances = DEFAULT_TOLERANCES | (tolerances or {})
-        if self.tolerances.keys() != DEFAULT_TOLERANCES.keys() or not all(
+        self.tolerances = dict(tolerances or {})
+        if not self.tolerances.keys() <= AMOUNT_TYPES or not all(
             type(value) is int and value >= 0 for value in self.tolerances.values()
         ):
             raise ValueError("Invalid amount tolerances")
