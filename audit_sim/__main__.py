@@ -3,18 +3,19 @@
 import argparse
 import json
 from pathlib import Path
+from shutil import copytree
 from statistics import mean
 import sys
 import tempfile
 import unittest
 
-from fincheck.load import SchemaError
+from fincheck.load import SchemaError, fx_key
 from fincheck.verify import discover
 
 from .data import load_json
 from .fixtures import dump_json, dump_jsonl, make_dev
 from .policies import POLICIES
-from .release import prepare_release
+from .release import ROOT, prepare_release
 from .runner import WorkerProtocolError, run_policy
 
 
@@ -81,19 +82,27 @@ def evaluate(directory, *, choices=POLICIES, mode="closed", policy_seed=0,
 
 
 def demo(output):
+    control = ROOT / "fincheck" / "fixtures" / "a08"
+    clean = "EP-QRS8HS6811"
     with tempfile.TemporaryDirectory() as temp:
         directory = Path(temp)
-        make_dev(directory, demo=True)
-        reports, _, trajectories = evaluate(directory, choices=("reconcile", "mark_all"), output=output)
+        for scope in ("public", "private"):
+            copytree(control / scope, directory / scope / "demo" / "EP-CHK-A08")
+            copytree(ROOT / "episodes" / scope / "dev" / clean, directory / scope / "demo" / clean)
+        reports, _, trajectories = evaluate(
+            directory, split="demo", choices=("reconcile", "mark_all"), output=output,
+        )
     # Display only the same public documents and records used as agent evidence.
     public_records = {}
     for row in trajectories:
         if row["policy"] != "reconcile" or row["action"]["action"] != "list_records":
             continue
         for record in row["observation"]["result"]:
-            evidence_id = record.get("doc_id") or record["row_id"]
+            evidence_id = record.get("doc_id") or record.get("row_id")
+            if evidence_id is None:
+                evidence_id = fx_key(record["date"], record["source_currency"], record["target_currency"])
             public_records[row["episode_id"], evidence_id] = record
-    for report in sorted(reports, key=lambda item: item["episode_id"] != "demo-mixed"):
+    for report in reports:
         data = {key: report[key] for key in (
             "episode_id", "policy", "steps", "tp", "fp", "fn", "f1", "reward",
         )}

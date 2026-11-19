@@ -1,0 +1,41 @@
+{
+  "accounts": {
+    "ar": "1208.08",
+    "bank": "1075.12",
+    "expense": [
+      "6963.04",
+      "7319.19",
+      "7555.24"
+    ],
+    "revenue": "4145.02",
+    "unapplied": "2270.07"
+  },
+  "allocation": {
+    "rounding_remainder": "last_ref",
+    "rule": "per_invoice_refs",
+    "unapplied_account_role": "unapplied"
+  },
+  "base_currency": "CNY",
+  "episode_id": "EP-9AMRPHA6M8",
+  "fx": {
+    "date_rule": "event_local_date",
+    "rate_direction": "target_per_source",
+    "target_currency": "CNY"
+  },
+  "period": {
+    "end": "2026-05-01T00:00:00+09:00",
+    "end_exclusive": true,
+    "start": "2026-02-01T00:00:00+09:00",
+    "timezone": "Asia/Tokyo",
+    "utc_offset": "+09:00"
+  },
+  "recognition": {
+    "invoice": "issued_at_local_date",
+    "payment": "timestamp_local_date"
+  },
+  "rounding": {
+    "mode": "half_even",
+    "scope": "per_conversion"
+  },
+  "schema_version": "1.0"
+}

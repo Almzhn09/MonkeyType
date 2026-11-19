@@ -1,0 +1,37 @@
+{
+  "base_currency": "GBP",
+  "company": {
+    "name": "Talaris Apparel LLC"
+  },
+  "counts": {
+    "documents": 24,
+    "entries": 98,
+    "fx_rates": 50,
+    "invoices": 14,
+    "ledger_rows": 211,
+    "payments": 10
+  },
+  "currency_exponents": {
+    "EUR": 2,
+    "GBP": 2
+  },
+  "episode_id": "EP-QRS8HS6811",
+  "extract_end": "2026-05-11T00:00:00+05:30",
+  "extract_start": "2026-03-22T00:00:00+05:30",
+  "files": {
+    "fx.csv": "2a4ca03532c350568d86d12d0d3ec59d0da974188bb499a9e379f39c18b337b0",
+    "invoices.jsonl": "ffb293e36ddbcc4a31cf919f45634d785b6d4ff436469e3f88b794367219909a",
+    "ledger.csv": "460edf374e989cca8a3ab574f2e3f3584d440dbdbe31a76fdde838abd7e65401",
+    "payments.jsonl": "2e38669180ffed8765ea2dcf621c9ca3f8026d2208344c787ec3338a418095d8",
+    "policy.json": "051c10be05127decf299ec31f5834058b7ee2c2968cfe77de6dc68ef10233992"
+  },
+  "period_end": "2026-05-01T00:00:00+05:30",
+  "period_start": "2026-04-01T00:00:00+05:30",
+  "rounding": {
+    "mode": "half_even",
+    "scope": "per_conversion"
+  },
+  "schema_version": "1.0",
+  "timezone": "Asia/Kolkata",
+  "utc_offset": "+05:30"
+}

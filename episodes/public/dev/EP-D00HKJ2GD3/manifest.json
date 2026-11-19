@@ -1,0 +1,38 @@
+{
+  "base_currency": "KZT",
+  "company": {
+    "name": "Qoremaex Machinery LLC"
+  },
+  "counts": {
+    "documents": 158,
+    "entries": 808,
+    "fx_rates": 162,
+    "invoices": 90,
+    "ledger_rows": 1795,
+    "payments": 68
+  },
+  "currency_exponents": {
+    "EUR": 2,
+    "KZT": 2,
+    "USD": 2
+  },
+  "episode_id": "EP-D00HKJ2GD3",
+  "extract_end": "2026-07-11T00:00:00+05:00",
+  "extract_start": "2026-04-21T00:00:00+05:00",
+  "files": {
+    "fx.csv": "e098006ded16cb46dd467d90abe908a09eedcc2cbf1d170b60281d33756a41e5",
+    "invoices.jsonl": "6a80968c6291abeaa6c618c4c0282d20d668d14c107f81a7e18a926a87964471",
+    "ledger.csv": "fab5d5763a6891ad2624083b64e28f776978117f62aafef08abf8db2e7a815c5",
+    "payments.jsonl": "2480470868fb21df941607450caa73ab78c7fa818dff98f6896d3c104a14352d",
+    "policy.json": "da9f1ab452bd24a34b3104269f70c204d1fe1480f445f66ad6ba4f60bde94da4"
+  },
+  "period_end": "2026-07-01T00:00:00+05:00",
+  "period_start": "2026-05-01T00:00:00+05:00",
+  "rounding": {
+    "mode": "half_up",
+    "scope": "per_conversion"
+  },
+  "schema_version": "1.0",
+  "timezone": "Asia/Almaty",
+  "utc_offset": "+05:00"
+}

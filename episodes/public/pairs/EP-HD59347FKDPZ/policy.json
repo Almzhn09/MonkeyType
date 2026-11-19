@@ -1,0 +1,43 @@
+{
+  "accounts": {
+    "ar": "1232",
+    "bank": "1039",
+    "expense": [
+      "6350",
+      "6359",
+      "6631",
+      "7697",
+      "7723"
+    ],
+    "revenue": "4134",
+    "unapplied": "2201"
+  },
+  "allocation": {
+    "rounding_remainder": "last_ref",
+    "rule": "per_invoice_refs",
+    "unapplied_account_role": "unapplied"
+  },
+  "base_currency": "USD",
+  "episode_id": "EP-HD59347FKDPZ",
+  "fx": {
+    "date_rule": "event_local_date",
+    "rate_direction": "target_per_source",
+    "target_currency": "USD"
+  },
+  "period": {
+    "end": "2026-04-01T00:00:00+00:00",
+    "end_exclusive": true,
+    "start": "2026-03-01T00:00:00+00:00",
+    "timezone": "Etc/UTC",
+    "utc_offset": "+00:00"
+  },
+  "recognition": {
+    "invoice": "issued_at_local_date",
+    "payment": "timestamp_local_date"
+  },
+  "rounding": {
+    "mode": "half_up",
+    "scope": "per_conversion"
+  },
+  "schema_version": "1.0"
+}

@@ -1,0 +1,229 @@
+{
+  "base_currency": "KWD",
+  "episode_id": "EP-BQV9YGYXTTSE",
+  "issues": [
+    {
+      "affected_ids": [
+        "DK_CKZ78E24"
+      ],
+      "currency": "KWD",
+      "evidence_sets": [
+        [
+          "DK_CKZ78E24",
+          "R_8NVMXTYVG"
+        ],
+        [
+          "DK_CKZ78E24",
+          "R_9DTGZ61JB",
+          "R_TX1H0P6EK"
+        ]
+      ],
+      "expected_amount_minor": 823360,
+      "issue_id": "ISX_CD45CV",
+      "tolerance_minor": 0,
+      "type": "payment_allocation"
+    },
+    {
+      "affected_ids": [
+        "DK_F93RBEHW"
+      ],
+      "currency": "KWD",
+      "evidence_sets": [
+        [
+          "DK_F93RBEHW",
+          "R_680MVT8V2",
+          "R_BJEVVPJZR"
+        ],
+        [
+          "DK_F93RBEHW",
+          "R_QGVESJS41",
+          "R_AGKQWRRZX"
+        ]
+      ],
+      "expected_amount_minor": 380730,
+      "issue_id": "ISX_DT715B",
+      "tolerance_minor": 0,
+      "type": "duplicate_invoice"
+    },
+    {
+      "affected_ids": [
+        "DK_68XYWBZ1"
+      ],
+      "currency": "KWD",
+      "evidence_sets": [
+        [
+          "DK_68XYWBZ1",
+          "R_0EC006D5B",
+          "FX:2026-11-30:USD:KWD"
+        ]
+      ],
+      "expected_amount_minor": 17752,
+      "issue_id": "ISX_F2JA54",
+      "tolerance_minor": 1,
+      "type": "fx_conversion"
+    },
+    {
+      "affected_ids": [
+        "DK_ZD8JQF41"
+      ],
+      "currency": "KWD",
+      "evidence_sets": [
+        [
+          "DK_ZD8JQF41",
+          "R_P2V0ZXAQ4",
+          "R_HJ896DQXX"
+        ],
+        [
+          "DK_ZD8JQF41",
+          "R_FN1ZE5E9Y",
+          "R_ASKJ82E5Z"
+        ]
+      ],
+      "expected_amount_minor": 1270656,
+      "issue_id": "ISX_ND11G5",
+      "tolerance_minor": 0,
+      "type": "duplicate_invoice"
+    },
+    {
+      "affected_ids": [
+        "DK_MY60G9BN"
+      ],
+      "currency": "KWD",
+      "evidence_sets": [
+        [
+          "DK_MY60G9BN",
+          "R_7QEKM1ZC4",
+          "FX:2026-09-01:EUR:KWD"
+        ]
+      ],
+      "expected_amount_minor": 829,
+      "issue_id": "ISX_RJ4P2F",
+      "tolerance_minor": 1,
+      "type": "fx_conversion"
+    },
+    {
+      "affected_ids": [
+        "DK_EWN7G7NM"
+      ],
+      "currency": "KWD",
+      "evidence_sets": [
+        [
+          "DK_EWN7G7NM",
+          "R_CH6VPCFRB"
+        ],
+        [
+          "DK_EWN7G7NM",
+          "R_9ABA1DTRX"
+        ]
+      ],
+      "expected_amount_minor": 1273484,
+      "issue_id": "ISX_RW2AKA",
+      "tolerance_minor": 0,
+      "type": "wrong_period"
+    },
+    {
+      "affected_ids": [
+        "DK_68XYWBZ1"
+      ],
+      "currency": "KWD",
+      "evidence_sets": [
+        [
+          "DK_68XYWBZ1",
+          "R_1GSD9YG53"
+        ],
+        [
+          "DK_68XYWBZ1",
+          "R_0EC006D5B",
+          "R_KAH9EXGA0"
+        ]
+      ],
+      "expected_amount_minor": 3341029,
+      "issue_id": "ISX_T73PC0",
+      "tolerance_minor": 0,
+      "type": "payment_allocation"
+    },
+    {
+      "affected_ids": [
+        "DK_2J03FS5Z"
+      ],
+      "currency": "KWD",
+      "evidence_sets": [
+        [
+          "DK_2J03FS5Z",
+          "R_RM1N89MTZ"
+        ],
+        [
+          "DK_2J03FS5Z",
+          "R_7BFXNW944"
+        ]
+      ],
+      "expected_amount_minor": 87750,
+      "issue_id": "ISX_X9V7VR",
+      "tolerance_minor": 0,
+      "type": "payment_allocation"
+    },
+    {
+      "affected_ids": [
+        "DK_GFQV5WFZ"
+      ],
+      "currency": "KWD",
+      "evidence_sets": [
+        [
+          "DK_GFQV5WFZ",
+          "R_90B1S7C9R"
+        ],
+        [
+          "DK_GFQV5WFZ",
+          "R_GC2EDPWTS"
+        ]
+      ],
+      "expected_amount_minor": 668000,
+      "issue_id": "ISX_XF4VGE",
+      "tolerance_minor": 0,
+      "type": "wrong_period"
+    },
+    {
+      "affected_ids": [
+        "DK_YRC3FR0A"
+      ],
+      "currency": "KWD",
+      "evidence_sets": [
+        [
+          "DK_YRC3FR0A",
+          "R_XC2XWGXBY"
+        ],
+        [
+          "DK_YRC3FR0A",
+          "R_KP1BT4QG0"
+        ]
+      ],
+      "expected_amount_minor": 451382,
+      "issue_id": "ISX_Y1V3PT",
+      "tolerance_minor": 0,
+      "type": "wrong_period"
+    },
+    {
+      "affected_ids": [
+        "DK_FKA7PEE7"
+      ],
+      "currency": "KWD",
+      "evidence_sets": [
+        [
+          "DK_FKA7PEE7",
+          "R_W4X72DRJE",
+          "R_58WJSNJ95"
+        ],
+        [
+          "DK_FKA7PEE7",
+          "R_KEZZXZ9SH",
+          "R_C8B2K27DX"
+        ]
+      ],
+      "expected_amount_minor": 496190,
+      "issue_id": "ISX_Y897K7",
+      "tolerance_minor": 0,
+      "type": "duplicate_invoice"
+    }
+  ],
+  "schema_version": "1.0"
+}

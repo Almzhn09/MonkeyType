@@ -1,0 +1,45 @@
+{
+  "base_currency": "KZT",
+  "episode_id": "EP-65WKZJC14JF5",
+  "issues": [
+    {
+      "affected_ids": [
+        "DSRC_HE1A99WJ4"
+      ],
+      "currency": "KZT",
+      "evidence_sets": [
+        [
+          "DSRC_HE1A99WJ4",
+          "RR_TMXNEB",
+          "FX:2026-03-31:USD:KZT"
+        ]
+      ],
+      "expected_amount_minor": 58930,
+      "issue_id": "DSC_5X5WZH",
+      "tolerance_minor": 1,
+      "type": "fx_conversion"
+    },
+    {
+      "affected_ids": [
+        "DSRC_HE1A99WJ4"
+      ],
+      "currency": "KZT",
+      "evidence_sets": [
+        [
+          "DSRC_HE1A99WJ4",
+          "RR_5JEXT0"
+        ],
+        [
+          "DSRC_HE1A99WJ4",
+          "RR_TMXNEB",
+          "RR_2VSPZQ"
+        ]
+      ],
+      "expected_amount_minor": 4989474,
+      "issue_id": "DSC_FXQFSK",
+      "tolerance_minor": 0,
+      "type": "payment_allocation"
+    }
+  ],
+  "schema_version": "1.0"
+}

@@ -1,0 +1,49 @@
+{
+  "base_currency": "CNY",
+  "episode_id": "EP-9AMRPHA6M8",
+  "issues": [
+    {
+      "affected_ids": [
+        "D-7ER7AAK59"
+      ],
+      "currency": "CNY",
+      "evidence_sets": [
+        [
+          "D-7ER7AAK59",
+          "R-8GM3GV8"
+        ],
+        [
+          "D-7ER7AAK59",
+          "R-C0QJCF4"
+        ]
+      ],
+      "expected_amount_minor": 676285,
+      "issue_id": "ISS-DNMJX3",
+      "tolerance_minor": 0,
+      "type": "wrong_period"
+    },
+    {
+      "affected_ids": [
+        "D-S6WWZ9D75"
+      ],
+      "currency": "CNY",
+      "evidence_sets": [
+        [
+          "D-S6WWZ9D75",
+          "R-H9NG1NG",
+          "R-8X8KESF"
+        ],
+        [
+          "D-S6WWZ9D75",
+          "R-A77CF2N",
+          "R-XAT1E5J"
+        ]
+      ],
+      "expected_amount_minor": 677795,
+      "issue_id": "ISS-K70Q7T",
+      "tolerance_minor": 0,
+      "type": "duplicate_invoice"
+    }
+  ],
+  "schema_version": "1.0"
+}

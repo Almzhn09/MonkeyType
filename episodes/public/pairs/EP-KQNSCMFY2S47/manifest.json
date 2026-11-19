@@ -1,0 +1,38 @@
+{
+  "base_currency": "KZT",
+  "company": {
+    "name": "Bekik Media K.K."
+  },
+  "counts": {
+    "documents": 55,
+    "entries": 116,
+    "fx_rates": 102,
+    "invoices": 30,
+    "ledger_rows": 251,
+    "payments": 25
+  },
+  "currency_exponents": {
+    "EUR": 2,
+    "KZT": 2,
+    "USD": 2
+  },
+  "episode_id": "EP-KQNSCMFY2S47",
+  "extract_end": "2026-04-11T00:00:00+05:00",
+  "extract_start": "2026-02-19T00:00:00+05:00",
+  "files": {
+    "fx.csv": "450076c518a628db4ac4d4c26c1e02d0ae34f97935ce07a8e54017e03756ff2c",
+    "invoices.jsonl": "291054f3be98f4af6f3fbe5e638364cfeea95b8ed18c81879c3366c54e4f6547",
+    "ledger.csv": "32041a83b71e46ff7d7c3b76897b36850e5a20c6730a2c60eb29d7d874aa7d4c",
+    "payments.jsonl": "f91c1fc38c86df50f933e18688ac7d186bfcaa3b833e915947ea5cd5dba537ad",
+    "policy.json": "3a54e43325c3203aa7edf9e8eb486416792b5ae9d2292767a876079d535bb360"
+  },
+  "period_end": "2026-04-01T00:00:00+05:00",
+  "period_start": "2026-03-01T00:00:00+05:00",
+  "rounding": {
+    "mode": "half_up",
+    "scope": "per_conversion"
+  },
+  "schema_version": "1.0",
+  "timezone": "Asia/Almaty",
+  "utc_offset": "+05:00"
+}

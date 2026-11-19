@@ -1,0 +1,277 @@
+{
+  "baseline_sha256": {
+    "fx.csv": "b91f5fe0bebc54f3c0090c89674dab454b4a7d67de3dd987c4a2a826e7014275",
+    "invoices.jsonl": "bc72780453dcc03438fcf973333156991b10892f05f734a14900edaf965d5e73",
+    "ledger.csv": "02dc8705b2ca798fc2b8edb1bef3bd79bc12a0af7d26999b502af7e5c59838df",
+    "manifest.json": "938593dd597bec1b69884ba4571ab0aae8bbcf8ec82d3307c2fe443472d9a8a4",
+    "payments.jsonl": "a29514b50b9fcaa2807e40ed129a7db43b6b09b2387f29b985cd7d85cc202130",
+    "policy.json": "a4379e5c209f75c31801b507c7473a3ef6c116b92fa3f1f3e3c84720ad55e0f1"
+  },
+  "changes": [
+    {
+      "after": {
+        "account": "1098",
+        "credit_minor": 0,
+        "currency": "KZT",
+        "debit_minor": 18479535,
+        "entity_id": "ACC_P0T3",
+        "entry_id": "E_V2SWQ1X",
+        "invoice_id": null,
+        "payment_id": "RC_XY9B9EY",
+        "row_id": "GLR_HTAYT6",
+        "timestamp": "2026-03-31T04:05:09+05:00"
+      },
+      "before": {
+        "account": "1098",
+        "credit_minor": 0,
+        "currency": "KZT",
+        "debit_minor": 18538465,
+        "entity_id": "ACC_P0T3",
+        "entry_id": "E_V2SWQ1X",
+        "invoice_id": null,
+        "payment_id": "RC_XY9B9EY",
+        "row_id": "GLR_HTAYT6",
+        "timestamp": "2026-03-31T04:05:09+05:00"
+      },
+      "cause": "fx_conversion[utc_date] (combo fx_partial_payment_boundary, step 1/2): payment RC_XY9B9EY at 2026-03-31T04:05:09+05:00 (local 2026-03-31) converted at the UTC date 2026-03-30 rate 445.29 instead of 446.71",
+      "issue_id": "ISS_Q403D5",
+      "op": "modify_row",
+      "order": 0,
+      "target": "GLR_HTAYT6",
+      "type": "fx_conversion"
+    },
+    {
+      "after": {
+        "account": "1235",
+        "credit_minor": 18479535,
+        "currency": "KZT",
+        "debit_minor": 0,
+        "entity_id": "ACC_P0T3",
+        "entry_id": "E_V2SWQ1X",
+        "invoice_id": "SINV_4SFNFN4",
+        "payment_id": "RC_XY9B9EY",
+        "row_id": "GLR_JC6P7D",
+        "timestamp": "2026-03-31T04:05:09+05:00"
+      },
+      "before": {
+        "account": "1235",
+        "credit_minor": 18538465,
+        "currency": "KZT",
+        "debit_minor": 0,
+        "entity_id": "ACC_P0T3",
+        "entry_id": "E_V2SWQ1X",
+        "invoice_id": "SINV_4SFNFN4",
+        "payment_id": "RC_XY9B9EY",
+        "row_id": "GLR_JC6P7D",
+        "timestamp": "2026-03-31T04:05:09+05:00"
+      },
+      "cause": "fx_conversion[utc_date] (combo fx_partial_payment_boundary, step 1/2): payment RC_XY9B9EY at 2026-03-31T04:05:09+05:00 (local 2026-03-31) converted at the UTC date 2026-03-30 rate 445.29 instead of 446.71",
+      "issue_id": "ISS_Q403D5",
+      "op": "modify_row",
+      "order": 1,
+      "target": "GLR_JC6P7D",
+      "type": "fx_conversion"
+    },
+    {
+      "after": {
+        "account": "1235",
+        "credit_minor": 13490061,
+        "currency": "KZT",
+        "debit_minor": 0,
+        "entity_id": "ACC_P0T3",
+        "entry_id": "E_V2SWQ1X",
+        "invoice_id": "SINV_4SFNFN4",
+        "payment_id": "RC_XY9B9EY",
+        "row_id": "GLR_JC6P7D",
+        "timestamp": "2026-03-31T04:05:09+05:00"
+      },
+      "before": {
+        "account": "1235",
+        "credit_minor": 18479535,
+        "currency": "KZT",
+        "debit_minor": 0,
+        "entity_id": "ACC_P0T3",
+        "entry_id": "E_V2SWQ1X",
+        "invoice_id": "SINV_4SFNFN4",
+        "payment_id": "RC_XY9B9EY",
+        "row_id": "GLR_JC6P7D",
+        "timestamp": "2026-03-31T04:05:09+05:00"
+      },
+      "cause": "payment_allocation[partial] (combo fx_partial_payment_boundary, step 2/2, after the fx step): payment RC_XY9B9EY applied only 13490061 of 18479535 to SINV_4SFNFN4; rest 4989474 credited to unapplied",
+      "issue_id": "ISS_N1T31Y",
+      "op": "modify_row",
+      "order": 2,
+      "target": "GLR_JC6P7D",
+      "type": "payment_allocation"
+    },
+    {
+      "after": {
+        "account": "2283",
+        "credit_minor": 4989474,
+        "currency": "KZT",
+        "debit_minor": 0,
+        "entity_id": "ACC_P0T3",
+        "entry_id": "E_V2SWQ1X",
+        "invoice_id": null,
+        "payment_id": "RC_XY9B9EY",
+        "row_id": "GLR_TM2ETC",
+        "timestamp": "2026-03-31T04:05:09+05:00"
+      },
+      "before": null,
+      "cause": "payment_allocation[partial] (combo fx_partial_payment_boundary, step 2/2, after the fx step): payment RC_XY9B9EY applied only 13490061 of 18479535 to SINV_4SFNFN4; rest 4989474 credited to unapplied",
+      "issue_id": "ISS_N1T31Y",
+      "op": "add_row",
+      "order": 3,
+      "target": "GLR_TM2ETC",
+      "type": "payment_allocation"
+    }
+  ],
+  "config": {
+    "base_currency": "KZT",
+    "combos": {
+      "duplicate_plus_period": 0,
+      "fx_partial_payment_boundary": 1
+    },
+    "config_version": "1",
+    "distractors": {
+      "advances": 1,
+      "refunds": 1,
+      "repeated_amounts": 2,
+      "split_payments": 2,
+      "utc_boundary": 2
+    },
+    "errors": {
+      "duplicate_invoice": 0,
+      "fx_conversion": 0,
+      "payment_allocation": 0,
+      "wrong_period": 0
+    },
+    "foreign_currencies": [
+      "EUR",
+      "USD"
+    ],
+    "period": {
+      "months": 1,
+      "start_month": "2026-03"
+    },
+    "rounding_mode": "half_up",
+    "schema_version": "1.0",
+    "seed": 1107,
+    "size": {
+      "background_entries": 80,
+      "invoices": 40
+    },
+    "split": "train",
+    "timezone": "Asia/Almaty",
+    "transform": null
+  },
+  "config_sha256": "dce4711b0fa44b47feab9895b0f9b1693ecaff4e07397680fa702e778f89986c",
+  "distractors": [
+    {
+      "currency": "KZT",
+      "doc_ids": [
+        "DK_TB92NE"
+      ],
+      "kind": "advances",
+      "subtype": "prepayment",
+      "unapplied_minor": 174000000
+    },
+    {
+      "doc_ids": [
+        "DK_2HAJSR"
+      ],
+      "invoice_ids": [
+        "SINV_QYZ4DG9",
+        "SINV_6ZG6J6P"
+      ],
+      "kind": "multi_invoice_payment"
+    },
+    {
+      "doc_ids": [
+        "DK_WCBZJK"
+      ],
+      "invoice_ids": [
+        "SINV_2TKJC7J",
+        "SINV_CJPNKGD"
+      ],
+      "kind": "multi_invoice_payment"
+    },
+    {
+      "amount_minor": -107880000,
+      "currency": "KZT",
+      "doc_ids": [
+        "DK_K8DEA1",
+        "DK_TB92NE"
+      ],
+      "kind": "refunds"
+    },
+    {
+      "currency": "EUR",
+      "doc_ids": [
+        "DK_3XW27Q",
+        "DK_PMXC93"
+      ],
+      "kind": "repeated_amounts",
+      "same_entity": false,
+      "total_minor": 532400
+    },
+    {
+      "currency": "USD",
+      "doc_ids": [
+        "DK_6D0C97",
+        "DK_TH7JV9"
+      ],
+      "kind": "repeated_amounts",
+      "same_entity": true,
+      "total_minor": 545000
+    },
+    {
+      "doc_ids": [
+        "DK_3RQA83",
+        "DK_HW73S6",
+        "DK_V2E5KQ",
+        "DK_YN2ZNR"
+      ],
+      "invoice_id": "SINV_12096GJ",
+      "kind": "split_payments"
+    },
+    {
+      "doc_ids": [
+        "DK_7F2DWZ",
+        "DK_0TYYAS",
+        "DK_2GAPKG",
+        "DK_9WNNBG"
+      ],
+      "invoice_id": "SINV_0MY3ZQX",
+      "kind": "split_payments"
+    },
+    {
+      "boundary": "period_start",
+      "doc_ids": [
+        "DK_6YHSJ6"
+      ],
+      "doc_timestamp": "2026-02-28T19:27:04+00:00",
+      "kind": "utc_boundary",
+      "local_date": "2026-03-01",
+      "local_in_period": true,
+      "note": "posted on the local date; UTC date differs",
+      "utc_date": "2026-02-28"
+    },
+    {
+      "boundary": "period_end",
+      "doc_ids": [
+        "DK_9FMNS9"
+      ],
+      "doc_timestamp": "2026-03-31T23:52:33+00:00",
+      "kind": "utc_boundary",
+      "local_date": "2026-04-01",
+      "local_in_period": false,
+      "note": "posted on the local date; UTC date differs",
+      "utc_date": "2026-03-31"
+    }
+  ],
+  "episode_id": "EP-9K6F80TV0W",
+  "generator_version": "fingen-0.1.0",
+  "schema_version": "1.0",
+  "seed": 1107
+}

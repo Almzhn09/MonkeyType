@@ -1,0 +1,355 @@
+{
+  "baseline_sha256": {
+    "fx.csv": "291a5a8b73be3009fc16487e96a049a461f8fb878770603e739d3e11eb68247d",
+    "invoices.jsonl": "7469dc9ef2fce883f2f22883c53b5f107e4d3aeeaef21f2febd107d7ec092c2e",
+    "ledger.csv": "fa6405d3f5afc6494cb6ea050be9e12bb66b387034299a182ee6afb5e9f26761",
+    "manifest.json": "614999d8dfbbe66d807c76bc07ab5c17a7b313bc63652a4e69e9763efea8dad6",
+    "payments.jsonl": "335d70efaef723d74c2b5776918242cfabda8e30523c8ae0b61bc4212ade941f",
+    "policy.json": "1aa3516cb8e17a9d59edf08efc8c99d91af65eecfe0c1756d078f262b38d4fc5"
+  },
+  "changes": [
+    {
+      "after": {
+        "account": "121838",
+        "credit_minor": 0,
+        "currency": "EUR",
+        "debit_minor": 379574,
+        "entity_id": "PTY-0E8QF",
+        "entry_id": "BK-WAH7K0",
+        "invoice_id": "IV-RXBTE",
+        "payment_id": null,
+        "row_id": "TX-VJS0G438",
+        "timestamp": "2026-01-01T04:19:26-05:00"
+      },
+      "before": {
+        "account": "121838",
+        "credit_minor": 0,
+        "currency": "EUR",
+        "debit_minor": 379574,
+        "entity_id": "PTY-0E8QF",
+        "entry_id": "BK-WAH7K0",
+        "invoice_id": "IV-RXBTE",
+        "payment_id": null,
+        "row_id": "TX-VJS0G438",
+        "timestamp": "2025-12-31T23:19:26-05:00"
+      },
+      "cause": "wrong_period[utc_trap]: issued_at 2026-01-01T04:19:26+00:00 (local date 2025-12-31) posted by its UTC date 2026-01-01",
+      "issue_id": "DSC-TG162WW",
+      "op": "modify_row",
+      "order": 0,
+      "target": "TX-VJS0G438",
+      "type": "wrong_period"
+    },
+    {
+      "after": {
+        "account": "409331",
+        "credit_minor": 379574,
+        "currency": "EUR",
+        "debit_minor": 0,
+        "entity_id": "PTY-0E8QF",
+        "entry_id": "BK-WAH7K0",
+        "invoice_id": "IV-RXBTE",
+        "payment_id": null,
+        "row_id": "TX-SCAJN95X",
+        "timestamp": "2026-01-01T04:19:26-05:00"
+      },
+      "before": {
+        "account": "409331",
+        "credit_minor": 379574,
+        "currency": "EUR",
+        "debit_minor": 0,
+        "entity_id": "PTY-0E8QF",
+        "entry_id": "BK-WAH7K0",
+        "invoice_id": "IV-RXBTE",
+        "payment_id": null,
+        "row_id": "TX-SCAJN95X",
+        "timestamp": "2025-12-31T23:19:26-05:00"
+      },
+      "cause": "wrong_period[utc_trap]: issued_at 2026-01-01T04:19:26+00:00 (local date 2025-12-31) posted by its UTC date 2026-01-01",
+      "issue_id": "DSC-TG162WW",
+      "op": "modify_row",
+      "order": 1,
+      "target": "TX-SCAJN95X",
+      "type": "wrong_period"
+    },
+    {
+      "after": {
+        "account": "121838",
+        "credit_minor": 0,
+        "currency": "EUR",
+        "debit_minor": 542150,
+        "entity_id": "PTY-S110J",
+        "entry_id": "BK-3SHHTJ",
+        "invoice_id": "IV-SH2GH",
+        "payment_id": null,
+        "row_id": "TX-NV7K77TV",
+        "timestamp": "2026-04-02T09:59:13-05:00"
+      },
+      "before": {
+        "account": "121838",
+        "credit_minor": 0,
+        "currency": "EUR",
+        "debit_minor": 542150,
+        "entity_id": "PTY-S110J",
+        "entry_id": "BK-3SHHTJ",
+        "invoice_id": "IV-SH2GH",
+        "payment_id": null,
+        "row_id": "TX-NV7K77TV",
+        "timestamp": "2026-03-28T14:45:40-05:00"
+      },
+      "cause": "wrong_period[late_posting]: in-period invoice issued 2026-03-28 posted after period_end on 2026-04-02",
+      "issue_id": "DSC-VWWMCZW",
+      "op": "modify_row",
+      "order": 2,
+      "target": "TX-NV7K77TV",
+      "type": "wrong_period"
+    },
+    {
+      "after": {
+        "account": "409331",
+        "credit_minor": 542150,
+        "currency": "EUR",
+        "debit_minor": 0,
+        "entity_id": "PTY-S110J",
+        "entry_id": "BK-3SHHTJ",
+        "invoice_id": "IV-SH2GH",
+        "payment_id": null,
+        "row_id": "TX-T833FE3Q",
+        "timestamp": "2026-04-02T09:59:13-05:00"
+      },
+      "before": {
+        "account": "409331",
+        "credit_minor": 542150,
+        "currency": "EUR",
+        "debit_minor": 0,
+        "entity_id": "PTY-S110J",
+        "entry_id": "BK-3SHHTJ",
+        "invoice_id": "IV-SH2GH",
+        "payment_id": null,
+        "row_id": "TX-T833FE3Q",
+        "timestamp": "2026-03-28T14:45:40-05:00"
+      },
+      "cause": "wrong_period[late_posting]: in-period invoice issued 2026-03-28 posted after period_end on 2026-04-02",
+      "issue_id": "DSC-VWWMCZW",
+      "op": "modify_row",
+      "order": 3,
+      "target": "TX-T833FE3Q",
+      "type": "wrong_period"
+    },
+    {
+      "after": {
+        "account": "121838",
+        "credit_minor": 0,
+        "currency": "EUR",
+        "debit_minor": 125819,
+        "entity_id": "PTY-76QJ4",
+        "entry_id": "BK-FCQNV0",
+        "invoice_id": "IV-F90GB",
+        "payment_id": null,
+        "row_id": "TX-CKVTGQ4Y",
+        "timestamp": "2026-03-30T09:15:42-05:00"
+      },
+      "before": {
+        "account": "121838",
+        "credit_minor": 0,
+        "currency": "EUR",
+        "debit_minor": 125819,
+        "entity_id": "PTY-76QJ4",
+        "entry_id": "BK-FCQNV0",
+        "invoice_id": "IV-F90GB",
+        "payment_id": null,
+        "row_id": "TX-CKVTGQ4Y",
+        "timestamp": "2026-04-03T08:31:12-05:00"
+      },
+      "cause": "wrong_period[early_posting]: out-of-period invoice issued 2026-04-03 posted inside the period on 2026-03-30",
+      "issue_id": "DSC-9QRBRES",
+      "op": "modify_row",
+      "order": 4,
+      "target": "TX-CKVTGQ4Y",
+      "type": "wrong_period"
+    },
+    {
+      "after": {
+        "account": "409331",
+        "credit_minor": 125819,
+        "currency": "EUR",
+        "debit_minor": 0,
+        "entity_id": "PTY-76QJ4",
+        "entry_id": "BK-FCQNV0",
+        "invoice_id": "IV-F90GB",
+        "payment_id": null,
+        "row_id": "TX-DCK18BBS",
+        "timestamp": "2026-03-30T09:15:42-05:00"
+      },
+      "before": {
+        "account": "409331",
+        "credit_minor": 125819,
+        "currency": "EUR",
+        "debit_minor": 0,
+        "entity_id": "PTY-76QJ4",
+        "entry_id": "BK-FCQNV0",
+        "invoice_id": "IV-F90GB",
+        "payment_id": null,
+        "row_id": "TX-DCK18BBS",
+        "timestamp": "2026-04-03T08:31:12-05:00"
+      },
+      "cause": "wrong_period[early_posting]: out-of-period invoice issued 2026-04-03 posted inside the period on 2026-03-30",
+      "issue_id": "DSC-9QRBRES",
+      "op": "modify_row",
+      "order": 5,
+      "target": "TX-DCK18BBS",
+      "type": "wrong_period"
+    }
+  ],
+  "config": {
+    "base_currency": "EUR",
+    "combos": {
+      "duplicate_plus_period": 0,
+      "fx_partial_payment_boundary": 0
+    },
+    "config_version": "1",
+    "distractors": {
+      "advances": 1,
+      "refunds": 1,
+      "repeated_amounts": 2,
+      "split_payments": 2,
+      "utc_boundary": 2
+    },
+    "errors": {
+      "duplicate_invoice": 0,
+      "fx_conversion": 0,
+      "payment_allocation": 0,
+      "wrong_period": 3
+    },
+    "foreign_currencies": [
+      "USD",
+      "GBP"
+    ],
+    "period": {
+      "months": 3,
+      "start_month": "2026-01"
+    },
+    "rounding_mode": "half_up",
+    "schema_version": "1.0",
+    "seed": 2104,
+    "size": {
+      "background_entries": 90,
+      "invoices": 42
+    },
+    "split": "dev",
+    "timezone": "America/Bogota",
+    "transform": {
+      "kind": "pair",
+      "permute": true,
+      "rename": true,
+      "seed": 1403527800
+    }
+  },
+  "config_sha256": "c0106575584f917d33ef5379b99e5ecba41867768f188f6372fceddbb3efc179",
+  "distractors": [
+    {
+      "currency": "USD",
+      "doc_ids": [
+        "DC-ZY3JF1PT2"
+      ],
+      "kind": "advances",
+      "subtype": "prepayment",
+      "unapplied_minor": 110000
+    },
+    {
+      "doc_ids": [
+        "DC-YZ1K4BVTV"
+      ],
+      "invoice_ids": [
+        "IV-SH2GH",
+        "IV-3E3Q3"
+      ],
+      "kind": "multi_invoice_payment"
+    },
+    {
+      "doc_ids": [
+        "DC-P9Q5D1N0Q"
+      ],
+      "invoice_ids": [
+        "IV-1NCT9",
+        "IV-ZPKFJ"
+      ],
+      "kind": "multi_invoice_payment"
+    },
+    {
+      "amount_minor": -42900,
+      "currency": "USD",
+      "doc_ids": [
+        "DC-KKNNQRNCG",
+        "DC-ZY3JF1PT2"
+      ],
+      "kind": "refunds"
+    },
+    {
+      "currency": "EUR",
+      "doc_ids": [
+        "DC-WF7R0RRZY",
+        "DC-JQE9HV5KW"
+      ],
+      "kind": "repeated_amounts",
+      "same_entity": false,
+      "total_minor": 218360
+    },
+    {
+      "currency": "EUR",
+      "doc_ids": [
+        "DC-J43TV12XE",
+        "DC-F2MRF3HM7"
+      ],
+      "kind": "repeated_amounts",
+      "same_entity": true,
+      "total_minor": 50184
+    },
+    {
+      "doc_ids": [
+        "DC-60G82YYWW",
+        "DC-8VH6NSD50",
+        "DC-R81VTDRR5"
+      ],
+      "invoice_id": "IV-QHVMV",
+      "kind": "split_payments"
+    },
+    {
+      "doc_ids": [
+        "DC-MGC1W7S5X",
+        "DC-0YRCH6HV1",
+        "DC-SY4WPTZSB"
+      ],
+      "invoice_id": "IV-ERBES",
+      "kind": "split_payments"
+    },
+    {
+      "boundary": "period_start",
+      "doc_ids": [
+        "DC-65CPBCJFA"
+      ],
+      "doc_timestamp": "2026-01-01T02:33:09+00:00",
+      "kind": "utc_boundary",
+      "local_date": "2025-12-31",
+      "local_in_period": false,
+      "note": "posted on the local date; UTC date differs",
+      "utc_date": "2026-01-01"
+    },
+    {
+      "boundary": "period_end",
+      "doc_ids": [
+        "DC-WKN0JN2CC"
+      ],
+      "doc_timestamp": "2026-04-01T00:29:20+00:00",
+      "kind": "utc_boundary",
+      "local_date": "2026-03-31",
+      "local_in_period": true,
+      "note": "posted on the local date; UTC date differs",
+      "utc_date": "2026-04-01"
+    }
+  ],
+  "episode_id": "EP-B26TQHT8H9DK",
+  "generator_version": "fingen-0.1.0",
+  "schema_version": "1.0",
+  "seed": 2104
+}

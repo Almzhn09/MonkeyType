@@ -1,0 +1,102 @@
+{
+  "baseline_sha256": {
+    "fx.csv": "f6856f4bd23f58a92e8cdd7e57b65af4e47ac0f2a31895cedea766e6eb2f89ee",
+    "invoices.jsonl": "8116a62b2a49abb980986ff1c471197bcb381743134a35bb88b4dc6b9c15e8b6",
+    "ledger.csv": "e0fb7675aaa9cbd9026a2f41516efecc86149e2bd6d2c7a1bb1cd4ca8d9d85ba",
+    "manifest.json": "4ffc265113543f99e73eb00f2a8f280b8b82086e55889a0ab0f8246a109be0b8",
+    "payments.jsonl": "6d6926a95bfee6aa17ce4acbd75a359d1d2aa4038223241084d91269319a7ae1",
+    "policy.json": "cec6c53b53a0e84c7f155f9598a95d90e9fd59c3686fd5f81d66144151bcc153"
+  },
+  "changes": [],
+  "config": {
+    "base_currency": "KZT",
+    "combos": {
+      "duplicate_plus_period": 0,
+      "fx_partial_payment_boundary": 0
+    },
+    "config_version": "1",
+    "distractors": {
+      "advances": 0,
+      "refunds": 0,
+      "repeated_amounts": 1,
+      "split_payments": 1,
+      "utc_boundary": 1
+    },
+    "errors": {
+      "duplicate_invoice": 0,
+      "fx_conversion": 0,
+      "payment_allocation": 0,
+      "wrong_period": 0
+    },
+    "foreign_currencies": [
+      "USD"
+    ],
+    "period": {
+      "months": 1,
+      "start_month": "2026-03"
+    },
+    "rounding_mode": "half_up",
+    "schema_version": "1.0",
+    "seed": 1105,
+    "size": {
+      "background_entries": 0,
+      "invoices": 12
+    },
+    "split": "train",
+    "timezone": "Asia/Almaty",
+    "transform": {
+      "kind": "pair",
+      "permute": true,
+      "rename": true,
+      "seed": 1353059188
+    }
+  },
+  "config_sha256": "33ddb6cb7242cd3152757a7bc36ed0399dc122a5ed044fe1d84e48c1122f3cbb",
+  "distractors": [
+    {
+      "doc_ids": [
+        "DCW4MHXQQ"
+      ],
+      "invoice_ids": [
+        "IVK623YNXY",
+        "IVW39N5BVW"
+      ],
+      "kind": "multi_invoice_payment"
+    },
+    {
+      "currency": "KZT",
+      "doc_ids": [
+        "DCZPRS6W5",
+        "DCKRP3ZPF"
+      ],
+      "kind": "repeated_amounts",
+      "same_entity": false,
+      "total_minor": 2850000
+    },
+    {
+      "doc_ids": [
+        "DCE85BP8T",
+        "DCXXS568W",
+        "DC1435YQS"
+      ],
+      "invoice_id": "IVTTYM9R7N",
+      "kind": "split_payments"
+    },
+    {
+      "boundary": "period_end",
+      "doc_ids": [
+        "DCKBGSM79"
+      ],
+      "doc_timestamp": "2026-03-31T23:26:15+00:00",
+      "kind": "utc_boundary",
+      "local_date": "2026-04-01",
+      "local_in_period": false,
+      "note": "posted on the local date; UTC date differs",
+      "utc_date": "2026-03-31"
+    }
+  ],
+  "episode_id": "EP-Y46ETDJPMDGD",
+  "generator_version": "fingen-0.1.0",
+  "schema_version": "1.0",
+  "seed": 1105
+}

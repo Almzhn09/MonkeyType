@@ -1,0 +1,39 @@
+{
+  "base_currency": "GBP",
+  "company": {
+    "name": "Lunex Freight LLP"
+  },
+  "counts": {
+    "documents": 164,
+    "entries": 864,
+    "fx_rates": 327,
+    "invoices": 95,
+    "ledger_rows": 1909,
+    "payments": 69
+  },
+  "currency_exponents": {
+    "CNY": 2,
+    "EUR": 2,
+    "GBP": 2,
+    "USD": 2
+  },
+  "episode_id": "EP-EV3JAFBR0P",
+  "extract_end": "2026-05-11T00:00:00+05:30",
+  "extract_start": "2026-01-22T00:00:00+05:30",
+  "files": {
+    "fx.csv": "d1394d16c7647be4b7170fa1d71886d41aa665064803dd6aa205430fbcc79f4c",
+    "invoices.jsonl": "b8d720affaa5894567e934bc62d9bf5f03b7027c0117ee8a606d51a07539b6aa",
+    "ledger.csv": "e509cd4bb31079ddd054dc5a89a55dbc3895d616a44042f637fdc616d8d64036",
+    "payments.jsonl": "fb5bccc7c4a7c8dc95d40c1c6af19905f37c891b3e1f2b1900f76731d22347de",
+    "policy.json": "456d9c65a2093b143fdd7862c6c1e95cbd27d59f706313fc8944a0af7720906d"
+  },
+  "period_end": "2026-05-01T00:00:00+05:30",
+  "period_start": "2026-02-01T00:00:00+05:30",
+  "rounding": {
+    "mode": "half_even",
+    "scope": "per_conversion"
+  },
+  "schema_version": "1.0",
+  "timezone": "Asia/Kolkata",
+  "utc_offset": "+05:30"
+}

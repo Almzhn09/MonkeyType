@@ -1,0 +1,28 @@
+{
+  "base_currency": "USD",
+  "episode_id": "EP-HD59347FKDPZ",
+  "issues": [
+    {
+      "affected_ids": [
+        "DO_44FDM09V7V"
+      ],
+      "currency": "USD",
+      "evidence_sets": [
+        [
+          "DO_44FDM09V7V",
+          "LN_0JH7WDAMM"
+        ],
+        [
+          "DO_44FDM09V7V",
+          "LN_5ZF16W1M7",
+          "LN_KXJ9QTTPD"
+        ]
+      ],
+      "expected_amount_minor": 86115,
+      "issue_id": "ISX_X5PKAVV",
+      "tolerance_minor": 0,
+      "type": "payment_allocation"
+    }
+  ],
+  "schema_version": "1.0"
+}

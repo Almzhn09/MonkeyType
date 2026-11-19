@@ -1,0 +1,282 @@
+{
+  "baseline_sha256": {
+    "fx.csv": "832c3f16b87179de9abdaf347c45808c5e8d255f124305d12a6f2320d25774d6",
+    "invoices.jsonl": "803ff87fe6d42977b56de751131825717e8555aac74a2f2024c2a3fdfc32cbcc",
+    "ledger.csv": "173a6b5481b0df629b94c66733b74c93e74034aa4297c306b909b3641bd49344",
+    "manifest.json": "091a0e2c57e06add800834540b9ca06631084563845e4d16650b46ef50f5d239",
+    "payments.jsonl": "094fdd7f641488f2240dd07681a0efc5ab1b25ca440313015e12654eff0440fc",
+    "policy.json": "8b1f102093c184fa6cf3ba13972d7fa4437318e21cd3bf1730f310940f3a3d2f"
+  },
+  "changes": [
+    {
+      "after": {
+        "account": "1098",
+        "credit_minor": 0,
+        "currency": "KZT",
+        "debit_minor": 18479535,
+        "entity_id": "PTY_H6PTHD",
+        "entry_id": "JRN_9TP122R",
+        "invoice_id": null,
+        "payment_id": "BNK_MEX8Z50",
+        "row_id": "RR_TMXNEB",
+        "timestamp": "2026-03-31T04:05:09+05:00"
+      },
+      "before": {
+        "account": "1098",
+        "credit_minor": 0,
+        "currency": "KZT",
+        "debit_minor": 18538465,
+        "entity_id": "PTY_H6PTHD",
+        "entry_id": "JRN_9TP122R",
+        "invoice_id": null,
+        "payment_id": "BNK_MEX8Z50",
+        "row_id": "RR_TMXNEB",
+        "timestamp": "2026-03-31T04:05:09+05:00"
+      },
+      "cause": "fx_conversion[utc_date] (combo fx_partial_payment_boundary, step 1/2): payment BNK_MEX8Z50 at 2026-03-31T04:05:09+05:00 (local 2026-03-31) converted at the UTC date 2026-03-30 rate 445.29 instead of 446.71",
+      "issue_id": "DSC_5X5WZH",
+      "op": "modify_row",
+      "order": 0,
+      "target": "RR_TMXNEB",
+      "type": "fx_conversion"
+    },
+    {
+      "after": {
+        "account": "1235",
+        "credit_minor": 18479535,
+        "currency": "KZT",
+        "debit_minor": 0,
+        "entity_id": "PTY_H6PTHD",
+        "entry_id": "JRN_9TP122R",
+        "invoice_id": "IV_M3P15",
+        "payment_id": "BNK_MEX8Z50",
+        "row_id": "RR_2VSPZQ",
+        "timestamp": "2026-03-31T04:05:09+05:00"
+      },
+      "before": {
+        "account": "1235",
+        "credit_minor": 18538465,
+        "currency": "KZT",
+        "debit_minor": 0,
+        "entity_id": "PTY_H6PTHD",
+        "entry_id": "JRN_9TP122R",
+        "invoice_id": "IV_M3P15",
+        "payment_id": "BNK_MEX8Z50",
+        "row_id": "RR_2VSPZQ",
+        "timestamp": "2026-03-31T04:05:09+05:00"
+      },
+      "cause": "fx_conversion[utc_date] (combo fx_partial_payment_boundary, step 1/2): payment BNK_MEX8Z50 at 2026-03-31T04:05:09+05:00 (local 2026-03-31) converted at the UTC date 2026-03-30 rate 445.29 instead of 446.71",
+      "issue_id": "DSC_5X5WZH",
+      "op": "modify_row",
+      "order": 1,
+      "target": "RR_2VSPZQ",
+      "type": "fx_conversion"
+    },
+    {
+      "after": {
+        "account": "1235",
+        "credit_minor": 13490061,
+        "currency": "KZT",
+        "debit_minor": 0,
+        "entity_id": "PTY_H6PTHD",
+        "entry_id": "JRN_9TP122R",
+        "invoice_id": "IV_M3P15",
+        "payment_id": "BNK_MEX8Z50",
+        "row_id": "RR_2VSPZQ",
+        "timestamp": "2026-03-31T04:05:09+05:00"
+      },
+      "before": {
+        "account": "1235",
+        "credit_minor": 18479535,
+        "currency": "KZT",
+        "debit_minor": 0,
+        "entity_id": "PTY_H6PTHD",
+        "entry_id": "JRN_9TP122R",
+        "invoice_id": "IV_M3P15",
+        "payment_id": "BNK_MEX8Z50",
+        "row_id": "RR_2VSPZQ",
+        "timestamp": "2026-03-31T04:05:09+05:00"
+      },
+      "cause": "payment_allocation[partial] (combo fx_partial_payment_boundary, step 2/2, after the fx step): payment BNK_MEX8Z50 applied only 13490061 of 18479535 to IV_M3P15; rest 4989474 credited to unapplied",
+      "issue_id": "DSC_FXQFSK",
+      "op": "modify_row",
+      "order": 2,
+      "target": "RR_2VSPZQ",
+      "type": "payment_allocation"
+    },
+    {
+      "after": {
+        "account": "2283",
+        "credit_minor": 4989474,
+        "currency": "KZT",
+        "debit_minor": 0,
+        "entity_id": "PTY_H6PTHD",
+        "entry_id": "JRN_9TP122R",
+        "invoice_id": null,
+        "payment_id": "BNK_MEX8Z50",
+        "row_id": "RR_5JEXT0",
+        "timestamp": "2026-03-31T04:05:09+05:00"
+      },
+      "before": null,
+      "cause": "payment_allocation[partial] (combo fx_partial_payment_boundary, step 2/2, after the fx step): payment BNK_MEX8Z50 applied only 13490061 of 18479535 to IV_M3P15; rest 4989474 credited to unapplied",
+      "issue_id": "DSC_FXQFSK",
+      "op": "add_row",
+      "order": 3,
+      "target": "RR_5JEXT0",
+      "type": "payment_allocation"
+    }
+  ],
+  "config": {
+    "base_currency": "KZT",
+    "combos": {
+      "duplicate_plus_period": 0,
+      "fx_partial_payment_boundary": 1
+    },
+    "config_version": "1",
+    "distractors": {
+      "advances": 1,
+      "refunds": 1,
+      "repeated_amounts": 2,
+      "split_payments": 2,
+      "utc_boundary": 2
+    },
+    "errors": {
+      "duplicate_invoice": 0,
+      "fx_conversion": 0,
+      "payment_allocation": 0,
+      "wrong_period": 0
+    },
+    "foreign_currencies": [
+      "EUR",
+      "USD"
+    ],
+    "period": {
+      "months": 1,
+      "start_month": "2026-03"
+    },
+    "rounding_mode": "half_up",
+    "schema_version": "1.0",
+    "seed": 1107,
+    "size": {
+      "background_entries": 80,
+      "invoices": 40
+    },
+    "split": "train",
+    "timezone": "Asia/Almaty",
+    "transform": {
+      "kind": "pair",
+      "permute": true,
+      "rename": true,
+      "seed": 3774614371
+    }
+  },
+  "config_sha256": "8cc6edce5b5be33feb0f4cf187e2145db912c4e590c299beef81c36e202a2586",
+  "distractors": [
+    {
+      "currency": "KZT",
+      "doc_ids": [
+        "DSRC_N9HRT6VB2"
+      ],
+      "kind": "advances",
+      "subtype": "prepayment",
+      "unapplied_minor": 174000000
+    },
+    {
+      "doc_ids": [
+        "DSRC_8Y2NXN3M2"
+      ],
+      "invoice_ids": [
+        "IV_DSREJ",
+        "IV_DJK45"
+      ],
+      "kind": "multi_invoice_payment"
+    },
+    {
+      "doc_ids": [
+        "DSRC_VBZBDAM5X"
+      ],
+      "invoice_ids": [
+        "IV_K4QA2",
+        "IV_2ZZ41"
+      ],
+      "kind": "multi_invoice_payment"
+    },
+    {
+      "amount_minor": -107880000,
+      "currency": "KZT",
+      "doc_ids": [
+        "DSRC_VN4309BWG",
+        "DSRC_N9HRT6VB2"
+      ],
+      "kind": "refunds"
+    },
+    {
+      "currency": "EUR",
+      "doc_ids": [
+        "DSRC_ASMD3P36Y",
+        "DSRC_98N5V5BC9"
+      ],
+      "kind": "repeated_amounts",
+      "same_entity": false,
+      "total_minor": 532400
+    },
+    {
+      "currency": "USD",
+      "doc_ids": [
+        "DSRC_PXAGYWS53",
+        "DSRC_97H2EBDXA"
+      ],
+      "kind": "repeated_amounts",
+      "same_entity": true,
+      "total_minor": 545000
+    },
+    {
+      "doc_ids": [
+        "DSRC_20D96YDKA",
+        "DSRC_R0BDK1ZWF",
+        "DSRC_83MNJXKFT",
+        "DSRC_VEWACZN71"
+      ],
+      "invoice_id": "IV_ZHJA6",
+      "kind": "split_payments"
+    },
+    {
+      "doc_ids": [
+        "DSRC_S0G3HB4AJ",
+        "DSRC_MAWKXYZ14",
+        "DSRC_R89Z45EDR",
+        "DSRC_0038A09SW"
+      ],
+      "invoice_id": "IV_764S8",
+      "kind": "split_payments"
+    },
+    {
+      "boundary": "period_start",
+      "doc_ids": [
+        "DSRC_0JWGHVADS"
+      ],
+      "doc_timestamp": "2026-02-28T19:27:04+00:00",
+      "kind": "utc_boundary",
+      "local_date": "2026-03-01",
+      "local_in_period": true,
+      "note": "posted on the local date; UTC date differs",
+      "utc_date": "2026-02-28"
+    },
+    {
+      "boundary": "period_end",
+      "doc_ids": [
+        "DSRC_BQS85MHRR"
+      ],
+      "doc_timestamp": "2026-03-31T23:52:33+00:00",
+      "kind": "utc_boundary",
+      "local_date": "2026-04-01",
+      "local_in_period": false,
+      "note": "posted on the local date; UTC date differs",
+      "utc_date": "2026-03-31"
+    }
+  ],
+  "episode_id": "EP-65WKZJC14JF5",
+  "generator_version": "fingen-0.1.0",
+  "schema_version": "1.0",
+  "seed": 1107
+}

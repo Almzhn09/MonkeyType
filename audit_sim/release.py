@@ -105,9 +105,7 @@ def prepare_release(evaluate, output=None):
                 copytree(ROOT / directory, output / directory, ignore=ignore_patterns("__pycache__"))
             for filename in SOURCE_FILES:
                 copy2(ROOT / filename, output / filename)
-            for scope in ("public", "private"):
-                for split in SPLITS:
-                    copytree(dataset / scope / split, output / "episodes" / scope / split)
+            copytree(dataset, output / "episodes")
             dump_json(output / "dev-reports.json", reports)
             dump_json(output / "validation.json", result)
             dump_jsonl(output / "trajectories.jsonl", trajectories)
