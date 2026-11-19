@@ -117,13 +117,17 @@ def canon_ids(ids) -> list:
     return sorted({str(i).strip().upper() for i in ids})
 
 
-def _strict_json(text: str, where: str, errors: list):
+def _strict_json(text: str, where: str, errors: list, warnings: list | None = None):
+    """Strict JSON (no floats/NaN, no duplicate keys). Key order is not semantic
+    (CONTRACT §2): unsorted keys are only a warning, once per file."""
     def hook(pairs):
         keys = [k for k, _ in pairs]
         if len(set(keys)) != len(keys):
             errors.append(f"{where}: duplicate JSON key in object {keys}")
-        if keys != sorted(keys):
-            errors.append(f"{where}: JSON keys not sorted (sort_keys required): {keys}")
+        if keys != sorted(keys) and warnings is not None:
+            msg = f"{where.split(':')[0]}: JSON keys not in sorted order (accepted)"
+            if msg not in warnings:
+                warnings.append(msg)
         return dict(pairs)
 
     def bad_const(c):
@@ -281,6 +285,7 @@ class Public:
     fx_rows: list
     raw: dict = field(default_factory=dict)  # file name -> bytes
     root: str | None = None
+    warnings: list = field(default_factory=list)  # non-fatal findings (e.g. row order)
 
     def __post_init__(self):
         m = self.manifest
@@ -472,7 +477,7 @@ def _read_csv(text, columns, name, errors):
     return out
 
 
-def _read_jsonl(text, name, errors):
+def _read_jsonl(text, name, errors, warnings=None):
     out = []
     if text and not text.endswith("\n"):
         errors.append(f"{name}: last line must end with \\n")
@@ -480,7 +485,7 @@ def _read_jsonl(text, name, errors):
         if line == "":
             continue
         try:
-            obj = _strict_json(line, f"{name}:{i}", errors)
+            obj = _strict_json(line, f"{name}:{i}", errors, warnings)
         except ValueError as exc:
             errors.append(f"{name}:{i}: invalid JSON: {exc}")
             continue
@@ -580,6 +585,7 @@ def _validate_payment(pay, where, base_exps, invoice_ids, errors):
 
 def load_public(path: str) -> Public:
     errors: list = []
+    warnings: list = []
     raw, text = {}, {}
     for name in PUBLIC_FILES:
         b, t = _read_text(os.path.join(path, name), errors)
@@ -592,13 +598,13 @@ def load_public(path: str) -> Public:
 
     # --- manifest & policy
     try:
-        manifest = _strict_json(text["manifest.json"], "manifest.json", errors)
+        manifest = _strict_json(text["manifest.json"], "manifest.json", errors, warnings)
     except ValueError as exc:
         raise SchemaError(errors + [f"manifest.json: invalid JSON: {exc}"])
     if not _validate_manifest(manifest, errors):
         raise SchemaError(errors)
     try:
-        policy = _strict_json(text["policy.json"], "policy.json", errors)
+        policy = _strict_json(text["policy.json"], "policy.json", errors, warnings)
     except ValueError as exc:
         raise SchemaError(errors + [f"policy.json: invalid JSON: {exc}"])
     if not _validate_policy(policy, manifest, errors):
@@ -623,7 +629,7 @@ def load_public(path: str) -> Public:
 
     # --- invoices
     invoices = []
-    for ln, obj in _read_jsonl(text["invoices.jsonl"], "invoices.jsonl", errors):
+    for ln, obj in _read_jsonl(text["invoices.jsonl"], "invoices.jsonl", errors, warnings):
         if _validate_invoice(obj, f"invoices.jsonl:{ln}", exps, offset, errors):
             invoices.append(obj)
             if not in_extract(obj["issued_at"]):
@@ -633,7 +639,7 @@ def load_public(path: str) -> Public:
         errors.append("invoices.jsonl: duplicate invoice_id")
     # --- payments
     payments = []
-    for ln, obj in _read_jsonl(text["payments.jsonl"], "payments.jsonl", errors):
+    for ln, obj in _read_jsonl(text["payments.jsonl"], "payments.jsonl", errors, warnings):
         if _validate_payment(obj, f"payments.jsonl:{ln}", exps, invoice_ids, errors):
             payments.append(obj)
             if not in_extract(obj["timestamp"]):
@@ -641,10 +647,11 @@ def load_public(path: str) -> Public:
     payment_ids = {d["payment_id"] for d in payments}
     if len(payment_ids) != len(payments):
         errors.append("payments.jsonl: duplicate payment_id")
+    # Order is not semantic (CONTRACT §2): the generator sorts, readers accept any order.
     for name, docs in (("invoices.jsonl", invoices), ("payments.jsonl", payments)):
         ids = [d["doc_id"] for d in docs]
         if ids != sorted(ids):
-            errors.append(f"{name}: documents must be sorted by doc_id")
+            warnings.append(f"{name}: documents not sorted by doc_id (accepted)")
     all_doc_ids = [d["doc_id"] for d in invoices + payments]
     if len(set(all_doc_ids)) != len(all_doc_ids):
         errors.append("documents: doc_id not unique across invoices and payments")
@@ -706,7 +713,8 @@ def load_public(path: str) -> Public:
                 errors.append(f"ledger.csv:{i}: timestamp outside extract window")
     try:
         if [row_sort_key(r) for r in ledger] != sorted(row_sort_key(r) for r in ledger):
-            errors.append("ledger.csv: rows must be sorted by (timestamp, row_id)")
+            warnings.append("ledger.csv: rows not sorted by (timestamp, row_id) (accepted)")
+        ledger.sort(key=row_sort_key)  # canonical in-memory order, independent of the file
     except ValueError:
         pass
     errors.extend(check_ledger_integrity(ledger, invoice_ids, payment_ids))
@@ -722,7 +730,7 @@ def load_public(path: str) -> Public:
 
     if errors:
         raise SchemaError(errors)
-    return Public(manifest, policy, ledger, invoices, payments, fx_rows, raw, path)
+    return Public(manifest, policy, ledger, invoices, payments, fx_rows, raw, path, warnings)
 
 
 # --------------------------------------------------------------------------- Private
@@ -733,6 +741,7 @@ class Private:
     provenance: dict
     id_map: dict | None = None
     root: str | None = None
+    warnings: list = field(default_factory=list)
 
 
 def _validate_truth(t, errors):
@@ -826,6 +835,7 @@ def _validate_provenance(p, errors):
 
 def load_private(path: str) -> Private:
     errors: list = []
+    warnings: list = []
     out = {}
     for name in ("truth.json", "provenance.json", "id_map.json"):
         fp = os.path.join(path, name)
@@ -836,7 +846,7 @@ def load_private(path: str) -> Private:
         if t is None:
             continue
         try:
-            out[name] = _strict_json(t, name, errors)
+            out[name] = _strict_json(t, name, errors, warnings)
         except ValueError as exc:
             errors.append(f"{name}: invalid JSON: {exc}")
     if errors:
@@ -853,4 +863,4 @@ def load_private(path: str) -> Private:
             errors.append("id_map.json: mapping is not injective")
     if errors:
         raise SchemaError(errors)
-    return Private(out["truth.json"], out["provenance.json"], im, path)
+    return Private(out["truth.json"], out["provenance.json"], im, path, warnings)
