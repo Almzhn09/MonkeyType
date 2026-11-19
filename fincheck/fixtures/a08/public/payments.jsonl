@@ -1,0 +1,3 @@
+{"amount_minor": 230000, "currency": "EUR", "doc_id": "PB1T3", "entity_id": "CN-QW2E", "invoice_refs": [{"amount_minor": 150000, "invoice_id": "INV-77-044"}, {"amount_minor": 80000, "invoice_id": "INV-77-045"}], "payment_id": "PAY-3101", "timestamp": "2026-03-18T12:00:00+05:00"}
+{"amount_minor": 2500000, "currency": "KZT", "doc_id": "PB2V6", "entity_id": "CN-ZX9C", "invoice_refs": [{"amount_minor": 2500000, "invoice_id": "INV-77-050"}], "payment_id": "PAY-3102", "timestamp": "2026-03-20T15:00:00+05:00"}
+{"amount_minor": 3000000, "currency": "KZT", "doc_id": "PB3W1", "entity_id": "CN-RT5W", "invoice_refs": [{"amount_minor": 1800000, "invoice_id": "INV-77-052"}], "payment_id": "PAY-3103", "timestamp": "2026-03-26T10:00:00+05:00"}
