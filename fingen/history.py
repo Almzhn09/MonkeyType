@@ -744,15 +744,18 @@ class _Builder:
         # "same amount, same customer" alone never identifies a duplicate.
         # (c3) Pairs for the duplicate_plus_period combo: two regular invoices
         # of one customer with equal totals. Both only when configured.
-        def room() -> int:
-            return n_inv - len(self.specs) - 2
+        def room(reserve_errors: bool) -> int:
+            # keep space for the (d)/(e) specs (and, for the optional twins,
+            # for regular candidates of the other error types)
+            return n_inv - len(self.specs) - dis["split_payments"] - dis["advances"] \
+                - (sum(err.values()) + 2 if reserve_errors else 0)
 
-        n_twins = err["duplicate_invoice"] if dis["repeated_amounts"] else 0
         n_pairs = combos["duplicate_plus_period"]
-        for k in range(n_twins + n_pairs):
-            if room() < 2:
+        n_twins = err["duplicate_invoice"] if dis["repeated_amounts"] else 0
+        for k in range(n_pairs + n_twins):
+            twin = k >= n_pairs
+            if room(twin) < 2:
                 break
-            twin = k < n_twins
             d1 = self._date_between(self.p_first, self.p_last - days(5))
             if d1 is None:
                 break
@@ -825,6 +828,7 @@ class _Builder:
                 d = self._date_between(self.d_first, self.d_last)
             spec = self._spec(self._instant(d))
             self._plain_payment(spec)
+        self._ensure_foreign_candidates()
 
         # (g) Multi-invoice payments: merge two plain payments of the same
         # customer and currency into one payment with two refs.
@@ -851,6 +855,30 @@ class _Builder:
 
         self._ensure_min_documents()
         self._materialize()
+
+    def _ensure_foreign_candidates(self) -> None:
+        """fx_conversion needs in-period foreign-currency documents: when there
+        are fewer regular ones than ``errors.fx_conversion + 1``, switch plain
+        in-period base-currency invoices to a foreign currency. No RNG draws
+        (amounts are drawn later the same way for any currency), so nothing
+        changes unless fx_conversion is configured and candidates are short."""
+        want = self.cfg["errors"]["fx_conversion"] + 1 if self.foreign else 0
+        copied = {id(s["copy_from"]) for s in self.specs if s["copy_from"] is not None}
+
+        def regular_in_period(spec) -> bool:
+            return "distractor" not in spec["tags"] and spec["copy_from"] is None \
+                and id(spec) not in copied and self.h.in_period(spec["issued"])
+
+        have = sum(1 for s in self.specs if regular_in_period(s) and s["currency"] != self.base)
+        i = 0
+        for spec in self.specs:
+            if have >= want:
+                break
+            if regular_in_period(spec) and spec["currency"] == self.base and \
+                    not {"twin_source", "combo_pair"} & set(spec["tags"]):
+                spec["currency"] = self.foreign[i % len(self.foreign)]
+                i += 1
+                have += 1
 
     def _ensure_min_documents(self) -> None:
         """Small configs: pay unpaid invoices / split plain payments until the

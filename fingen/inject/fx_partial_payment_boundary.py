@@ -15,8 +15,9 @@ follows this sequence and every ``cause`` names its step.
 
 Candidate tiers: dedicated baseline payments (tag ``fx_combo``), then other
 near-boundary/UTC-edge receipts, then any UTC-edge receipt. With company
-offset +00:00 there is no UTC-edge document: the previous day's rate is used
-instead (documented in the cause).
+offset +00:00 there is no UTC-edge document, and a UTC-date rate can equal
+the local-date rate (6-decimal quotes of small rates): then the previous/next
+day's rate is used instead (variant recorded in the cause).
 """
 
 from __future__ import annotations
@@ -31,27 +32,37 @@ from ..timeutil import utc_date
 NAME = "fx_partial_payment_boundary"
 
 
-def _wrong_rate(h, pay):
+def _options(h, pay) -> list[tuple]:
+    """Wrong-rate options in preference order: [(variant, rate, date, why)].
+    The UTC-date rate first; the adjacent days only as a fallback (company
+    offset +00:00, or a UTC-date rate equal to the local-date rate, which
+    happens for small rates quoted with 6 decimals)."""
     local = h.local_date(pay.timestamp)
+    out = []
     if has_utc_edge(h, pay):
-        d, why = utc_date(pay.timestamp), "UTC date"
-    else:
-        d, why = local - _dt.timedelta(days=1), "previous day (offset +00:00 has no UTC edge)"
-    rate = h.fx_rate(d, pay.currency)
-    return (rate, d, why) if rate is not None else None
+        out.append(("utc_date", utc_date(pay.timestamp), "UTC date"))
+    for s in (-1, 1):
+        out.append(("adjacent_day", local + _dt.timedelta(days=s),
+                    "previous day" if s < 0 else "next day"))
+    res = []
+    for variant, d, why in out:
+        rate = h.fx_rate(d, pay.currency)
+        if rate is not None and rate != h.fx_rate(local, pay.currency):
+            res.append((variant, rate, d, why))
+    return res
 
 
-def _feasible(h, pay) -> bool:
+def _plan(h, pay, utc_only: bool):
+    """First option yielding a valid rescale whose AR line can still be split."""
     if pay.currency == h.base_currency or not can_misallocate(h, pay):
-        return False
-    if h.utc_offset != "+00:00" and not has_utc_edge(h, pay):
-        return False
-    w = _wrong_rate(h, pay)
-    if w is None:
-        return False
-    plan = rescaled(h, pay, sole_entry(h, pay), w[0])
-    # step 2 needs an AR line of at least 2 minor units to split
-    return plan is not None and any(r.role == "ar" and c >= 2 for r, _d, c in plan)
+        return None
+    for variant, rate, d, why in _options(h, pay):
+        if utc_only and variant != "utc_date":
+            continue
+        plan = rescaled(h, pay, sole_entry(h, pay), rate)
+        if plan is not None and any(r.role == "ar" and c >= 2 for r, _d, c in plan):
+            return variant, rate, d, why, plan
+    return None
 
 
 @register(NAME)
@@ -59,20 +70,22 @@ def inject_fx_partial_payment_boundary(ctx: InjectionContext, count: int) -> lis
     h = ctx.history
     issues = []
     for _ in range(count):
-        docs = [d for d in ctx.candidates("payment") if _feasible(h, d)]
-        pay = pick(ctx, docs, lambda d: "fx_combo" in d.tags,
-                   lambda d: "near_boundary" in d.tags and has_utc_edge(h, d),
-                   lambda d: has_utc_edge(h, d))
+        docs = [d for d in ctx.candidates("payment") if _plan(h, d, False)]
+        utc_ok = {d.doc_id for d in docs if _plan(h, d, True)}
+        pay = pick(ctx, docs, lambda d: d.doc_id in utc_ok and "fx_combo" in d.tags,
+                   lambda d: d.doc_id in utc_ok and "near_boundary" in d.tags,
+                   lambda d: d.doc_id in utc_ok,
+                   lambda d: "fx_combo" in d.tags,
+                   lambda d: "near_boundary" in d.tags)
         if pay is None:
             raise InjectionError(f"{NAME}: no foreign-currency fully allocated receipt left")
         fx_id, alloc_id = ctx.new_issue_id(), ctx.new_issue_id()
         ctx.claim(pay.doc_id, fx_id)
         entry = sole_entry(h, pay)
-        rate, d, why = _wrong_rate(h, pay)
+        variant, rate, d, why, plan = _plan(h, pay, pay.doc_id in utc_ok)
         local = h.local_date(pay.timestamp)
         correct = correct_key_amount(h, pay)
-        plan = rescaled(h, pay, entry, rate)
-        cause = (f"fx_conversion[{'utc_date' if 'UTC' in why else 'adjacent_day'}] (combo {NAME}, "
+        cause = (f"fx_conversion[{variant}] (combo {NAME}, "
                  f"step 1/2): payment {pay.payment_id} at {pay.timestamp} (local {local}) "
                  f"converted at the {why} {d} rate {rate} instead of "
                  f"{h.fx_rate(local, pay.currency)}")
