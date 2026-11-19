@@ -1,0 +1,4478 @@
+[
+  {
+    "episode_id": "demo-clean",
+    "policy": "random",
+    "mode": "closed",
+    "steps": 17,
+    "inspection_steps": 16,
+    "duration_seconds": 0.113703,
+    "terminated": true,
+    "truncated": false,
+    "reason": "submitted",
+    "submitted_findings": [],
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 0.0,
+    "recall": 0.0,
+    "f1": 1.0,
+    "reward": 0.968,
+    "invalid_submission": false
+  },
+  {
+    "episode_id": "demo-clean",
+    "policy": "reconcile",
+    "mode": "closed",
+    "steps": 4,
+    "inspection_steps": 3,
+    "duration_seconds": 0.14189,
+    "terminated": true,
+    "truncated": false,
+    "reason": "submitted",
+    "submitted_findings": [],
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 0.0,
+    "recall": 0.0,
+    "f1": 1.0,
+    "reward": 0.994,
+    "invalid_submission": false
+  },
+  {
+    "episode_id": "demo-clean",
+    "policy": "mark_all",
+    "mode": "closed",
+    "steps": 2,
+    "inspection_steps": 1,
+    "duration_seconds": 0.113921,
+    "terminated": true,
+    "truncated": false,
+    "reason": "submitted",
+    "submitted_findings": [
+      {
+        "type": "duplicate_invoice",
+        "affected_ids": [
+          "R-row-001"
+        ],
+        "claimed_amount_minor": 4019,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-001"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "payment_allocation",
+        "affected_ids": [
+          "R-row-001"
+        ],
+        "claimed_amount_minor": 4019,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-001"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "fx_conversion",
+        "affected_ids": [
+          "R-row-001"
+        ],
+        "claimed_amount_minor": 4019,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-001"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "reporting_period",
+        "affected_ids": [
+          "R-row-001"
+        ],
+        "claimed_amount_minor": 4019,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-001"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "duplicate_invoice",
+        "affected_ids": [
+          "R-row-002"
+        ],
+        "claimed_amount_minor": 4019,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-002"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "payment_allocation",
+        "affected_ids": [
+          "R-row-002"
+        ],
+        "claimed_amount_minor": 4019,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-002"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "fx_conversion",
+        "affected_ids": [
+          "R-row-002"
+        ],
+        "claimed_amount_minor": 4019,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-002"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "reporting_period",
+        "affected_ids": [
+          "R-row-002"
+        ],
+        "claimed_amount_minor": 4019,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-002"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "duplicate_invoice",
+        "affected_ids": [
+          "R-row-003"
+        ],
+        "claimed_amount_minor": 4019,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-003"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "payment_allocation",
+        "affected_ids": [
+          "R-row-003"
+        ],
+        "claimed_amount_minor": 4019,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-003"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "fx_conversion",
+        "affected_ids": [
+          "R-row-003"
+        ],
+        "claimed_amount_minor": 4019,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-003"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "reporting_period",
+        "affected_ids": [
+          "R-row-003"
+        ],
+        "claimed_amount_minor": 4019,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-003"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "duplicate_invoice",
+        "affected_ids": [
+          "R-row-004"
+        ],
+        "claimed_amount_minor": 4019,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-004"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "payment_allocation",
+        "affected_ids": [
+          "R-row-004"
+        ],
+        "claimed_amount_minor": 4019,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-004"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "fx_conversion",
+        "affected_ids": [
+          "R-row-004"
+        ],
+        "claimed_amount_minor": 4019,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-004"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "reporting_period",
+        "affected_ids": [
+          "R-row-004"
+        ],
+        "claimed_amount_minor": 4019,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-004"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "duplicate_invoice",
+        "affected_ids": [
+          "R-row-005"
+        ],
+        "claimed_amount_minor": 4513,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-005"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "payment_allocation",
+        "affected_ids": [
+          "R-row-005"
+        ],
+        "claimed_amount_minor": 4513,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-005"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "fx_conversion",
+        "affected_ids": [
+          "R-row-005"
+        ],
+        "claimed_amount_minor": 4513,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-005"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "reporting_period",
+        "affected_ids": [
+          "R-row-005"
+        ],
+        "claimed_amount_minor": 4513,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-005"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "duplicate_invoice",
+        "affected_ids": [
+          "R-row-006"
+        ],
+        "claimed_amount_minor": 4513,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-006"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "payment_allocation",
+        "affected_ids": [
+          "R-row-006"
+        ],
+        "claimed_amount_minor": 4513,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-006"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "fx_conversion",
+        "affected_ids": [
+          "R-row-006"
+        ],
+        "claimed_amount_minor": 4513,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-006"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "reporting_period",
+        "affected_ids": [
+          "R-row-006"
+        ],
+        "claimed_amount_minor": 4513,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-006"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "duplicate_invoice",
+        "affected_ids": [
+          "R-row-007"
+        ],
+        "claimed_amount_minor": 1339,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-007"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "payment_allocation",
+        "affected_ids": [
+          "R-row-007"
+        ],
+        "claimed_amount_minor": 1339,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-007"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "fx_conversion",
+        "affected_ids": [
+          "R-row-007"
+        ],
+        "claimed_amount_minor": 1339,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-007"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "reporting_period",
+        "affected_ids": [
+          "R-row-007"
+        ],
+        "claimed_amount_minor": 1339,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-007"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "duplicate_invoice",
+        "affected_ids": [
+          "R-row-008"
+        ],
+        "claimed_amount_minor": 669,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-008"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "payment_allocation",
+        "affected_ids": [
+          "R-row-008"
+        ],
+        "claimed_amount_minor": 669,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-008"
+        ],
+        "explanation": "Broad accusation control."
+      }
+    ],
+    "tp": 0,
+    "fp": 30,
+    "fn": 0,
+    "precision": 0.0,
+    "recall": 0.0,
+    "f1": 0.0,
+    "reward": -1.0,
+    "invalid_submission": false
+  },
+  {
+    "episode_id": "demo-clean",
+    "policy": "oracle",
+    "mode": "closed",
+    "steps": 1,
+    "inspection_steps": 0,
+    "duration_seconds": 0.001065,
+    "terminated": true,
+    "truncated": false,
+    "reason": "submitted",
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 0.0,
+    "recall": 0.0,
+    "f1": 1.0,
+    "reward": 1.0,
+    "invalid_submission": false
+  },
+  {
+    "episode_id": "demo-mixed",
+    "policy": "random",
+    "mode": "closed",
+    "steps": 17,
+    "inspection_steps": 16,
+    "duration_seconds": 0.146234,
+    "terminated": true,
+    "truncated": false,
+    "reason": "submitted",
+    "submitted_findings": [],
+    "tp": 0,
+    "fp": 0,
+    "fn": 2,
+    "precision": 0.0,
+    "recall": 0.0,
+    "f1": 0.0,
+    "reward": -1.0,
+    "invalid_submission": false
+  },
+  {
+    "episode_id": "demo-mixed",
+    "policy": "reconcile",
+    "mode": "closed",
+    "steps": 4,
+    "inspection_steps": 3,
+    "duration_seconds": 0.112726,
+    "terminated": true,
+    "truncated": false,
+    "reason": "submitted",
+    "submitted_findings": [
+      {
+        "type": "duplicate_invoice",
+        "affected_ids": [
+          "R-invoice-1"
+        ],
+        "claimed_amount_minor": 3630,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-doc-invoice-1",
+          "R-row-001",
+          "R-row-003"
+        ],
+        "explanation": "Multiple full receivable postings reference the same invoice."
+      },
+      {
+        "type": "payment_allocation",
+        "affected_ids": [
+          "R-payment-1"
+        ],
+        "claimed_amount_minor": 125,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-doc-payment-1",
+          "R-doc-invoice-1",
+          "R-row-010",
+          "R-row-011"
+        ],
+        "explanation": "Same-currency invoice allocations total less than the payment."
+      }
+    ],
+    "tp": 2,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0,
+    "reward": 0.994,
+    "invalid_submission": false
+  },
+  {
+    "episode_id": "demo-mixed",
+    "policy": "mark_all",
+    "mode": "closed",
+    "steps": 2,
+    "inspection_steps": 1,
+    "duration_seconds": 0.125196,
+    "terminated": true,
+    "truncated": false,
+    "reason": "submitted",
+    "submitted_findings": [
+      {
+        "type": "duplicate_invoice",
+        "affected_ids": [
+          "R-row-001"
+        ],
+        "claimed_amount_minor": 3630,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-001"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "payment_allocation",
+        "affected_ids": [
+          "R-row-001"
+        ],
+        "claimed_amount_minor": 3630,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-001"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "fx_conversion",
+        "affected_ids": [
+          "R-row-001"
+        ],
+        "claimed_amount_minor": 3630,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-001"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "reporting_period",
+        "affected_ids": [
+          "R-row-001"
+        ],
+        "claimed_amount_minor": 3630,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-001"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "duplicate_invoice",
+        "affected_ids": [
+          "R-row-002"
+        ],
+        "claimed_amount_minor": 3630,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-002"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "payment_allocation",
+        "affected_ids": [
+          "R-row-002"
+        ],
+        "claimed_amount_minor": 3630,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-002"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "fx_conversion",
+        "affected_ids": [
+          "R-row-002"
+        ],
+        "claimed_amount_minor": 3630,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-002"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "reporting_period",
+        "affected_ids": [
+          "R-row-002"
+        ],
+        "claimed_amount_minor": 3630,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-002"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "duplicate_invoice",
+        "affected_ids": [
+          "R-row-003"
+        ],
+        "claimed_amount_minor": 3630,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-003"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "payment_allocation",
+        "affected_ids": [
+          "R-row-003"
+        ],
+        "claimed_amount_minor": 3630,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-003"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "fx_conversion",
+        "affected_ids": [
+          "R-row-003"
+        ],
+        "claimed_amount_minor": 3630,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-003"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "reporting_period",
+        "affected_ids": [
+          "R-row-003"
+        ],
+        "claimed_amount_minor": 3630,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-003"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "duplicate_invoice",
+        "affected_ids": [
+          "R-row-004"
+        ],
+        "claimed_amount_minor": 3630,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-004"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "payment_allocation",
+        "affected_ids": [
+          "R-row-004"
+        ],
+        "claimed_amount_minor": 3630,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-004"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "fx_conversion",
+        "affected_ids": [
+          "R-row-004"
+        ],
+        "claimed_amount_minor": 3630,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-004"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "reporting_period",
+        "affected_ids": [
+          "R-row-004"
+        ],
+        "claimed_amount_minor": 3630,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-004"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "duplicate_invoice",
+        "affected_ids": [
+          "R-row-005"
+        ],
+        "claimed_amount_minor": 3630,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-005"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "payment_allocation",
+        "affected_ids": [
+          "R-row-005"
+        ],
+        "claimed_amount_minor": 3630,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-005"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "fx_conversion",
+        "affected_ids": [
+          "R-row-005"
+        ],
+        "claimed_amount_minor": 3630,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-005"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "reporting_period",
+        "affected_ids": [
+          "R-row-005"
+        ],
+        "claimed_amount_minor": 3630,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-005"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "duplicate_invoice",
+        "affected_ids": [
+          "R-row-006"
+        ],
+        "claimed_amount_minor": 3630,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-006"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "payment_allocation",
+        "affected_ids": [
+          "R-row-006"
+        ],
+        "claimed_amount_minor": 3630,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-006"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "fx_conversion",
+        "affected_ids": [
+          "R-row-006"
+        ],
+        "claimed_amount_minor": 3630,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-006"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "reporting_period",
+        "affected_ids": [
+          "R-row-006"
+        ],
+        "claimed_amount_minor": 3630,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-006"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "duplicate_invoice",
+        "affected_ids": [
+          "R-row-007"
+        ],
+        "claimed_amount_minor": 5033,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-007"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "payment_allocation",
+        "affected_ids": [
+          "R-row-007"
+        ],
+        "claimed_amount_minor": 5033,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-007"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "fx_conversion",
+        "affected_ids": [
+          "R-row-007"
+        ],
+        "claimed_amount_minor": 5033,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-007"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "reporting_period",
+        "affected_ids": [
+          "R-row-007"
+        ],
+        "claimed_amount_minor": 5033,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-007"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "duplicate_invoice",
+        "affected_ids": [
+          "R-row-008"
+        ],
+        "claimed_amount_minor": 5033,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-008"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "payment_allocation",
+        "affected_ids": [
+          "R-row-008"
+        ],
+        "claimed_amount_minor": 5033,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-008"
+        ],
+        "explanation": "Broad accusation control."
+      }
+    ],
+    "tp": 0,
+    "fp": 30,
+    "fn": 2,
+    "precision": 0.0,
+    "recall": 0.0,
+    "f1": 0.0,
+    "reward": -1.0,
+    "invalid_submission": false
+  },
+  {
+    "episode_id": "demo-mixed",
+    "policy": "oracle",
+    "mode": "closed",
+    "steps": 1,
+    "inspection_steps": 0,
+    "duration_seconds": 0.000533,
+    "terminated": true,
+    "truncated": false,
+    "reason": "submitted",
+    "tp": 2,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0,
+    "reward": 1.0,
+    "invalid_submission": false
+  },
+  {
+    "episode_id": "dev-allocation",
+    "policy": "random",
+    "mode": "closed",
+    "steps": 17,
+    "inspection_steps": 16,
+    "duration_seconds": 0.112617,
+    "terminated": true,
+    "truncated": false,
+    "reason": "submitted",
+    "submitted_findings": [],
+    "tp": 0,
+    "fp": 0,
+    "fn": 1,
+    "precision": 0.0,
+    "recall": 0.0,
+    "f1": 0.0,
+    "reward": -1.0,
+    "invalid_submission": false
+  },
+  {
+    "episode_id": "dev-allocation",
+    "policy": "reconcile",
+    "mode": "closed",
+    "steps": 4,
+    "inspection_steps": 3,
+    "duration_seconds": 0.144426,
+    "terminated": true,
+    "truncated": false,
+    "reason": "submitted",
+    "submitted_findings": [
+      {
+        "type": "payment_allocation",
+        "affected_ids": [
+          "R-payment-1"
+        ],
+        "claimed_amount_minor": 125,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-doc-payment-1",
+          "R-doc-invoice-1",
+          "R-row-008",
+          "R-row-009"
+        ],
+        "explanation": "Same-currency invoice allocations total less than the payment."
+      }
+    ],
+    "tp": 1,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0,
+    "reward": 0.994,
+    "invalid_submission": false
+  },
+  {
+    "episode_id": "dev-allocation",
+    "policy": "mark_all",
+    "mode": "closed",
+    "steps": 2,
+    "inspection_steps": 1,
+    "duration_seconds": 0.116993,
+    "terminated": true,
+    "truncated": false,
+    "reason": "submitted",
+    "submitted_findings": [
+      {
+        "type": "duplicate_invoice",
+        "affected_ids": [
+          "R-row-001"
+        ],
+        "claimed_amount_minor": 3511,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-001"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "payment_allocation",
+        "affected_ids": [
+          "R-row-001"
+        ],
+        "claimed_amount_minor": 3511,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-001"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "fx_conversion",
+        "affected_ids": [
+          "R-row-001"
+        ],
+        "claimed_amount_minor": 3511,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-001"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "reporting_period",
+        "affected_ids": [
+          "R-row-001"
+        ],
+        "claimed_amount_minor": 3511,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-001"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "duplicate_invoice",
+        "affected_ids": [
+          "R-row-002"
+        ],
+        "claimed_amount_minor": 3511,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-002"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "payment_allocation",
+        "affected_ids": [
+          "R-row-002"
+        ],
+        "claimed_amount_minor": 3511,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-002"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "fx_conversion",
+        "affected_ids": [
+          "R-row-002"
+        ],
+        "claimed_amount_minor": 3511,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-002"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "reporting_period",
+        "affected_ids": [
+          "R-row-002"
+        ],
+        "claimed_amount_minor": 3511,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-002"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "duplicate_invoice",
+        "affected_ids": [
+          "R-row-003"
+        ],
+        "claimed_amount_minor": 3511,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-003"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "payment_allocation",
+        "affected_ids": [
+          "R-row-003"
+        ],
+        "claimed_amount_minor": 3511,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-003"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "fx_conversion",
+        "affected_ids": [
+          "R-row-003"
+        ],
+        "claimed_amount_minor": 3511,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-003"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "reporting_period",
+        "affected_ids": [
+          "R-row-003"
+        ],
+        "claimed_amount_minor": 3511,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-003"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "duplicate_invoice",
+        "affected_ids": [
+          "R-row-004"
+        ],
+        "claimed_amount_minor": 3511,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-004"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "payment_allocation",
+        "affected_ids": [
+          "R-row-004"
+        ],
+        "claimed_amount_minor": 3511,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-004"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "fx_conversion",
+        "affected_ids": [
+          "R-row-004"
+        ],
+        "claimed_amount_minor": 3511,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-004"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "reporting_period",
+        "affected_ids": [
+          "R-row-004"
+        ],
+        "claimed_amount_minor": 3511,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-004"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "duplicate_invoice",
+        "affected_ids": [
+          "R-row-005"
+        ],
+        "claimed_amount_minor": 5103,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-005"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "payment_allocation",
+        "affected_ids": [
+          "R-row-005"
+        ],
+        "claimed_amount_minor": 5103,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-005"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "fx_conversion",
+        "affected_ids": [
+          "R-row-005"
+        ],
+        "claimed_amount_minor": 5103,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-005"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "reporting_period",
+        "affected_ids": [
+          "R-row-005"
+        ],
+        "claimed_amount_minor": 5103,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-005"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "duplicate_invoice",
+        "affected_ids": [
+          "R-row-006"
+        ],
+        "claimed_amount_minor": 5103,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-006"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "payment_allocation",
+        "affected_ids": [
+          "R-row-006"
+        ],
+        "claimed_amount_minor": 5103,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-006"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "fx_conversion",
+        "affected_ids": [
+          "R-row-006"
+        ],
+        "claimed_amount_minor": 5103,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-006"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "reporting_period",
+        "affected_ids": [
+          "R-row-006"
+        ],
+        "claimed_amount_minor": 5103,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-006"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "duplicate_invoice",
+        "affected_ids": [
+          "R-row-007"
+        ],
+        "claimed_amount_minor": 1170,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-007"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "payment_allocation",
+        "affected_ids": [
+          "R-row-007"
+        ],
+        "claimed_amount_minor": 1170,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-007"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "fx_conversion",
+        "affected_ids": [
+          "R-row-007"
+        ],
+        "claimed_amount_minor": 1170,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-007"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "reporting_period",
+        "affected_ids": [
+          "R-row-007"
+        ],
+        "claimed_amount_minor": 1170,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-007"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "duplicate_invoice",
+        "affected_ids": [
+          "R-row-008"
+        ],
+        "claimed_amount_minor": 585,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-008"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "payment_allocation",
+        "affected_ids": [
+          "R-row-008"
+        ],
+        "claimed_amount_minor": 585,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-008"
+        ],
+        "explanation": "Broad accusation control."
+      }
+    ],
+    "tp": 0,
+    "fp": 30,
+    "fn": 1,
+    "precision": 0.0,
+    "recall": 0.0,
+    "f1": 0.0,
+    "reward": -1.0,
+    "invalid_submission": false
+  },
+  {
+    "episode_id": "dev-allocation",
+    "policy": "oracle",
+    "mode": "closed",
+    "steps": 1,
+    "inspection_steps": 0,
+    "duration_seconds": 0.000726,
+    "terminated": true,
+    "truncated": false,
+    "reason": "submitted",
+    "tp": 1,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0,
+    "reward": 1.0,
+    "invalid_submission": false
+  },
+  {
+    "episode_id": "dev-allocation-fx",
+    "policy": "random",
+    "mode": "closed",
+    "steps": 17,
+    "inspection_steps": 16,
+    "duration_seconds": 0.18327,
+    "terminated": true,
+    "truncated": false,
+    "reason": "submitted",
+    "submitted_findings": [],
+    "tp": 0,
+    "fp": 0,
+    "fn": 2,
+    "precision": 0.0,
+    "recall": 0.0,
+    "f1": 0.0,
+    "reward": -1.0,
+    "invalid_submission": false
+  },
+  {
+    "episode_id": "dev-allocation-fx",
+    "policy": "reconcile",
+    "mode": "closed",
+    "steps": 4,
+    "inspection_steps": 3,
+    "duration_seconds": 0.157211,
+    "terminated": true,
+    "truncated": false,
+    "reason": "submitted",
+    "submitted_findings": [],
+    "tp": 0,
+    "fp": 0,
+    "fn": 2,
+    "precision": 0.0,
+    "recall": 0.0,
+    "f1": 0.0,
+    "reward": -1.0,
+    "invalid_submission": false
+  },
+  {
+    "episode_id": "dev-allocation-fx",
+    "policy": "mark_all",
+    "mode": "closed",
+    "steps": 2,
+    "inspection_steps": 1,
+    "duration_seconds": 0.156507,
+    "terminated": true,
+    "truncated": false,
+    "reason": "submitted",
+    "submitted_findings": [
+      {
+        "type": "duplicate_invoice",
+        "affected_ids": [
+          "R-row-001"
+        ],
+        "claimed_amount_minor": 3862,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-001"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "payment_allocation",
+        "affected_ids": [
+          "R-row-001"
+        ],
+        "claimed_amount_minor": 3862,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-001"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "fx_conversion",
+        "affected_ids": [
+          "R-row-001"
+        ],
+        "claimed_amount_minor": 3862,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-001"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "reporting_period",
+        "affected_ids": [
+          "R-row-001"
+        ],
+        "claimed_amount_minor": 3862,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-001"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "duplicate_invoice",
+        "affected_ids": [
+          "R-row-002"
+        ],
+        "claimed_amount_minor": 3862,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-002"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "payment_allocation",
+        "affected_ids": [
+          "R-row-002"
+        ],
+        "claimed_amount_minor": 3862,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-002"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "fx_conversion",
+        "affected_ids": [
+          "R-row-002"
+        ],
+        "claimed_amount_minor": 3862,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-002"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "reporting_period",
+        "affected_ids": [
+          "R-row-002"
+        ],
+        "claimed_amount_minor": 3862,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-002"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "duplicate_invoice",
+        "affected_ids": [
+          "R-row-003"
+        ],
+        "claimed_amount_minor": 3862,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-003"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "payment_allocation",
+        "affected_ids": [
+          "R-row-003"
+        ],
+        "claimed_amount_minor": 3862,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-003"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "fx_conversion",
+        "affected_ids": [
+          "R-row-003"
+        ],
+        "claimed_amount_minor": 3862,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-003"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "reporting_period",
+        "affected_ids": [
+          "R-row-003"
+        ],
+        "claimed_amount_minor": 3862,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-003"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "duplicate_invoice",
+        "affected_ids": [
+          "R-row-004"
+        ],
+        "claimed_amount_minor": 3862,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-004"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "payment_allocation",
+        "affected_ids": [
+          "R-row-004"
+        ],
+        "claimed_amount_minor": 3862,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-004"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "fx_conversion",
+        "affected_ids": [
+          "R-row-004"
+        ],
+        "claimed_amount_minor": 3862,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-004"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "reporting_period",
+        "affected_ids": [
+          "R-row-004"
+        ],
+        "claimed_amount_minor": 3862,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-004"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "duplicate_invoice",
+        "affected_ids": [
+          "R-row-005"
+        ],
+        "claimed_amount_minor": 5445,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-005"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "payment_allocation",
+        "affected_ids": [
+          "R-row-005"
+        ],
+        "claimed_amount_minor": 5445,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-005"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "fx_conversion",
+        "affected_ids": [
+          "R-row-005"
+        ],
+        "claimed_amount_minor": 5445,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-005"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "reporting_period",
+        "affected_ids": [
+          "R-row-005"
+        ],
+        "claimed_amount_minor": 5445,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-005"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "duplicate_invoice",
+        "affected_ids": [
+          "R-row-006"
+        ],
+        "claimed_amount_minor": 5445,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-006"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "payment_allocation",
+        "affected_ids": [
+          "R-row-006"
+        ],
+        "claimed_amount_minor": 5445,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-006"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "fx_conversion",
+        "affected_ids": [
+          "R-row-006"
+        ],
+        "claimed_amount_minor": 5445,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-006"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "reporting_period",
+        "affected_ids": [
+          "R-row-006"
+        ],
+        "claimed_amount_minor": 5445,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-006"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "duplicate_invoice",
+        "affected_ids": [
+          "R-row-007"
+        ],
+        "claimed_amount_minor": 1287,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-007"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "payment_allocation",
+        "affected_ids": [
+          "R-row-007"
+        ],
+        "claimed_amount_minor": 1287,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-007"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "fx_conversion",
+        "affected_ids": [
+          "R-row-007"
+        ],
+        "claimed_amount_minor": 1287,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-007"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "reporting_period",
+        "affected_ids": [
+          "R-row-007"
+        ],
+        "claimed_amount_minor": 1287,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-007"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "duplicate_invoice",
+        "affected_ids": [
+          "R-row-008"
+        ],
+        "claimed_amount_minor": 643,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-008"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "payment_allocation",
+        "affected_ids": [
+          "R-row-008"
+        ],
+        "claimed_amount_minor": 643,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-008"
+        ],
+        "explanation": "Broad accusation control."
+      }
+    ],
+    "tp": 0,
+    "fp": 30,
+    "fn": 2,
+    "precision": 0.0,
+    "recall": 0.0,
+    "f1": 0.0,
+    "reward": -1.0,
+    "invalid_submission": false
+  },
+  {
+    "episode_id": "dev-allocation-fx",
+    "policy": "oracle",
+    "mode": "closed",
+    "steps": 1,
+    "inspection_steps": 0,
+    "duration_seconds": 0.000717,
+    "terminated": true,
+    "truncated": false,
+    "reason": "submitted",
+    "tp": 2,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0,
+    "reward": 1.0,
+    "invalid_submission": false
+  },
+  {
+    "episode_id": "dev-clean-repeat",
+    "policy": "random",
+    "mode": "closed",
+    "steps": 17,
+    "inspection_steps": 16,
+    "duration_seconds": 0.119897,
+    "terminated": true,
+    "truncated": false,
+    "reason": "submitted",
+    "submitted_findings": [],
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 0.0,
+    "recall": 0.0,
+    "f1": 1.0,
+    "reward": 0.968,
+    "invalid_submission": false
+  },
+  {
+    "episode_id": "dev-clean-repeat",
+    "policy": "reconcile",
+    "mode": "closed",
+    "steps": 4,
+    "inspection_steps": 3,
+    "duration_seconds": 0.153829,
+    "terminated": true,
+    "truncated": false,
+    "reason": "submitted",
+    "submitted_findings": [],
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 0.0,
+    "recall": 0.0,
+    "f1": 1.0,
+    "reward": 0.994,
+    "invalid_submission": false
+  },
+  {
+    "episode_id": "dev-clean-repeat",
+    "policy": "mark_all",
+    "mode": "closed",
+    "steps": 2,
+    "inspection_steps": 1,
+    "duration_seconds": 0.150786,
+    "terminated": true,
+    "truncated": false,
+    "reason": "submitted",
+    "submitted_findings": [
+      {
+        "type": "duplicate_invoice",
+        "affected_ids": [
+          "R-row-001"
+        ],
+        "claimed_amount_minor": 4058,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-001"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "payment_allocation",
+        "affected_ids": [
+          "R-row-001"
+        ],
+        "claimed_amount_minor": 4058,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-001"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "fx_conversion",
+        "affected_ids": [
+          "R-row-001"
+        ],
+        "claimed_amount_minor": 4058,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-001"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "reporting_period",
+        "affected_ids": [
+          "R-row-001"
+        ],
+        "claimed_amount_minor": 4058,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-001"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "duplicate_invoice",
+        "affected_ids": [
+          "R-row-002"
+        ],
+        "claimed_amount_minor": 4058,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-002"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "payment_allocation",
+        "affected_ids": [
+          "R-row-002"
+        ],
+        "claimed_amount_minor": 4058,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-002"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "fx_conversion",
+        "affected_ids": [
+          "R-row-002"
+        ],
+        "claimed_amount_minor": 4058,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-002"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "reporting_period",
+        "affected_ids": [
+          "R-row-002"
+        ],
+        "claimed_amount_minor": 4058,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-002"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "duplicate_invoice",
+        "affected_ids": [
+          "R-row-003"
+        ],
+        "claimed_amount_minor": 4058,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-003"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "payment_allocation",
+        "affected_ids": [
+          "R-row-003"
+        ],
+        "claimed_amount_minor": 4058,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-003"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "fx_conversion",
+        "affected_ids": [
+          "R-row-003"
+        ],
+        "claimed_amount_minor": 4058,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-003"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "reporting_period",
+        "affected_ids": [
+          "R-row-003"
+        ],
+        "claimed_amount_minor": 4058,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-003"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "duplicate_invoice",
+        "affected_ids": [
+          "R-row-004"
+        ],
+        "claimed_amount_minor": 4058,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-004"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "payment_allocation",
+        "affected_ids": [
+          "R-row-004"
+        ],
+        "claimed_amount_minor": 4058,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-004"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "fx_conversion",
+        "affected_ids": [
+          "R-row-004"
+        ],
+        "claimed_amount_minor": 4058,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-004"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "reporting_period",
+        "affected_ids": [
+          "R-row-004"
+        ],
+        "claimed_amount_minor": 4058,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-004"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "duplicate_invoice",
+        "affected_ids": [
+          "R-row-005"
+        ],
+        "claimed_amount_minor": 5016,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-005"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "payment_allocation",
+        "affected_ids": [
+          "R-row-005"
+        ],
+        "claimed_amount_minor": 5016,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-005"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "fx_conversion",
+        "affected_ids": [
+          "R-row-005"
+        ],
+        "claimed_amount_minor": 5016,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-005"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "reporting_period",
+        "affected_ids": [
+          "R-row-005"
+        ],
+        "claimed_amount_minor": 5016,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-005"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "duplicate_invoice",
+        "affected_ids": [
+          "R-row-006"
+        ],
+        "claimed_amount_minor": 5016,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-006"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "payment_allocation",
+        "affected_ids": [
+          "R-row-006"
+        ],
+        "claimed_amount_minor": 5016,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-006"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "fx_conversion",
+        "affected_ids": [
+          "R-row-006"
+        ],
+        "claimed_amount_minor": 5016,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-006"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "reporting_period",
+        "affected_ids": [
+          "R-row-006"
+        ],
+        "claimed_amount_minor": 5016,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-006"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "duplicate_invoice",
+        "affected_ids": [
+          "R-row-007"
+        ],
+        "claimed_amount_minor": 1352,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-007"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "payment_allocation",
+        "affected_ids": [
+          "R-row-007"
+        ],
+        "claimed_amount_minor": 1352,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-007"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "fx_conversion",
+        "affected_ids": [
+          "R-row-007"
+        ],
+        "claimed_amount_minor": 1352,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-007"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "reporting_period",
+        "affected_ids": [
+          "R-row-007"
+        ],
+        "claimed_amount_minor": 1352,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-007"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "duplicate_invoice",
+        "affected_ids": [
+          "R-row-008"
+        ],
+        "claimed_amount_minor": 676,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-008"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "payment_allocation",
+        "affected_ids": [
+          "R-row-008"
+        ],
+        "claimed_amount_minor": 676,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-008"
+        ],
+        "explanation": "Broad accusation control."
+      }
+    ],
+    "tp": 0,
+    "fp": 30,
+    "fn": 0,
+    "precision": 0.0,
+    "recall": 0.0,
+    "f1": 0.0,
+    "reward": -1.0,
+    "invalid_submission": false
+  },
+  {
+    "episode_id": "dev-clean-repeat",
+    "policy": "oracle",
+    "mode": "closed",
+    "steps": 1,
+    "inspection_steps": 0,
+    "duration_seconds": 0.000668,
+    "terminated": true,
+    "truncated": false,
+    "reason": "submitted",
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 0.0,
+    "recall": 0.0,
+    "f1": 1.0,
+    "reward": 1.0,
+    "invalid_submission": false
+  },
+  {
+    "episode_id": "dev-clean-split",
+    "policy": "random",
+    "mode": "closed",
+    "steps": 17,
+    "inspection_steps": 16,
+    "duration_seconds": 0.150272,
+    "terminated": true,
+    "truncated": false,
+    "reason": "submitted",
+    "submitted_findings": [],
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 0.0,
+    "recall": 0.0,
+    "f1": 1.0,
+    "reward": 0.968,
+    "invalid_submission": false
+  },
+  {
+    "episode_id": "dev-clean-split",
+    "policy": "reconcile",
+    "mode": "closed",
+    "steps": 4,
+    "inspection_steps": 3,
+    "duration_seconds": 0.146079,
+    "terminated": true,
+    "truncated": false,
+    "reason": "submitted",
+    "submitted_findings": [],
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 0.0,
+    "recall": 0.0,
+    "f1": 1.0,
+    "reward": 0.994,
+    "invalid_submission": false
+  },
+  {
+    "episode_id": "dev-clean-split",
+    "policy": "mark_all",
+    "mode": "closed",
+    "steps": 2,
+    "inspection_steps": 1,
+    "duration_seconds": 0.114689,
+    "terminated": true,
+    "truncated": false,
+    "reason": "submitted",
+    "submitted_findings": [
+      {
+        "type": "duplicate_invoice",
+        "affected_ids": [
+          "R-row-001"
+        ],
+        "claimed_amount_minor": 4463,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-001"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "payment_allocation",
+        "affected_ids": [
+          "R-row-001"
+        ],
+        "claimed_amount_minor": 4463,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-001"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "fx_conversion",
+        "affected_ids": [
+          "R-row-001"
+        ],
+        "claimed_amount_minor": 4463,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-001"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "reporting_period",
+        "affected_ids": [
+          "R-row-001"
+        ],
+        "claimed_amount_minor": 4463,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-001"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "duplicate_invoice",
+        "affected_ids": [
+          "R-row-002"
+        ],
+        "claimed_amount_minor": 4463,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-002"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "payment_allocation",
+        "affected_ids": [
+          "R-row-002"
+        ],
+        "claimed_amount_minor": 4463,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-002"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "fx_conversion",
+        "affected_ids": [
+          "R-row-002"
+        ],
+        "claimed_amount_minor": 4463,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-002"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "reporting_period",
+        "affected_ids": [
+          "R-row-002"
+        ],
+        "claimed_amount_minor": 4463,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-002"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "duplicate_invoice",
+        "affected_ids": [
+          "R-row-003"
+        ],
+        "claimed_amount_minor": 4463,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-003"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "payment_allocation",
+        "affected_ids": [
+          "R-row-003"
+        ],
+        "claimed_amount_minor": 4463,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-003"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "fx_conversion",
+        "affected_ids": [
+          "R-row-003"
+        ],
+        "claimed_amount_minor": 4463,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-003"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "reporting_period",
+        "affected_ids": [
+          "R-row-003"
+        ],
+        "claimed_amount_minor": 4463,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-003"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "duplicate_invoice",
+        "affected_ids": [
+          "R-row-004"
+        ],
+        "claimed_amount_minor": 4463,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-004"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "payment_allocation",
+        "affected_ids": [
+          "R-row-004"
+        ],
+        "claimed_amount_minor": 4463,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-004"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "fx_conversion",
+        "affected_ids": [
+          "R-row-004"
+        ],
+        "claimed_amount_minor": 4463,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-004"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "reporting_period",
+        "affected_ids": [
+          "R-row-004"
+        ],
+        "claimed_amount_minor": 4463,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-004"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "duplicate_invoice",
+        "affected_ids": [
+          "R-row-005"
+        ],
+        "claimed_amount_minor": 4895,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-005"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "payment_allocation",
+        "affected_ids": [
+          "R-row-005"
+        ],
+        "claimed_amount_minor": 4895,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-005"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "fx_conversion",
+        "affected_ids": [
+          "R-row-005"
+        ],
+        "claimed_amount_minor": 4895,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-005"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "reporting_period",
+        "affected_ids": [
+          "R-row-005"
+        ],
+        "claimed_amount_minor": 4895,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-005"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "duplicate_invoice",
+        "affected_ids": [
+          "R-row-006"
+        ],
+        "claimed_amount_minor": 4895,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-006"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "payment_allocation",
+        "affected_ids": [
+          "R-row-006"
+        ],
+        "claimed_amount_minor": 4895,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-006"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "fx_conversion",
+        "affected_ids": [
+          "R-row-006"
+        ],
+        "claimed_amount_minor": 4895,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-006"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "reporting_period",
+        "affected_ids": [
+          "R-row-006"
+        ],
+        "claimed_amount_minor": 4895,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-006"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "duplicate_invoice",
+        "affected_ids": [
+          "R-row-007"
+        ],
+        "claimed_amount_minor": 1487,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-007"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "payment_allocation",
+        "affected_ids": [
+          "R-row-007"
+        ],
+        "claimed_amount_minor": 1487,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-007"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "fx_conversion",
+        "affected_ids": [
+          "R-row-007"
+        ],
+        "claimed_amount_minor": 1487,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-007"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "reporting_period",
+        "affected_ids": [
+          "R-row-007"
+        ],
+        "claimed_amount_minor": 1487,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-007"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "duplicate_invoice",
+        "affected_ids": [
+          "R-row-008"
+        ],
+        "claimed_amount_minor": 743,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-008"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "payment_allocation",
+        "affected_ids": [
+          "R-row-008"
+        ],
+        "claimed_amount_minor": 743,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-008"
+        ],
+        "explanation": "Broad accusation control."
+      }
+    ],
+    "tp": 0,
+    "fp": 30,
+    "fn": 0,
+    "precision": 0.0,
+    "recall": 0.0,
+    "f1": 0.0,
+    "reward": -1.0,
+    "invalid_submission": false
+  },
+  {
+    "episode_id": "dev-clean-split",
+    "policy": "oracle",
+    "mode": "closed",
+    "steps": 1,
+    "inspection_steps": 0,
+    "duration_seconds": 0.000553,
+    "terminated": true,
+    "truncated": false,
+    "reason": "submitted",
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "precision": 0.0,
+    "recall": 0.0,
+    "f1": 1.0,
+    "reward": 1.0,
+    "invalid_submission": false
+  },
+  {
+    "episode_id": "dev-duplicate",
+    "policy": "random",
+    "mode": "closed",
+    "steps": 17,
+    "inspection_steps": 16,
+    "duration_seconds": 0.140587,
+    "terminated": true,
+    "truncated": false,
+    "reason": "submitted",
+    "submitted_findings": [],
+    "tp": 0,
+    "fp": 0,
+    "fn": 1,
+    "precision": 0.0,
+    "recall": 0.0,
+    "f1": 0.0,
+    "reward": -1.0,
+    "invalid_submission": false
+  },
+  {
+    "episode_id": "dev-duplicate",
+    "policy": "reconcile",
+    "mode": "closed",
+    "steps": 4,
+    "inspection_steps": 3,
+    "duration_seconds": 0.111308,
+    "terminated": true,
+    "truncated": false,
+    "reason": "submitted",
+    "submitted_findings": [
+      {
+        "type": "duplicate_invoice",
+        "affected_ids": [
+          "R-invoice-1"
+        ],
+        "claimed_amount_minor": 4002,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-doc-invoice-1",
+          "R-row-001",
+          "R-row-003"
+        ],
+        "explanation": "Multiple full receivable postings reference the same invoice."
+      }
+    ],
+    "tp": 1,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0,
+    "reward": 0.994,
+    "invalid_submission": false
+  },
+  {
+    "episode_id": "dev-duplicate",
+    "policy": "mark_all",
+    "mode": "closed",
+    "steps": 2,
+    "inspection_steps": 1,
+    "duration_seconds": 0.138747,
+    "terminated": true,
+    "truncated": false,
+    "reason": "submitted",
+    "submitted_findings": [
+      {
+        "type": "duplicate_invoice",
+        "affected_ids": [
+          "R-row-001"
+        ],
+        "claimed_amount_minor": 4002,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-001"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "payment_allocation",
+        "affected_ids": [
+          "R-row-001"
+        ],
+        "claimed_amount_minor": 4002,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-001"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "fx_conversion",
+        "affected_ids": [
+          "R-row-001"
+        ],
+        "claimed_amount_minor": 4002,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-001"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "reporting_period",
+        "affected_ids": [
+          "R-row-001"
+        ],
+        "claimed_amount_minor": 4002,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-001"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "duplicate_invoice",
+        "affected_ids": [
+          "R-row-002"
+        ],
+        "claimed_amount_minor": 4002,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-002"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "payment_allocation",
+        "affected_ids": [
+          "R-row-002"
+        ],
+        "claimed_amount_minor": 4002,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-002"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "fx_conversion",
+        "affected_ids": [
+          "R-row-002"
+        ],
+        "claimed_amount_minor": 4002,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-002"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "reporting_period",
+        "affected_ids": [
+          "R-row-002"
+        ],
+        "claimed_amount_minor": 4002,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-002"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "duplicate_invoice",
+        "affected_ids": [
+          "R-row-003"
+        ],
+        "claimed_amount_minor": 4002,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-003"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "payment_allocation",
+        "affected_ids": [
+          "R-row-003"
+        ],
+        "claimed_amount_minor": 4002,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-003"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "fx_conversion",
+        "affected_ids": [
+          "R-row-003"
+        ],
+        "claimed_amount_minor": 4002,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-003"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "reporting_period",
+        "affected_ids": [
+          "R-row-003"
+        ],
+        "claimed_amount_minor": 4002,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-003"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "duplicate_invoice",
+        "affected_ids": [
+          "R-row-004"
+        ],
+        "claimed_amount_minor": 4002,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-004"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "payment_allocation",
+        "affected_ids": [
+          "R-row-004"
+        ],
+        "claimed_amount_minor": 4002,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-004"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "fx_conversion",
+        "affected_ids": [
+          "R-row-004"
+        ],
+        "claimed_amount_minor": 4002,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-004"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "reporting_period",
+        "affected_ids": [
+          "R-row-004"
+        ],
+        "claimed_amount_minor": 4002,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-004"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "duplicate_invoice",
+        "affected_ids": [
+          "R-row-005"
+        ],
+        "claimed_amount_minor": 4002,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-005"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "payment_allocation",
+        "affected_ids": [
+          "R-row-005"
+        ],
+        "claimed_amount_minor": 4002,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-005"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "fx_conversion",
+        "affected_ids": [
+          "R-row-005"
+        ],
+        "claimed_amount_minor": 4002,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-005"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "reporting_period",
+        "affected_ids": [
+          "R-row-005"
+        ],
+        "claimed_amount_minor": 4002,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-005"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "duplicate_invoice",
+        "affected_ids": [
+          "R-row-006"
+        ],
+        "claimed_amount_minor": 4002,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-006"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "payment_allocation",
+        "affected_ids": [
+          "R-row-006"
+        ],
+        "claimed_amount_minor": 4002,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-006"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "fx_conversion",
+        "affected_ids": [
+          "R-row-006"
+        ],
+        "claimed_amount_minor": 4002,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-006"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "reporting_period",
+        "affected_ids": [
+          "R-row-006"
+        ],
+        "claimed_amount_minor": 4002,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-006"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "duplicate_invoice",
+        "affected_ids": [
+          "R-row-007"
+        ],
+        "claimed_amount_minor": 4509,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-007"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "payment_allocation",
+        "affected_ids": [
+          "R-row-007"
+        ],
+        "claimed_amount_minor": 4509,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-007"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "fx_conversion",
+        "affected_ids": [
+          "R-row-007"
+        ],
+        "claimed_amount_minor": 4509,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-007"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "reporting_period",
+        "affected_ids": [
+          "R-row-007"
+        ],
+        "claimed_amount_minor": 4509,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-007"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "duplicate_invoice",
+        "affected_ids": [
+          "R-row-008"
+        ],
+        "claimed_amount_minor": 4509,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-008"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "payment_allocation",
+        "affected_ids": [
+          "R-row-008"
+        ],
+        "claimed_amount_minor": 4509,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-008"
+        ],
+        "explanation": "Broad accusation control."
+      }
+    ],
+    "tp": 0,
+    "fp": 30,
+    "fn": 1,
+    "precision": 0.0,
+    "recall": 0.0,
+    "f1": 0.0,
+    "reward": -1.0,
+    "invalid_submission": false
+  },
+  {
+    "episode_id": "dev-duplicate",
+    "policy": "oracle",
+    "mode": "closed",
+    "steps": 1,
+    "inspection_steps": 0,
+    "duration_seconds": 0.000728,
+    "terminated": true,
+    "truncated": false,
+    "reason": "submitted",
+    "tp": 1,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0,
+    "reward": 1.0,
+    "invalid_submission": false
+  },
+  {
+    "episode_id": "dev-duplicate-period",
+    "policy": "random",
+    "mode": "closed",
+    "steps": 17,
+    "inspection_steps": 16,
+    "duration_seconds": 0.14923,
+    "terminated": true,
+    "truncated": false,
+    "reason": "submitted",
+    "submitted_findings": [],
+    "tp": 0,
+    "fp": 0,
+    "fn": 2,
+    "precision": 0.0,
+    "recall": 0.0,
+    "f1": 0.0,
+    "reward": -1.0,
+    "invalid_submission": false
+  },
+  {
+    "episode_id": "dev-duplicate-period",
+    "policy": "reconcile",
+    "mode": "closed",
+    "steps": 4,
+    "inspection_steps": 3,
+    "duration_seconds": 0.160422,
+    "terminated": true,
+    "truncated": false,
+    "reason": "submitted",
+    "submitted_findings": [
+      {
+        "type": "duplicate_invoice",
+        "affected_ids": [
+          "R-invoice-1"
+        ],
+        "claimed_amount_minor": 4348,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-doc-invoice-1",
+          "R-row-001",
+          "R-row-003"
+        ],
+        "explanation": "Multiple full receivable postings reference the same invoice."
+      }
+    ],
+    "tp": 1,
+    "fp": 0,
+    "fn": 1,
+    "precision": 1.0,
+    "recall": 0.5,
+    "f1": 0.6666666666666666,
+    "reward": 0.32733333333333325,
+    "invalid_submission": false
+  },
+  {
+    "episode_id": "dev-duplicate-period",
+    "policy": "mark_all",
+    "mode": "closed",
+    "steps": 2,
+    "inspection_steps": 1,
+    "duration_seconds": 0.156618,
+    "terminated": true,
+    "truncated": false,
+    "reason": "submitted",
+    "submitted_findings": [
+      {
+        "type": "duplicate_invoice",
+        "affected_ids": [
+          "R-row-001"
+        ],
+        "claimed_amount_minor": 4348,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-001"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "payment_allocation",
+        "affected_ids": [
+          "R-row-001"
+        ],
+        "claimed_amount_minor": 4348,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-001"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "fx_conversion",
+        "affected_ids": [
+          "R-row-001"
+        ],
+        "claimed_amount_minor": 4348,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-001"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "reporting_period",
+        "affected_ids": [
+          "R-row-001"
+        ],
+        "claimed_amount_minor": 4348,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-001"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "duplicate_invoice",
+        "affected_ids": [
+          "R-row-002"
+        ],
+        "claimed_amount_minor": 4348,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-002"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "payment_allocation",
+        "affected_ids": [
+          "R-row-002"
+        ],
+        "claimed_amount_minor": 4348,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-002"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "fx_conversion",
+        "affected_ids": [
+          "R-row-002"
+        ],
+        "claimed_amount_minor": 4348,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-002"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "reporting_period",
+        "affected_ids": [
+          "R-row-002"
+        ],
+        "claimed_amount_minor": 4348,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-002"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "duplicate_invoice",
+        "affected_ids": [
+          "R-row-003"
+        ],
+        "claimed_amount_minor": 4348,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-003"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "payment_allocation",
+        "affected_ids": [
+          "R-row-003"
+        ],
+        "claimed_amount_minor": 4348,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-003"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "fx_conversion",
+        "affected_ids": [
+          "R-row-003"
+        ],
+        "claimed_amount_minor": 4348,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-003"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "reporting_period",
+        "affected_ids": [
+          "R-row-003"
+        ],
+        "claimed_amount_minor": 4348,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-003"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "duplicate_invoice",
+        "affected_ids": [
+          "R-row-004"
+        ],
+        "claimed_amount_minor": 4348,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-004"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "payment_allocation",
+        "affected_ids": [
+          "R-row-004"
+        ],
+        "claimed_amount_minor": 4348,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-004"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "fx_conversion",
+        "affected_ids": [
+          "R-row-004"
+        ],
+        "claimed_amount_minor": 4348,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-004"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "reporting_period",
+        "affected_ids": [
+          "R-row-004"
+        ],
+        "claimed_amount_minor": 4348,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-004"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "duplicate_invoice",
+        "affected_ids": [
+          "R-row-005"
+        ],
+        "claimed_amount_minor": 4348,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-005"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "payment_allocation",
+        "affected_ids": [
+          "R-row-005"
+        ],
+        "claimed_amount_minor": 4348,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-005"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "fx_conversion",
+        "affected_ids": [
+          "R-row-005"
+        ],
+        "claimed_amount_minor": 4348,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-005"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "reporting_period",
+        "affected_ids": [
+          "R-row-005"
+        ],
+        "claimed_amount_minor": 4348,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-005"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "duplicate_invoice",
+        "affected_ids": [
+          "R-row-006"
+        ],
+        "claimed_amount_minor": 4348,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-006"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "payment_allocation",
+        "affected_ids": [
+          "R-row-006"
+        ],
+        "claimed_amount_minor": 4348,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-006"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "fx_conversion",
+        "affected_ids": [
+          "R-row-006"
+        ],
+        "claimed_amount_minor": 4348,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-006"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "reporting_period",
+        "affected_ids": [
+          "R-row-006"
+        ],
+        "claimed_amount_minor": 4348,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-006"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "duplicate_invoice",
+        "affected_ids": [
+          "R-row-007"
+        ],
+        "claimed_amount_minor": 5327,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-007"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "payment_allocation",
+        "affected_ids": [
+          "R-row-007"
+        ],
+        "claimed_amount_minor": 5327,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-007"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "fx_conversion",
+        "affected_ids": [
+          "R-row-007"
+        ],
+        "claimed_amount_minor": 5327,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-007"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "reporting_period",
+        "affected_ids": [
+          "R-row-007"
+        ],
+        "claimed_amount_minor": 5327,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-007"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "duplicate_invoice",
+        "affected_ids": [
+          "R-row-008"
+        ],
+        "claimed_amount_minor": 5327,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-008"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "payment_allocation",
+        "affected_ids": [
+          "R-row-008"
+        ],
+        "claimed_amount_minor": 5327,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-008"
+        ],
+        "explanation": "Broad accusation control."
+      }
+    ],
+    "tp": 0,
+    "fp": 30,
+    "fn": 2,
+    "precision": 0.0,
+    "recall": 0.0,
+    "f1": 0.0,
+    "reward": -1.0,
+    "invalid_submission": false
+  },
+  {
+    "episode_id": "dev-duplicate-period",
+    "policy": "oracle",
+    "mode": "closed",
+    "steps": 1,
+    "inspection_steps": 0,
+    "duration_seconds": 0.001029,
+    "terminated": true,
+    "truncated": false,
+    "reason": "submitted",
+    "tp": 2,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0,
+    "reward": 1.0,
+    "invalid_submission": false
+  },
+  {
+    "episode_id": "dev-fx",
+    "policy": "random",
+    "mode": "closed",
+    "steps": 17,
+    "inspection_steps": 16,
+    "duration_seconds": 0.137667,
+    "terminated": true,
+    "truncated": false,
+    "reason": "submitted",
+    "submitted_findings": [],
+    "tp": 0,
+    "fp": 0,
+    "fn": 1,
+    "precision": 0.0,
+    "recall": 0.0,
+    "f1": 0.0,
+    "reward": -1.0,
+    "invalid_submission": false
+  },
+  {
+    "episode_id": "dev-fx",
+    "policy": "reconcile",
+    "mode": "closed",
+    "steps": 4,
+    "inspection_steps": 3,
+    "duration_seconds": 0.163259,
+    "terminated": true,
+    "truncated": false,
+    "reason": "submitted",
+    "submitted_findings": [],
+    "tp": 0,
+    "fp": 0,
+    "fn": 1,
+    "precision": 0.0,
+    "recall": 0.0,
+    "f1": 0.0,
+    "reward": -1.0,
+    "invalid_submission": false
+  },
+  {
+    "episode_id": "dev-fx",
+    "policy": "mark_all",
+    "mode": "closed",
+    "steps": 2,
+    "inspection_steps": 1,
+    "duration_seconds": 0.135427,
+    "terminated": true,
+    "truncated": false,
+    "reason": "submitted",
+    "submitted_findings": [
+      {
+        "type": "duplicate_invoice",
+        "affected_ids": [
+          "R-row-001"
+        ],
+        "claimed_amount_minor": 3179,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-001"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "payment_allocation",
+        "affected_ids": [
+          "R-row-001"
+        ],
+        "claimed_amount_minor": 3179,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-001"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "fx_conversion",
+        "affected_ids": [
+          "R-row-001"
+        ],
+        "claimed_amount_minor": 3179,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-001"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "reporting_period",
+        "affected_ids": [
+          "R-row-001"
+        ],
+        "claimed_amount_minor": 3179,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-001"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "duplicate_invoice",
+        "affected_ids": [
+          "R-row-002"
+        ],
+        "claimed_amount_minor": 3179,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-002"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "payment_allocation",
+        "affected_ids": [
+          "R-row-002"
+        ],
+        "claimed_amount_minor": 3179,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-002"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "fx_conversion",
+        "affected_ids": [
+          "R-row-002"
+        ],
+        "claimed_amount_minor": 3179,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-002"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "reporting_period",
+        "affected_ids": [
+          "R-row-002"
+        ],
+        "claimed_amount_minor": 3179,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-002"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "duplicate_invoice",
+        "affected_ids": [
+          "R-row-003"
+        ],
+        "claimed_amount_minor": 3179,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-003"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "payment_allocation",
+        "affected_ids": [
+          "R-row-003"
+        ],
+        "claimed_amount_minor": 3179,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-003"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "fx_conversion",
+        "affected_ids": [
+          "R-row-003"
+        ],
+        "claimed_amount_minor": 3179,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-003"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "reporting_period",
+        "affected_ids": [
+          "R-row-003"
+        ],
+        "claimed_amount_minor": 3179,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-003"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "duplicate_invoice",
+        "affected_ids": [
+          "R-row-004"
+        ],
+        "claimed_amount_minor": 3179,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-004"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "payment_allocation",
+        "affected_ids": [
+          "R-row-004"
+        ],
+        "claimed_amount_minor": 3179,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-004"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "fx_conversion",
+        "affected_ids": [
+          "R-row-004"
+        ],
+        "claimed_amount_minor": 3179,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-004"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "reporting_period",
+        "affected_ids": [
+          "R-row-004"
+        ],
+        "claimed_amount_minor": 3179,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-004"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "duplicate_invoice",
+        "affected_ids": [
+          "R-row-005"
+        ],
+        "claimed_amount_minor": 5448,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-005"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "payment_allocation",
+        "affected_ids": [
+          "R-row-005"
+        ],
+        "claimed_amount_minor": 5448,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-005"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "fx_conversion",
+        "affected_ids": [
+          "R-row-005"
+        ],
+        "claimed_amount_minor": 5448,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-005"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "reporting_period",
+        "affected_ids": [
+          "R-row-005"
+        ],
+        "claimed_amount_minor": 5448,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-005"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "duplicate_invoice",
+        "affected_ids": [
+          "R-row-006"
+        ],
+        "claimed_amount_minor": 5448,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-006"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "payment_allocation",
+        "affected_ids": [
+          "R-row-006"
+        ],
+        "claimed_amount_minor": 5448,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-006"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "fx_conversion",
+        "affected_ids": [
+          "R-row-006"
+        ],
+        "claimed_amount_minor": 5448,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-006"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "reporting_period",
+        "affected_ids": [
+          "R-row-006"
+        ],
+        "claimed_amount_minor": 5448,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-006"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "duplicate_invoice",
+        "affected_ids": [
+          "R-row-007"
+        ],
+        "claimed_amount_minor": 1059,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-007"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "payment_allocation",
+        "affected_ids": [
+          "R-row-007"
+        ],
+        "claimed_amount_minor": 1059,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-007"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "fx_conversion",
+        "affected_ids": [
+          "R-row-007"
+        ],
+        "claimed_amount_minor": 1059,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-007"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "reporting_period",
+        "affected_ids": [
+          "R-row-007"
+        ],
+        "claimed_amount_minor": 1059,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-007"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "duplicate_invoice",
+        "affected_ids": [
+          "R-row-008"
+        ],
+        "claimed_amount_minor": 529,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-008"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "payment_allocation",
+        "affected_ids": [
+          "R-row-008"
+        ],
+        "claimed_amount_minor": 529,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-008"
+        ],
+        "explanation": "Broad accusation control."
+      }
+    ],
+    "tp": 0,
+    "fp": 30,
+    "fn": 1,
+    "precision": 0.0,
+    "recall": 0.0,
+    "f1": 0.0,
+    "reward": -1.0,
+    "invalid_submission": false
+  },
+  {
+    "episode_id": "dev-fx",
+    "policy": "oracle",
+    "mode": "closed",
+    "steps": 1,
+    "inspection_steps": 0,
+    "duration_seconds": 0.000691,
+    "terminated": true,
+    "truncated": false,
+    "reason": "submitted",
+    "tp": 1,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0,
+    "reward": 1.0,
+    "invalid_submission": false
+  },
+  {
+    "episode_id": "dev-period",
+    "policy": "random",
+    "mode": "closed",
+    "steps": 17,
+    "inspection_steps": 16,
+    "duration_seconds": 0.163438,
+    "terminated": true,
+    "truncated": false,
+    "reason": "submitted",
+    "submitted_findings": [],
+    "tp": 0,
+    "fp": 0,
+    "fn": 1,
+    "precision": 0.0,
+    "recall": 0.0,
+    "f1": 0.0,
+    "reward": -1.0,
+    "invalid_submission": false
+  },
+  {
+    "episode_id": "dev-period",
+    "policy": "reconcile",
+    "mode": "closed",
+    "steps": 4,
+    "inspection_steps": 3,
+    "duration_seconds": 0.172347,
+    "terminated": true,
+    "truncated": false,
+    "reason": "submitted",
+    "submitted_findings": [],
+    "tp": 0,
+    "fp": 0,
+    "fn": 1,
+    "precision": 0.0,
+    "recall": 0.0,
+    "f1": 0.0,
+    "reward": -1.0,
+    "invalid_submission": false
+  },
+  {
+    "episode_id": "dev-period",
+    "policy": "mark_all",
+    "mode": "closed",
+    "steps": 2,
+    "inspection_steps": 1,
+    "duration_seconds": 0.33618,
+    "terminated": true,
+    "truncated": false,
+    "reason": "submitted",
+    "submitted_findings": [
+      {
+        "type": "duplicate_invoice",
+        "affected_ids": [
+          "R-row-001"
+        ],
+        "claimed_amount_minor": 3089,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-001"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "payment_allocation",
+        "affected_ids": [
+          "R-row-001"
+        ],
+        "claimed_amount_minor": 3089,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-001"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "fx_conversion",
+        "affected_ids": [
+          "R-row-001"
+        ],
+        "claimed_amount_minor": 3089,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-001"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "reporting_period",
+        "affected_ids": [
+          "R-row-001"
+        ],
+        "claimed_amount_minor": 3089,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-001"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "duplicate_invoice",
+        "affected_ids": [
+          "R-row-002"
+        ],
+        "claimed_amount_minor": 3089,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-002"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "payment_allocation",
+        "affected_ids": [
+          "R-row-002"
+        ],
+        "claimed_amount_minor": 3089,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-002"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "fx_conversion",
+        "affected_ids": [
+          "R-row-002"
+        ],
+        "claimed_amount_minor": 3089,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-002"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "reporting_period",
+        "affected_ids": [
+          "R-row-002"
+        ],
+        "claimed_amount_minor": 3089,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-002"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "duplicate_invoice",
+        "affected_ids": [
+          "R-row-003"
+        ],
+        "claimed_amount_minor": 3089,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-003"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "payment_allocation",
+        "affected_ids": [
+          "R-row-003"
+        ],
+        "claimed_amount_minor": 3089,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-003"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "fx_conversion",
+        "affected_ids": [
+          "R-row-003"
+        ],
+        "claimed_amount_minor": 3089,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-003"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "reporting_period",
+        "affected_ids": [
+          "R-row-003"
+        ],
+        "claimed_amount_minor": 3089,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-003"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "duplicate_invoice",
+        "affected_ids": [
+          "R-row-004"
+        ],
+        "claimed_amount_minor": 3089,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-004"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "payment_allocation",
+        "affected_ids": [
+          "R-row-004"
+        ],
+        "claimed_amount_minor": 3089,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-004"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "fx_conversion",
+        "affected_ids": [
+          "R-row-004"
+        ],
+        "claimed_amount_minor": 3089,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-004"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "reporting_period",
+        "affected_ids": [
+          "R-row-004"
+        ],
+        "claimed_amount_minor": 3089,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-004"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "duplicate_invoice",
+        "affected_ids": [
+          "R-row-005"
+        ],
+        "claimed_amount_minor": 4608,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-005"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "payment_allocation",
+        "affected_ids": [
+          "R-row-005"
+        ],
+        "claimed_amount_minor": 4608,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-005"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "fx_conversion",
+        "affected_ids": [
+          "R-row-005"
+        ],
+        "claimed_amount_minor": 4608,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-005"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "reporting_period",
+        "affected_ids": [
+          "R-row-005"
+        ],
+        "claimed_amount_minor": 4608,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-005"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "duplicate_invoice",
+        "affected_ids": [
+          "R-row-006"
+        ],
+        "claimed_amount_minor": 4608,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-006"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "payment_allocation",
+        "affected_ids": [
+          "R-row-006"
+        ],
+        "claimed_amount_minor": 4608,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-006"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "fx_conversion",
+        "affected_ids": [
+          "R-row-006"
+        ],
+        "claimed_amount_minor": 4608,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-006"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "reporting_period",
+        "affected_ids": [
+          "R-row-006"
+        ],
+        "claimed_amount_minor": 4608,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-006"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "duplicate_invoice",
+        "affected_ids": [
+          "R-row-007"
+        ],
+        "claimed_amount_minor": 1029,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-007"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "payment_allocation",
+        "affected_ids": [
+          "R-row-007"
+        ],
+        "claimed_amount_minor": 1029,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-007"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "fx_conversion",
+        "affected_ids": [
+          "R-row-007"
+        ],
+        "claimed_amount_minor": 1029,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-007"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "reporting_period",
+        "affected_ids": [
+          "R-row-007"
+        ],
+        "claimed_amount_minor": 1029,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-007"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "duplicate_invoice",
+        "affected_ids": [
+          "R-row-008"
+        ],
+        "claimed_amount_minor": 514,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-008"
+        ],
+        "explanation": "Broad accusation control."
+      },
+      {
+        "type": "payment_allocation",
+        "affected_ids": [
+          "R-row-008"
+        ],
+        "claimed_amount_minor": 514,
+        "currency": "USD",
+        "evidence_ids": [
+          "R-row-008"
+        ],
+        "explanation": "Broad accusation control."
+      }
+    ],
+    "tp": 0,
+    "fp": 30,
+    "fn": 1,
+    "precision": 0.0,
+    "recall": 0.0,
+    "f1": 0.0,
+    "reward": -1.0,
+    "invalid_submission": false
+  },
+  {
+    "episode_id": "dev-period",
+    "policy": "oracle",
+    "mode": "closed",
+    "steps": 1,
+    "inspection_steps": 0,
+    "duration_seconds": 0.000533,
+    "terminated": true,
+    "truncated": false,
+    "reason": "submitted",
+    "tp": 1,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0,
+    "reward": 1.0,
+    "invalid_submission": false
+  }
+]
