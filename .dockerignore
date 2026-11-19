@@ -1,0 +1,7 @@
+**
+!audit_sim/
+!audit_sim/*.py
+audit_sim/__pycache__/
+!tests/
+!tests/*.py
+tests/__pycache__/
