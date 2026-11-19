@@ -19,7 +19,7 @@ from __future__ import annotations
 import datetime as _dt
 
 from . import InjectionContext, InjectionError, register
-from ._common import (apply_rescale, correct_key_amount, fx_issue, has_utc_edge,
+from ._common import (apply_rescale, candidates, correct_key_amount, fx_issue, has_utc_edge,
                       not_reserved_for_others, pick, rescaled, sole_entry, typo_rates)
 from ..history import Invoice, Payment
 from ..timeutil import utc_date
@@ -87,7 +87,7 @@ def inject_fx_conversion(ctx: InjectionContext, count: int) -> list:
         chosen = None
         for k in range(len(VARIANTS)):
             variant = VARIANTS[(start + i + k) % len(VARIANTS)]
-            docs = [d for d in ctx.candidates() if eligible(h, d)]
+            docs = [d for d in candidates(ctx) if eligible(h, d)]
             feasible = {}
             for d in docs:
                 if plan_for(h, d, variant) is not None:

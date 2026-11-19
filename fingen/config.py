@@ -159,6 +159,12 @@ def resolve_config(obj: dict) -> dict:
         raise ConfigError(f"total issues {n_issues} exceeds {MAX_ISSUES}")
     if n_issues > n_inv // 3:
         raise ConfigError(f"too many issues ({n_issues}) for {n_inv} invoices (max invoices//3)")
+    # duplicate_plus_period needs two regular same-customer invoices per combo on top of
+    # the distractors; below 6k+1 invoices the injector can run out (measured over seeds).
+    if n_inv < 6 * combos["duplicate_plus_period"] + 1:
+        raise ConfigError(
+            f"duplicate_plus_period={combos['duplicate_plus_period']} needs at least "
+            f"{6 * combos['duplicate_plus_period'] + 1} invoices (got {n_inv})")
     if distractors["refunds"] > distractors["advances"]:
         raise ConfigError("distractors.refunds must not exceed distractors.advances")
     if distractors["split_payments"] > n_inv // 4 or distractors["repeated_amounts"] > n_inv // 4:
