@@ -1,0 +1,43 @@
+{
+  "accounts": {
+    "ar": "1258.12",
+    "bank": "1068.10",
+    "expense": [
+      "6061.16",
+      "6332.26",
+      "7332.29",
+      "7460.14",
+      "7798.08"
+    ],
+    "revenue": "4038.30",
+    "unapplied": "2285.29"
+  },
+  "allocation": {
+    "rounding_remainder": "last_ref",
+    "rule": "per_invoice_refs",
+    "unapplied_account_role": "unapplied"
+  },
+  "base_currency": "KZT",
+  "episode_id": "EP-VVMQTE0KZG5B",
+  "fx": {
+    "date_rule": "event_local_date",
+    "rate_direction": "target_per_source",
+    "target_currency": "KZT"
+  },
+  "period": {
+    "end": "2026-07-01T00:00:00+05:00",
+    "end_exclusive": true,
+    "start": "2026-05-01T00:00:00+05:00",
+    "timezone": "Asia/Almaty",
+    "utc_offset": "+05:00"
+  },
+  "recognition": {
+    "invoice": "issued_at_local_date",
+    "payment": "timestamp_local_date"
+  },
+  "rounding": {
+    "mode": "half_up",
+    "scope": "per_conversion"
+  },
+  "schema_version": "1.0"
+}

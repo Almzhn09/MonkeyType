@@ -11,7 +11,8 @@ Stages (each printed as `[stage] PASS/FAIL/SKIP (Xs)`):
 1. `tests` - `unittest` discovery in `tests/`.
 2. `repro` - `fingen selfcheck` if available, else generate twice and compare bytes.
 3. `verify-episodes` - `fincheck verify --all episodes` if `episodes/public` exists.
-4. `fresh-gen` - generate each `configs/examples/*.json`, verify with fincheck;
+4. `fresh-seed` - builds an unseen seed with a new combination, verifies, runs `fingen selfcheck`.
+5. `fresh-gen` - generate each `configs/examples/*.json`, verify with fincheck;
    prints per-episode generation time and peak RSS against the limits
    (2 CPU, 4 GB, 60 s/episode).
 5. `env` - runs `python -m $FINCASE_ENV_CHECK` (default `fincase_env.check`) if

@@ -1,0 +1,38 @@
+{
+  "base_currency": "KWD",
+  "company": {
+    "name": "Lunveset Transit JSC"
+  },
+  "counts": {
+    "documents": 165,
+    "entries": 668,
+    "fx_rates": 222,
+    "invoices": 95,
+    "ledger_rows": 1481,
+    "payments": 70
+  },
+  "currency_exponents": {
+    "EUR": 2,
+    "KWD": 3,
+    "USD": 2
+  },
+  "episode_id": "EP-BQV9YGYXTTSE",
+  "extract_end": "2026-12-11T00:00:00+04:00",
+  "extract_start": "2026-08-22T00:00:00+04:00",
+  "files": {
+    "fx.csv": "927b1e2f7368b1e697ed826e50b81cd5089197e27d0677e1ab3127add947b06b",
+    "invoices.jsonl": "a799d5b4e3f467766e81bf96ef844c101202279ba2fdfadc1d9428a77e08e5a1",
+    "ledger.csv": "6c2e33704b6c49694f2f2a503814bca19a996128231841edd5ab4c07c8952536",
+    "payments.jsonl": "c6f246de407c9e3336da4709421c343d6956ade8f4ee505712a2d6a22707a864",
+    "policy.json": "1a8b47c7ff65150c6ba4e4c6168a1ec7c6bfd9fcae55338b0f4fa40d6b7bcbb7"
+  },
+  "period_end": "2026-12-01T00:00:00+04:00",
+  "period_start": "2026-09-01T00:00:00+04:00",
+  "rounding": {
+    "mode": "half_even",
+    "scope": "per_conversion"
+  },
+  "schema_version": "1.0",
+  "timezone": "Asia/Dubai",
+  "utc_offset": "+04:00"
+}

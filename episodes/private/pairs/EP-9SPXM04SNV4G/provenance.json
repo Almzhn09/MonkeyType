@@ -1,0 +1,301 @@
+{
+  "baseline_sha256": {
+    "fx.csv": "962e325ab26ce0e9849d03e85323ac0734bee0a4bf5f73a46c63171efa82fa26",
+    "invoices.jsonl": "334fac42560f901dd74725be287399407bf91d6ed9251cfee5d9f5388e09af75",
+    "ledger.csv": "22443a2c3a7ecbbe099f65d403cef4d9fe38c6a1d6e62e35d97eb3cf3a918c58",
+    "manifest.json": "965de108fbc7a1047d2058e56ced920b26a03518f1f816ac04111df27b9d6770",
+    "payments.jsonl": "37228bb16ecf3493ba76fad0a8ce9e3bf06966f4d27f4dcaf7808b69fdc16074",
+    "policy.json": "3295dbff9b855d1fb5ddf15394194952bc66cd1762d91520bccc1a2eacc9b5a2"
+  },
+  "changes": [
+    {
+      "after": {
+        "account": "129197",
+        "credit_minor": 0,
+        "currency": "EUR",
+        "debit_minor": 302448,
+        "entity_id": "CL_072ZW0N",
+        "entry_id": "JRN_0X63CNP08",
+        "invoice_id": "SI_PCPWV",
+        "payment_id": null,
+        "row_id": "JL_NBDX0P",
+        "timestamp": "2026-08-01T12:59:40+00:00"
+      },
+      "before": {
+        "account": "129197",
+        "credit_minor": 0,
+        "currency": "EUR",
+        "debit_minor": 302448,
+        "entity_id": "CL_072ZW0N",
+        "entry_id": "JRN_0X63CNP08",
+        "invoice_id": "SI_PCPWV",
+        "payment_id": null,
+        "row_id": "JL_NBDX0P",
+        "timestamp": "2026-07-26T09:54:56+00:00"
+      },
+      "cause": "wrong_period[late_posting]: in-period invoice issued 2026-07-26 posted after period_end on 2026-08-01",
+      "issue_id": "FND_ZV39EK",
+      "op": "modify_row",
+      "order": 0,
+      "target": "JL_NBDX0P",
+      "type": "wrong_period"
+    },
+    {
+      "after": {
+        "account": "411808",
+        "credit_minor": 302448,
+        "currency": "EUR",
+        "debit_minor": 0,
+        "entity_id": "CL_072ZW0N",
+        "entry_id": "JRN_0X63CNP08",
+        "invoice_id": "SI_PCPWV",
+        "payment_id": null,
+        "row_id": "JL_2D38KX",
+        "timestamp": "2026-08-01T12:59:40+00:00"
+      },
+      "before": {
+        "account": "411808",
+        "credit_minor": 302448,
+        "currency": "EUR",
+        "debit_minor": 0,
+        "entity_id": "CL_072ZW0N",
+        "entry_id": "JRN_0X63CNP08",
+        "invoice_id": "SI_PCPWV",
+        "payment_id": null,
+        "row_id": "JL_2D38KX",
+        "timestamp": "2026-07-26T09:54:56+00:00"
+      },
+      "cause": "wrong_period[late_posting]: in-period invoice issued 2026-07-26 posted after period_end on 2026-08-01",
+      "issue_id": "FND_ZV39EK",
+      "op": "modify_row",
+      "order": 1,
+      "target": "JL_2D38KX",
+      "type": "wrong_period"
+    },
+    {
+      "after": {
+        "account": "129197",
+        "credit_minor": 0,
+        "currency": "EUR",
+        "debit_minor": 22500,
+        "entity_id": "CL_GGQG5GF",
+        "entry_id": "JRN_XKAAW1961",
+        "invoice_id": "SI_4QZ6Z",
+        "payment_id": null,
+        "row_id": "JL_VHCDBQ",
+        "timestamp": "2026-05-04T10:47:20+00:00"
+      },
+      "before": {
+        "account": "129197",
+        "credit_minor": 0,
+        "currency": "EUR",
+        "debit_minor": 22500,
+        "entity_id": "CL_GGQG5GF",
+        "entry_id": "JRN_XKAAW1961",
+        "invoice_id": "SI_4QZ6Z",
+        "payment_id": null,
+        "row_id": "JL_VHCDBQ",
+        "timestamp": "2026-04-30T01:13:15+00:00"
+      },
+      "cause": "wrong_period[early_posting]: out-of-period invoice issued 2026-04-30 posted inside the period on 2026-05-04",
+      "issue_id": "FND_1MY480",
+      "op": "modify_row",
+      "order": 2,
+      "target": "JL_VHCDBQ",
+      "type": "wrong_period"
+    },
+    {
+      "after": {
+        "account": "411808",
+        "credit_minor": 22500,
+        "currency": "EUR",
+        "debit_minor": 0,
+        "entity_id": "CL_GGQG5GF",
+        "entry_id": "JRN_XKAAW1961",
+        "invoice_id": "SI_4QZ6Z",
+        "payment_id": null,
+        "row_id": "JL_SJD8FR",
+        "timestamp": "2026-05-04T10:47:20+00:00"
+      },
+      "before": {
+        "account": "411808",
+        "credit_minor": 22500,
+        "currency": "EUR",
+        "debit_minor": 0,
+        "entity_id": "CL_GGQG5GF",
+        "entry_id": "JRN_XKAAW1961",
+        "invoice_id": "SI_4QZ6Z",
+        "payment_id": null,
+        "row_id": "JL_SJD8FR",
+        "timestamp": "2026-04-30T01:13:15+00:00"
+      },
+      "cause": "wrong_period[early_posting]: out-of-period invoice issued 2026-04-30 posted inside the period on 2026-05-04",
+      "issue_id": "FND_1MY480",
+      "op": "modify_row",
+      "order": 3,
+      "target": "JL_SJD8FR",
+      "type": "wrong_period"
+    }
+  ],
+  "config": {
+    "base_currency": "EUR",
+    "combos": {
+      "duplicate_plus_period": 0,
+      "fx_partial_payment_boundary": 0
+    },
+    "config_version": "1",
+    "distractors": {
+      "advances": 1,
+      "refunds": 1,
+      "repeated_amounts": 2,
+      "split_payments": 2,
+      "utc_boundary": 2
+    },
+    "errors": {
+      "duplicate_invoice": 0,
+      "fx_conversion": 0,
+      "payment_allocation": 0,
+      "wrong_period": 2
+    },
+    "foreign_currencies": [
+      "USD"
+    ],
+    "period": {
+      "months": 3,
+      "start_month": "2026-05"
+    },
+    "rounding_mode": "half_up",
+    "schema_version": "1.0",
+    "seed": 1104,
+    "size": {
+      "background_entries": 200,
+      "invoices": 60
+    },
+    "split": "train",
+    "timezone": "Etc/UTC",
+    "transform": {
+      "kind": "pair",
+      "permute": true,
+      "rename": true,
+      "seed": 170693252
+    }
+  },
+  "config_sha256": "93f01e7ebfe0b1efa0ab8af84f4c31dd3fc8d442c5a2216d829a408a17b76eb1",
+  "distractors": [
+    {
+      "currency": "EUR",
+      "doc_ids": [
+        "DK_BXBGN0TZ3"
+      ],
+      "kind": "advances",
+      "subtype": "prepayment",
+      "unapplied_minor": 2000000
+    },
+    {
+      "doc_ids": [
+        "DK_JA6Z1P0G8"
+      ],
+      "invoice_ids": [
+        "SI_P473D",
+        "SI_94QM7"
+      ],
+      "kind": "multi_invoice_payment"
+    },
+    {
+      "doc_ids": [
+        "DK_YQMV5D28Y"
+      ],
+      "invoice_ids": [
+        "SI_X1GYZ",
+        "SI_0BG1B"
+      ],
+      "kind": "multi_invoice_payment"
+    },
+    {
+      "doc_ids": [
+        "DK_1GWX9WWWV"
+      ],
+      "invoice_ids": [
+        "SI_4NQN0",
+        "SI_JY1KD"
+      ],
+      "kind": "multi_invoice_payment"
+    },
+    {
+      "amount_minor": -1680000,
+      "currency": "EUR",
+      "doc_ids": [
+        "DK_BVQ8SMZYH",
+        "DK_BXBGN0TZ3"
+      ],
+      "kind": "refunds"
+    },
+    {
+      "currency": "EUR",
+      "doc_ids": [
+        "DK_HEHHBK33N",
+        "DK_R9YB1P47R"
+      ],
+      "kind": "repeated_amounts",
+      "same_entity": false,
+      "total_minor": 28390
+    },
+    {
+      "currency": "USD",
+      "doc_ids": [
+        "DK_2ES0SNNTF",
+        "DK_YX06HGBJ5"
+      ],
+      "kind": "repeated_amounts",
+      "same_entity": true,
+      "total_minor": 22360
+    },
+    {
+      "doc_ids": [
+        "DK_1ERTJ6HX3",
+        "DK_T5DHN4P2P",
+        "DK_WJHAFG34V"
+      ],
+      "invoice_id": "SI_NHKM8",
+      "kind": "split_payments"
+    },
+    {
+      "doc_ids": [
+        "DK_HDVQZ0Z37",
+        "DK_ZAY3PG42S",
+        "DK_E3PQ1WZQ8",
+        "DK_SQ398MDT8"
+      ],
+      "invoice_id": "SI_JH255",
+      "kind": "split_payments"
+    },
+    {
+      "boundary": "period_end",
+      "doc_ids": [
+        "DK_EVRQZMBPA"
+      ],
+      "doc_timestamp": "2026-07-31T23:45:46+00:00",
+      "kind": "utc_boundary",
+      "local_date": "2026-07-31",
+      "local_in_period": true,
+      "note": "company offset is +00:00; event placed next to the boundary",
+      "utc_date": "2026-07-31"
+    },
+    {
+      "boundary": "period_start",
+      "doc_ids": [
+        "DK_466Y6MFZY"
+      ],
+      "doc_timestamp": "2026-05-01T00:19:30+00:00",
+      "kind": "utc_boundary",
+      "local_date": "2026-05-01",
+      "local_in_period": true,
+      "note": "company offset is +00:00; event placed next to the boundary",
+      "utc_date": "2026-05-01"
+    }
+  ],
+  "episode_id": "EP-9SPXM04SNV4G",
+  "generator_version": "fingen-0.1.0",
+  "schema_version": "1.0",
+  "seed": 1104
+}

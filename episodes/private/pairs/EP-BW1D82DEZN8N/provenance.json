@@ -1,0 +1,292 @@
+{
+  "baseline_sha256": {
+    "fx.csv": "9539a39dad44c0f46ce03e4f6440a3889b2ae538851f611779e6b2d652586a31",
+    "invoices.jsonl": "2ce4950bd792b9294ba3ff998969faed18377c0eaed97b5f2f1af4ff091d4996",
+    "ledger.csv": "c722c96a552059bb6bc4a1c9ebfcdbcaef6fa157ad26adc4d0897c73569d6f2b",
+    "manifest.json": "e1737f94034e55e1959a62c4c59fb3fc6486242545d174c4a9e3d7470385d364",
+    "payments.jsonl": "770184430d919448076e951ef49c3ba0b1bcf31c237a1db61bc74d916c2aa1b7",
+    "policy.json": "cc49c6b1acef84a51db1dc6b0b17766636eefb7ea94124e5a9c8e2a73ee516d8"
+  },
+  "changes": [
+    {
+      "after": {
+        "account": "101198",
+        "credit_minor": 0,
+        "currency": "KZT",
+        "debit_minor": 2416729,
+        "entity_id": "CS-RBSE",
+        "entry_id": "VCH-SJ7TWG",
+        "invoice_id": null,
+        "payment_id": "CR-8JG7JRSG",
+        "row_id": "LN-9PHY89QG",
+        "timestamp": "2026-10-01T02:59:54+05:00"
+      },
+      "before": {
+        "account": "101198",
+        "credit_minor": 0,
+        "currency": "KZT",
+        "debit_minor": 2414090,
+        "entity_id": "CS-RBSE",
+        "entry_id": "VCH-SJ7TWG",
+        "invoice_id": null,
+        "payment_id": "CR-8JG7JRSG",
+        "row_id": "LN-9PHY89QG",
+        "timestamp": "2026-10-01T02:59:54+05:00"
+      },
+      "cause": "fx_conversion[utc_date]: payment DK-5YTRDQKBE6 converted at 503.80: rate of the UTC date 2026-09-30 (503.80) used instead of local date 2026-10-01 (503.25)",
+      "issue_id": "ISX-1NCQP8",
+      "op": "modify_row",
+      "order": 0,
+      "target": "LN-9PHY89QG",
+      "type": "fx_conversion"
+    },
+    {
+      "after": {
+        "account": "120670",
+        "credit_minor": 2416729,
+        "currency": "KZT",
+        "debit_minor": 0,
+        "entity_id": "CS-RBSE",
+        "entry_id": "VCH-SJ7TWG",
+        "invoice_id": "IV-H794RC",
+        "payment_id": "CR-8JG7JRSG",
+        "row_id": "LN-WNTV5E02",
+        "timestamp": "2026-10-01T02:59:54+05:00"
+      },
+      "before": {
+        "account": "120670",
+        "credit_minor": 2414090,
+        "currency": "KZT",
+        "debit_minor": 0,
+        "entity_id": "CS-RBSE",
+        "entry_id": "VCH-SJ7TWG",
+        "invoice_id": "IV-H794RC",
+        "payment_id": "CR-8JG7JRSG",
+        "row_id": "LN-WNTV5E02",
+        "timestamp": "2026-10-01T02:59:54+05:00"
+      },
+      "cause": "fx_conversion[utc_date]: payment DK-5YTRDQKBE6 converted at 503.80: rate of the UTC date 2026-09-30 (503.80) used instead of local date 2026-10-01 (503.25)",
+      "issue_id": "ISX-1NCQP8",
+      "op": "modify_row",
+      "order": 1,
+      "target": "LN-WNTV5E02",
+      "type": "fx_conversion"
+    },
+    {
+      "after": {
+        "account": "120670",
+        "credit_minor": 0,
+        "currency": "KZT",
+        "debit_minor": 38084040,
+        "entity_id": "CS-RBSE",
+        "entry_id": "VCH-5Z3RGQ",
+        "invoice_id": "IV-X8D8AP",
+        "payment_id": null,
+        "row_id": "LN-1F5WHS2Y",
+        "timestamp": "2026-11-14T11:24:30+05:00"
+      },
+      "before": {
+        "account": "120670",
+        "credit_minor": 0,
+        "currency": "KZT",
+        "debit_minor": 38106594,
+        "entity_id": "CS-RBSE",
+        "entry_id": "VCH-5Z3RGQ",
+        "invoice_id": "IV-X8D8AP",
+        "payment_id": null,
+        "row_id": "LN-1F5WHS2Y",
+        "timestamp": "2026-11-14T11:24:30+05:00"
+      },
+      "cause": "fx_conversion[adjacent_day]: invoice DK-J8FXTK3P3V converted at 472.80: rate of previous day 2026-11-13 (472.80) used instead of 2026-11-14 (473.08)",
+      "issue_id": "ISX-9865MC",
+      "op": "modify_row",
+      "order": 2,
+      "target": "LN-1F5WHS2Y",
+      "type": "fx_conversion"
+    },
+    {
+      "after": {
+        "account": "410108",
+        "credit_minor": 38084040,
+        "currency": "KZT",
+        "debit_minor": 0,
+        "entity_id": "CS-RBSE",
+        "entry_id": "VCH-5Z3RGQ",
+        "invoice_id": "IV-X8D8AP",
+        "payment_id": null,
+        "row_id": "LN-4PY6BDBN",
+        "timestamp": "2026-11-14T11:24:30+05:00"
+      },
+      "before": {
+        "account": "410108",
+        "credit_minor": 38106594,
+        "currency": "KZT",
+        "debit_minor": 0,
+        "entity_id": "CS-RBSE",
+        "entry_id": "VCH-5Z3RGQ",
+        "invoice_id": "IV-X8D8AP",
+        "payment_id": null,
+        "row_id": "LN-4PY6BDBN",
+        "timestamp": "2026-11-14T11:24:30+05:00"
+      },
+      "cause": "fx_conversion[adjacent_day]: invoice DK-J8FXTK3P3V converted at 472.80: rate of previous day 2026-11-13 (472.80) used instead of 2026-11-14 (473.08)",
+      "issue_id": "ISX-9865MC",
+      "op": "modify_row",
+      "order": 3,
+      "target": "LN-4PY6BDBN",
+      "type": "fx_conversion"
+    }
+  ],
+  "config": {
+    "base_currency": "KZT",
+    "combos": {
+      "duplicate_plus_period": 0,
+      "fx_partial_payment_boundary": 0
+    },
+    "config_version": "1",
+    "distractors": {
+      "advances": 1,
+      "refunds": 1,
+      "repeated_amounts": 2,
+      "split_payments": 2,
+      "utc_boundary": 2
+    },
+    "errors": {
+      "duplicate_invoice": 0,
+      "fx_conversion": 2,
+      "payment_allocation": 0,
+      "wrong_period": 0
+    },
+    "foreign_currencies": [
+      "EUR",
+      "USD"
+    ],
+    "period": {
+      "months": 2,
+      "start_month": "2026-10"
+    },
+    "rounding_mode": "half_even",
+    "schema_version": "1.0",
+    "seed": 2103,
+    "size": {
+      "background_entries": 140,
+      "invoices": 48
+    },
+    "split": "dev",
+    "timezone": "Asia/Almaty",
+    "transform": {
+      "kind": "pair",
+      "permute": true,
+      "rename": true,
+      "seed": 457826616
+    }
+  },
+  "config_sha256": "872a7f6e5b4006d501df2354c75cc2151537e2df73f017d3222821555bcb24c0",
+  "distractors": [
+    {
+      "currency": "USD",
+      "doc_ids": [
+        "DK-M1Y5JSZ29F"
+      ],
+      "kind": "advances",
+      "subtype": "prepayment",
+      "unapplied_minor": 1180000
+    },
+    {
+      "doc_ids": [
+        "DK-PBKYX145AQ"
+      ],
+      "invoice_ids": [
+        "IV-G8XRAN",
+        "IV-PDNKAM"
+      ],
+      "kind": "multi_invoice_payment"
+    },
+    {
+      "doc_ids": [
+        "DK-HE7QXXS90G"
+      ],
+      "invoice_ids": [
+        "IV-XXN4J5",
+        "IV-XPCG9V"
+      ],
+      "kind": "multi_invoice_payment"
+    },
+    {
+      "amount_minor": -885000,
+      "currency": "USD",
+      "doc_ids": [
+        "DK-DS87VXX0DJ",
+        "DK-M1Y5JSZ29F"
+      ],
+      "kind": "refunds"
+    },
+    {
+      "currency": "KZT",
+      "doc_ids": [
+        "DK-RV67V9N3MF",
+        "DK-85DQR7JS48"
+      ],
+      "kind": "repeated_amounts",
+      "same_entity": true,
+      "total_minor": 35570000
+    },
+    {
+      "currency": "KZT",
+      "doc_ids": [
+        "DK-0QTW4A1DS8",
+        "DK-11CSTT2YST"
+      ],
+      "kind": "repeated_amounts",
+      "same_entity": true,
+      "total_minor": 25000000
+    },
+    {
+      "doc_ids": [
+        "DK-ECNHSTQKJ0",
+        "DK-5TT6GTK45K",
+        "DK-FGNSX9XWNX"
+      ],
+      "invoice_id": "IV-H2GX8K",
+      "kind": "split_payments"
+    },
+    {
+      "doc_ids": [
+        "DK-JAQW8H8EVR",
+        "DK-A1V3B52KYN",
+        "DK-X5J9J31D49",
+        "DK-FVT9VW9BYB"
+      ],
+      "invoice_id": "IV-6C1F3B",
+      "kind": "split_payments"
+    },
+    {
+      "boundary": "period_start",
+      "doc_ids": [
+        "DK-PHC8DMP56R"
+      ],
+      "doc_timestamp": "2026-09-30T23:29:07+00:00",
+      "kind": "utc_boundary",
+      "local_date": "2026-10-01",
+      "local_in_period": true,
+      "note": "posted on the local date; UTC date differs",
+      "utc_date": "2026-09-30"
+    },
+    {
+      "boundary": "period_end",
+      "doc_ids": [
+        "DK-B7HXFKWZZZ"
+      ],
+      "doc_timestamp": "2026-11-30T20:31:13+00:00",
+      "kind": "utc_boundary",
+      "local_date": "2026-12-01",
+      "local_in_period": false,
+      "note": "posted on the local date; UTC date differs",
+      "utc_date": "2026-11-30"
+    }
+  ],
+  "episode_id": "EP-BW1D82DEZN8N",
+  "generator_version": "fingen-0.1.0",
+  "schema_version": "1.0",
+  "seed": 2103
+}

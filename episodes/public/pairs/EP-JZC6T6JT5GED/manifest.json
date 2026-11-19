@@ -1,0 +1,39 @@
+{
+  "base_currency": "KWD",
+  "company": {
+    "name": "Lendorar Technics K.K."
+  },
+  "counts": {
+    "documents": 79,
+    "entries": 179,
+    "fx_rates": 150,
+    "invoices": 44,
+    "ledger_rows": 387,
+    "payments": 35
+  },
+  "currency_exponents": {
+    "EUR": 2,
+    "GBP": 2,
+    "KWD": 3,
+    "USD": 2
+  },
+  "episode_id": "EP-JZC6T6JT5GED",
+  "extract_end": "2026-12-11T00:00:00+04:00",
+  "extract_start": "2026-10-22T00:00:00+04:00",
+  "files": {
+    "fx.csv": "c4ac372c2a587a85c7e9d7bc961b9d80e778a281fbd7f70fdf17c46cc226cb4d",
+    "invoices.jsonl": "9f0cc992c885d725b941a41ffe4bb2bf7f253a7b141db9ba396434beb24d5d21",
+    "ledger.csv": "9d724e77d6a324bdc76d8c1ca49207e0a1da22ed72af4e5ed20aa7c901fceab8",
+    "payments.jsonl": "010a7ed0b38e84341562d3d1c926deb0ea1c1a9c0b843fd83e854a75cbcf2d87",
+    "policy.json": "6e63d6858aa580c3b4510d8c280d75243acd23709e6b37493ec7df001f07a75a"
+  },
+  "period_end": "2026-12-01T00:00:00+04:00",
+  "period_start": "2026-11-01T00:00:00+04:00",
+  "rounding": {
+    "mode": "half_up",
+    "scope": "per_conversion"
+  },
+  "schema_version": "1.0",
+  "timezone": "Asia/Dubai",
+  "utc_offset": "+04:00"
+}

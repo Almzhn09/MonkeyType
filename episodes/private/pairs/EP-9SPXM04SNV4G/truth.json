@@ -1,0 +1,47 @@
+{
+  "base_currency": "EUR",
+  "episode_id": "EP-9SPXM04SNV4G",
+  "issues": [
+    {
+      "affected_ids": [
+        "DK_YK0CEAJ7F"
+      ],
+      "currency": "EUR",
+      "evidence_sets": [
+        [
+          "DK_YK0CEAJ7F",
+          "JL_VHCDBQ"
+        ],
+        [
+          "DK_YK0CEAJ7F",
+          "JL_SJD8FR"
+        ]
+      ],
+      "expected_amount_minor": 22500,
+      "issue_id": "FND_1MY480",
+      "tolerance_minor": 0,
+      "type": "wrong_period"
+    },
+    {
+      "affected_ids": [
+        "DK_16187ZXM9"
+      ],
+      "currency": "EUR",
+      "evidence_sets": [
+        [
+          "DK_16187ZXM9",
+          "JL_NBDX0P"
+        ],
+        [
+          "DK_16187ZXM9",
+          "JL_2D38KX"
+        ]
+      ],
+      "expected_amount_minor": 302448,
+      "issue_id": "FND_ZV39EK",
+      "tolerance_minor": 0,
+      "type": "wrong_period"
+    }
+  ],
+  "schema_version": "1.0"
+}

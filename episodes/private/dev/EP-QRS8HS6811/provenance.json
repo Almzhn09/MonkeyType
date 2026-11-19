@@ -1,0 +1,87 @@
+{
+  "baseline_sha256": {
+    "fx.csv": "2a4ca03532c350568d86d12d0d3ec59d0da974188bb499a9e379f39c18b337b0",
+    "invoices.jsonl": "ffb293e36ddbcc4a31cf919f45634d785b6d4ff436469e3f88b794367219909a",
+    "ledger.csv": "460edf374e989cca8a3ab574f2e3f3584d440dbdbe31a76fdde838abd7e65401",
+    "manifest.json": "475e8258debbe5ac3f3b9284f65b4d06e2af9156205cf19410727eadfc7afc3a",
+    "payments.jsonl": "2e38669180ffed8765ea2dcf621c9ca3f8026d2208344c787ec3338a418095d8",
+    "policy.json": "051c10be05127decf299ec31f5834058b7ee2c2968cfe77de6dc68ef10233992"
+  },
+  "changes": [],
+  "config": {
+    "base_currency": "GBP",
+    "combos": {
+      "duplicate_plus_period": 0,
+      "fx_partial_payment_boundary": 0
+    },
+    "config_version": "1",
+    "distractors": {
+      "advances": 0,
+      "refunds": 0,
+      "repeated_amounts": 1,
+      "split_payments": 1,
+      "utc_boundary": 1
+    },
+    "errors": {
+      "duplicate_invoice": 0,
+      "fx_conversion": 0,
+      "payment_allocation": 0,
+      "wrong_period": 0
+    },
+    "foreign_currencies": [
+      "EUR"
+    ],
+    "period": {
+      "months": 1,
+      "start_month": "2026-04"
+    },
+    "rounding_mode": "half_even",
+    "schema_version": "1.0",
+    "seed": 2105,
+    "size": {
+      "background_entries": 0,
+      "invoices": 14
+    },
+    "split": "dev",
+    "timezone": "Asia/Kolkata",
+    "transform": null
+  },
+  "config_sha256": "21a31fd8d673c6511b97162da9ab60081dfd908dab686464d2a8d125f6113aaf",
+  "distractors": [
+    {
+      "currency": "EUR",
+      "doc_ids": [
+        "DC-CS828K0N",
+        "DC-JQSJ9MN5"
+      ],
+      "kind": "repeated_amounts",
+      "same_entity": true,
+      "total_minor": 4608
+    },
+    {
+      "doc_ids": [
+        "DC-JWD4SJ4P",
+        "DC-1EJ7GYC7",
+        "DC-X430CEH5"
+      ],
+      "invoice_id": "SI-5ZY06",
+      "kind": "split_payments"
+    },
+    {
+      "boundary": "period_end",
+      "doc_ids": [
+        "DC-N9VPVDB0"
+      ],
+      "doc_timestamp": "2026-04-30T21:58:15+00:00",
+      "kind": "utc_boundary",
+      "local_date": "2026-05-01",
+      "local_in_period": false,
+      "note": "posted on the local date; UTC date differs",
+      "utc_date": "2026-04-30"
+    }
+  ],
+  "episode_id": "EP-QRS8HS6811",
+  "generator_version": "fingen-0.1.0",
+  "schema_version": "1.0",
+  "seed": 2105
+}

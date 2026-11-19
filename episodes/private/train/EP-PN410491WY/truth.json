@@ -1,0 +1,29 @@
+{
+  "base_currency": "KZT",
+  "episode_id": "EP-PN410491WY",
+  "issues": [
+    {
+      "affected_ids": [
+        "DK-SZ6DN9"
+      ],
+      "currency": "KZT",
+      "evidence_sets": [
+        [
+          "DK-SZ6DN9",
+          "JL-CZPF9S9H",
+          "JL-EZAP9CY0"
+        ],
+        [
+          "DK-SZ6DN9",
+          "JL-0F6V1TE3",
+          "JL-BSHAZ4EE"
+        ]
+      ],
+      "expected_amount_minor": 590000000,
+      "issue_id": "ISS-Q7V0V6",
+      "tolerance_minor": 0,
+      "type": "duplicate_invoice"
+    }
+  ],
+  "schema_version": "1.0"
+}

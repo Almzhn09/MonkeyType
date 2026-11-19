@@ -1,0 +1,42 @@
+{
+  "accounts": {
+    "ar": "129197",
+    "bank": "107816",
+    "expense": [
+      "608876",
+      "620536",
+      "682942",
+      "683380"
+    ],
+    "revenue": "411808",
+    "unapplied": "238904"
+  },
+  "allocation": {
+    "rounding_remainder": "last_ref",
+    "rule": "per_invoice_refs",
+    "unapplied_account_role": "unapplied"
+  },
+  "base_currency": "EUR",
+  "episode_id": "EP-9SPXM04SNV4G",
+  "fx": {
+    "date_rule": "event_local_date",
+    "rate_direction": "target_per_source",
+    "target_currency": "EUR"
+  },
+  "period": {
+    "end": "2026-08-01T00:00:00+00:00",
+    "end_exclusive": true,
+    "start": "2026-05-01T00:00:00+00:00",
+    "timezone": "Etc/UTC",
+    "utc_offset": "+00:00"
+  },
+  "recognition": {
+    "invoice": "issued_at_local_date",
+    "payment": "timestamp_local_date"
+  },
+  "rounding": {
+    "mode": "half_up",
+    "scope": "per_conversion"
+  },
+  "schema_version": "1.0"
+}

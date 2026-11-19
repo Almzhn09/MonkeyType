@@ -1,0 +1,28 @@
+{
+  "base_currency": "USD",
+  "episode_id": "EP-PJ4DZXZS5W",
+  "issues": [
+    {
+      "affected_ids": [
+        "SRC-1WK25B5VD"
+      ],
+      "currency": "USD",
+      "evidence_sets": [
+        [
+          "SRC-1WK25B5VD",
+          "JL-52G9H8"
+        ],
+        [
+          "SRC-1WK25B5VD",
+          "JL-NT4N26",
+          "JL-PS7H1N"
+        ]
+      ],
+      "expected_amount_minor": 86115,
+      "issue_id": "ISS-NK9DCK",
+      "tolerance_minor": 0,
+      "type": "payment_allocation"
+    }
+  ],
+  "schema_version": "1.0"
+}

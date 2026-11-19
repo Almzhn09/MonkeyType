@@ -1,0 +1,255 @@
+{
+  "baseline_sha256": {
+    "fx.csv": "a0ffd528c76e4590f4b3a4a04722a92d41be47ed7b86ce642d0544fbd5df3d57",
+    "invoices.jsonl": "36efab2127c1d24b2d2e8a98868e458ba0c905867749e3b31daac38dd364356a",
+    "ledger.csv": "c7289e5d7a7ec30d3258b11c1f1c8356192e04488a3bf66aaf8dbde8b094fd27",
+    "manifest.json": "11e472522e07c2928cb26f305e6e56fafebf47b2ca04c6aafa21765f777cb8ef",
+    "payments.jsonl": "018e68ed92f326e2b9ef5b119cba4c1d0f616a12061ea340922904c93f7a0c45",
+    "policy.json": "0371588677a0d3c2069f0f68145d8b3860fd04daa69a09f6ee7e1f6d2c10a73b"
+  },
+  "changes": [
+    {
+      "after": {
+        "account": "1279.12",
+        "credit_minor": 0,
+        "currency": "USD",
+        "debit_minor": 155701,
+        "entity_id": "ENT-PTQM8M",
+        "entry_id": "JE-5ZHSBE",
+        "invoice_id": "INV-MNNP1A",
+        "payment_id": null,
+        "row_id": "JL-P6YQZ5C",
+        "timestamp": "2026-07-31T19:43:54-05:00"
+      },
+      "before": null,
+      "cause": "duplicate_invoice[repost] (combo duplicate_plus_period, step 1/2; sibling DOCU-KWBMNYGZW): invoice INV-MNNP1A (issued 2026-07-30) posted a second time on 2026-07-31 as a new entry with the same amounts",
+      "issue_id": "ISS-0KX63G",
+      "op": "add_row",
+      "order": 0,
+      "target": "JL-P6YQZ5C",
+      "type": "duplicate_invoice"
+    },
+    {
+      "after": {
+        "account": "4066.30",
+        "credit_minor": 155701,
+        "currency": "USD",
+        "debit_minor": 0,
+        "entity_id": "ENT-PTQM8M",
+        "entry_id": "JE-5ZHSBE",
+        "invoice_id": "INV-MNNP1A",
+        "payment_id": null,
+        "row_id": "JL-S2EC96W",
+        "timestamp": "2026-07-31T19:43:54-05:00"
+      },
+      "before": null,
+      "cause": "duplicate_invoice[repost] (combo duplicate_plus_period, step 1/2; sibling DOCU-KWBMNYGZW): invoice INV-MNNP1A (issued 2026-07-30) posted a second time on 2026-07-31 as a new entry with the same amounts",
+      "issue_id": "ISS-0KX63G",
+      "op": "add_row",
+      "order": 1,
+      "target": "JL-S2EC96W",
+      "type": "duplicate_invoice"
+    },
+    {
+      "after": {
+        "account": "1279.12",
+        "credit_minor": 0,
+        "currency": "USD",
+        "debit_minor": 156720,
+        "entity_id": "ENT-PTQM8M",
+        "entry_id": "JE-KETA45",
+        "invoice_id": "INV-ANNMA1",
+        "payment_id": null,
+        "row_id": "JL-4NRED5Y",
+        "timestamp": "2026-08-04T15:35:29-05:00"
+      },
+      "before": {
+        "account": "1279.12",
+        "credit_minor": 0,
+        "currency": "USD",
+        "debit_minor": 156720,
+        "entity_id": "ENT-PTQM8M",
+        "entry_id": "JE-KETA45",
+        "invoice_id": "INV-ANNMA1",
+        "payment_id": null,
+        "row_id": "JL-4NRED5Y",
+        "timestamp": "2026-07-22T08:57:34-05:00"
+      },
+      "cause": "wrong_period[late_posting] (combo duplicate_plus_period, step 2/2; sibling DOCU-KK2Q17B5J): in-period invoice issued 2026-07-22 posted after period_end on 2026-08-04",
+      "issue_id": "ISS-69K6D4",
+      "op": "modify_row",
+      "order": 2,
+      "target": "JL-4NRED5Y",
+      "type": "wrong_period"
+    },
+    {
+      "after": {
+        "account": "4066.30",
+        "credit_minor": 156720,
+        "currency": "USD",
+        "debit_minor": 0,
+        "entity_id": "ENT-PTQM8M",
+        "entry_id": "JE-KETA45",
+        "invoice_id": "INV-ANNMA1",
+        "payment_id": null,
+        "row_id": "JL-Z4D9S8K",
+        "timestamp": "2026-08-04T15:35:29-05:00"
+      },
+      "before": {
+        "account": "4066.30",
+        "credit_minor": 156720,
+        "currency": "USD",
+        "debit_minor": 0,
+        "entity_id": "ENT-PTQM8M",
+        "entry_id": "JE-KETA45",
+        "invoice_id": "INV-ANNMA1",
+        "payment_id": null,
+        "row_id": "JL-Z4D9S8K",
+        "timestamp": "2026-07-22T08:57:34-05:00"
+      },
+      "cause": "wrong_period[late_posting] (combo duplicate_plus_period, step 2/2; sibling DOCU-KK2Q17B5J): in-period invoice issued 2026-07-22 posted after period_end on 2026-08-04",
+      "issue_id": "ISS-69K6D4",
+      "op": "modify_row",
+      "order": 3,
+      "target": "JL-Z4D9S8K",
+      "type": "wrong_period"
+    }
+  ],
+  "config": {
+    "base_currency": "USD",
+    "combos": {
+      "duplicate_plus_period": 1,
+      "fx_partial_payment_boundary": 0
+    },
+    "config_version": "1",
+    "distractors": {
+      "advances": 1,
+      "refunds": 1,
+      "repeated_amounts": 2,
+      "split_payments": 2,
+      "utc_boundary": 2
+    },
+    "errors": {
+      "duplicate_invoice": 0,
+      "fx_conversion": 0,
+      "payment_allocation": 0,
+      "wrong_period": 0
+    },
+    "foreign_currencies": [
+      "EUR",
+      "JPY"
+    ],
+    "period": {
+      "months": 2,
+      "start_month": "2026-06"
+    },
+    "rounding_mode": "half_even",
+    "schema_version": "1.0",
+    "seed": 1108,
+    "size": {
+      "background_entries": 120,
+      "invoices": 36
+    },
+    "split": "train",
+    "timezone": "America/Bogota",
+    "transform": null
+  },
+  "config_sha256": "7b04b3ded65842162b4a02e3a86c16211670101e6f3b6176f42cbd298dc4eec8",
+  "distractors": [
+    {
+      "currency": "USD",
+      "doc_ids": [
+        "DOCU-T5ZV6QB2S"
+      ],
+      "kind": "advances",
+      "subtype": "prepayment",
+      "unapplied_minor": 540000
+    },
+    {
+      "doc_ids": [
+        "DOCU-5J3BQ43BZ"
+      ],
+      "invoice_ids": [
+        "INV-V2EGT4",
+        "INV-FC6JYK"
+      ],
+      "kind": "multi_invoice_payment"
+    },
+    {
+      "amount_minor": -448200,
+      "currency": "USD",
+      "doc_ids": [
+        "DOCU-79YB8ZVTB",
+        "DOCU-T5ZV6QB2S"
+      ],
+      "kind": "refunds"
+    },
+    {
+      "currency": "USD",
+      "doc_ids": [
+        "DOCU-23VFZA942",
+        "DOCU-4WASNZZAN"
+      ],
+      "kind": "repeated_amounts",
+      "same_entity": true,
+      "total_minor": 181605
+    },
+    {
+      "currency": "USD",
+      "doc_ids": [
+        "DOCU-76CJQJWEH",
+        "DOCU-D0G1W4DKH"
+      ],
+      "kind": "repeated_amounts",
+      "same_entity": false,
+      "total_minor": 258920
+    },
+    {
+      "doc_ids": [
+        "DOCU-FGJ8313VG",
+        "DOCU-7TPC6FQFX",
+        "DOCU-S1D2G30VD",
+        "DOCU-TCD81ZAM1"
+      ],
+      "invoice_id": "INV-04D9F8",
+      "kind": "split_payments"
+    },
+    {
+      "doc_ids": [
+        "DOCU-KRATMPR76",
+        "DOCU-4Z1M31PW2",
+        "DOCU-F629SG1BW"
+      ],
+      "invoice_id": "INV-TY7TF9",
+      "kind": "split_payments"
+    },
+    {
+      "boundary": "period_start",
+      "doc_ids": [
+        "DOCU-7VT7WGNXV"
+      ],
+      "doc_timestamp": "2026-06-01T04:59:52+00:00",
+      "kind": "utc_boundary",
+      "local_date": "2026-05-31",
+      "local_in_period": false,
+      "note": "posted on the local date; UTC date differs",
+      "utc_date": "2026-06-01"
+    },
+    {
+      "boundary": "period_end",
+      "doc_ids": [
+        "DOCU-7Y331C5T5"
+      ],
+      "doc_timestamp": "2026-08-01T02:11:21+00:00",
+      "kind": "utc_boundary",
+      "local_date": "2026-07-31",
+      "local_in_period": true,
+      "note": "posted on the local date; UTC date differs",
+      "utc_date": "2026-08-01"
+    }
+  ],
+  "episode_id": "EP-22ZXRRD8SC",
+  "generator_version": "fingen-0.1.0",
+  "schema_version": "1.0",
+  "seed": 1108
+}

@@ -1,0 +1,49 @@
+{
+  "base_currency": "USD",
+  "episode_id": "EP-YW2C34PKR2AP",
+  "issues": [
+    {
+      "affected_ids": [
+        "DSRC_FJV2V98RX"
+      ],
+      "currency": "USD",
+      "evidence_sets": [
+        [
+          "DSRC_FJV2V98RX",
+          "GL_J3CR8T"
+        ],
+        [
+          "DSRC_FJV2V98RX",
+          "GL_3E22RR"
+        ]
+      ],
+      "expected_amount_minor": 156720,
+      "issue_id": "CASE_5N3KCT",
+      "tolerance_minor": 0,
+      "type": "wrong_period"
+    },
+    {
+      "affected_ids": [
+        "DSRC_MGQF0ZZQZ"
+      ],
+      "currency": "USD",
+      "evidence_sets": [
+        [
+          "DSRC_MGQF0ZZQZ",
+          "GL_6K8CYM",
+          "GL_PCN212"
+        ],
+        [
+          "DSRC_MGQF0ZZQZ",
+          "GL_PYEM74",
+          "GL_88WY9M"
+        ]
+      ],
+      "expected_amount_minor": 155701,
+      "issue_id": "CASE_ZV0K4J",
+      "tolerance_minor": 0,
+      "type": "duplicate_invoice"
+    }
+  ],
+  "schema_version": "1.0"
+}

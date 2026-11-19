@@ -1,0 +1,44 @@
+{
+  "accounts": {
+    "ar": "G1218",
+    "bank": "A1086",
+    "expense": [
+      "A6475",
+      "B6979",
+      "B7002",
+      "L7660",
+      "L7791",
+      "S7693"
+    ],
+    "revenue": "G4031",
+    "unapplied": "B2396"
+  },
+  "allocation": {
+    "rounding_remainder": "last_ref",
+    "rule": "per_invoice_refs",
+    "unapplied_account_role": "unapplied"
+  },
+  "base_currency": "KWD",
+  "episode_id": "EP-BQV9YGYXTTSE",
+  "fx": {
+    "date_rule": "event_local_date",
+    "rate_direction": "target_per_source",
+    "target_currency": "KWD"
+  },
+  "period": {
+    "end": "2026-12-01T00:00:00+04:00",
+    "end_exclusive": true,
+    "start": "2026-09-01T00:00:00+04:00",
+    "timezone": "Asia/Dubai",
+    "utc_offset": "+04:00"
+  },
+  "recognition": {
+    "invoice": "issued_at_local_date",
+    "payment": "timestamp_local_date"
+  },
+  "rounding": {
+    "mode": "half_even",
+    "scope": "per_conversion"
+  },
+  "schema_version": "1.0"
+}

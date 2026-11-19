@@ -1,0 +1,179 @@
+{
+  "baseline_sha256": {
+    "fx.csv": "e098006ded16cb46dd467d90abe908a09eedcc2cbf1d170b60281d33756a41e5",
+    "invoices.jsonl": "6a80968c6291abeaa6c618c4c0282d20d668d14c107f81a7e18a926a87964471",
+    "ledger.csv": "fab5d5763a6891ad2624083b64e28f776978117f62aafef08abf8db2e7a815c5",
+    "manifest.json": "c0e9832ff4af9bf663998f9d2a4a0882061de4e00df54443189d7974078a2c34",
+    "payments.jsonl": "2480470868fb21df941607450caa73ab78c7fa818dff98f6896d3c104a14352d",
+    "policy.json": "da9f1ab452bd24a34b3104269f70c204d1fe1480f445f66ad6ba4f60bde94da4"
+  },
+  "changes": [],
+  "config": {
+    "base_currency": "KZT",
+    "combos": {
+      "duplicate_plus_period": 0,
+      "fx_partial_payment_boundary": 0
+    },
+    "config_version": "1",
+    "distractors": {
+      "advances": 1,
+      "refunds": 1,
+      "repeated_amounts": 2,
+      "split_payments": 2,
+      "utc_boundary": 2
+    },
+    "errors": {
+      "duplicate_invoice": 0,
+      "fx_conversion": 0,
+      "payment_allocation": 0,
+      "wrong_period": 0
+    },
+    "foreign_currencies": [
+      "EUR",
+      "USD"
+    ],
+    "period": {
+      "months": 2,
+      "start_month": "2026-05"
+    },
+    "rounding_mode": "half_up",
+    "schema_version": "1.0",
+    "seed": 2106,
+    "size": {
+      "background_entries": 650,
+      "invoices": 90
+    },
+    "split": "dev",
+    "timezone": "Asia/Almaty",
+    "transform": null
+  },
+  "config_sha256": "439dee8596bc069b5d7583b13e35c35ace79c11a16ff2893447fb9861860f29e",
+  "distractors": [
+    {
+      "currency": "KZT",
+      "doc_ids": [
+        "DOC-MHH34M",
+        "DOC-4V2BSW"
+      ],
+      "kind": "advances",
+      "subtype": "overpayment",
+      "unapplied_minor": 5090820
+    },
+    {
+      "doc_ids": [
+        "DOC-12Q9N3"
+      ],
+      "invoice_ids": [
+        "INV-YJEGCSE",
+        "INV-0T53768"
+      ],
+      "kind": "multi_invoice_payment"
+    },
+    {
+      "doc_ids": [
+        "DOC-DK9P4X"
+      ],
+      "invoice_ids": [
+        "INV-4QG4PFP",
+        "INV-PH5S39R"
+      ],
+      "kind": "multi_invoice_payment"
+    },
+    {
+      "doc_ids": [
+        "DOC-HNRTMV"
+      ],
+      "invoice_ids": [
+        "INV-E6H1N10",
+        "INV-HFT5GHP"
+      ],
+      "kind": "multi_invoice_payment"
+    },
+    {
+      "doc_ids": [
+        "DOC-ZTE2KJ"
+      ],
+      "invoice_ids": [
+        "INV-DZ3J326",
+        "INV-B2FX8P4"
+      ],
+      "kind": "multi_invoice_payment"
+    },
+    {
+      "amount_minor": -5090820,
+      "currency": "KZT",
+      "doc_ids": [
+        "DOC-V3664V",
+        "DOC-MHH34M"
+      ],
+      "kind": "refunds"
+    },
+    {
+      "currency": "EUR",
+      "doc_ids": [
+        "DOC-15NFFK",
+        "DOC-GHY38C"
+      ],
+      "kind": "repeated_amounts",
+      "same_entity": false,
+      "total_minor": 379760
+    },
+    {
+      "currency": "KZT",
+      "doc_ids": [
+        "DOC-JF2MNR",
+        "DOC-WVKKH9"
+      ],
+      "kind": "repeated_amounts",
+      "same_entity": false,
+      "total_minor": 61132000
+    },
+    {
+      "doc_ids": [
+        "DOC-CVGPAY",
+        "DOC-8WGA81",
+        "DOC-TJAV9G",
+        "DOC-YWND5J"
+      ],
+      "invoice_id": "INV-78AATA2",
+      "kind": "split_payments"
+    },
+    {
+      "doc_ids": [
+        "DOC-N5EBE3",
+        "DOC-GFFVZC",
+        "DOC-SYMJ4Y"
+      ],
+      "invoice_id": "INV-65WEP3Z",
+      "kind": "split_payments"
+    },
+    {
+      "boundary": "period_start",
+      "doc_ids": [
+        "DOC-6PJ0B1"
+      ],
+      "doc_timestamp": "2026-04-30T20:42:57+00:00",
+      "kind": "utc_boundary",
+      "local_date": "2026-05-01",
+      "local_in_period": true,
+      "note": "posted on the local date; UTC date differs",
+      "utc_date": "2026-04-30"
+    },
+    {
+      "boundary": "period_start",
+      "doc_ids": [
+        "DOC-ZMA35R"
+      ],
+      "doc_timestamp": "2026-04-30T20:53:38+00:00",
+      "kind": "utc_boundary",
+      "local_date": "2026-05-01",
+      "local_in_period": true,
+      "note": "posted on the local date; UTC date differs",
+      "utc_date": "2026-04-30"
+    }
+  ],
+  "episode_id": "EP-D00HKJ2GD3",
+  "generator_version": "fingen-0.1.0",
+  "schema_version": "1.0",
+  "seed": 2106
+}

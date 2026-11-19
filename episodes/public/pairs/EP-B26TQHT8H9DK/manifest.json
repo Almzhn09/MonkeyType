@@ -1,0 +1,38 @@
+{
+  "base_currency": "EUR",
+  "company": {
+    "name": "Tellenar Media GmbH"
+  },
+  "counts": {
+    "documents": 76,
+    "entries": 166,
+    "fx_rates": 220,
+    "invoices": 42,
+    "ledger_rows": 350,
+    "payments": 34
+  },
+  "currency_exponents": {
+    "EUR": 2,
+    "GBP": 2,
+    "USD": 2
+  },
+  "episode_id": "EP-B26TQHT8H9DK",
+  "extract_end": "2026-04-11T00:00:00-05:00",
+  "extract_start": "2025-12-22T00:00:00-05:00",
+  "files": {
+    "fx.csv": "291a5a8b73be3009fc16487e96a049a461f8fb878770603e739d3e11eb68247d",
+    "invoices.jsonl": "7469dc9ef2fce883f2f22883c53b5f107e4d3aeeaef21f2febd107d7ec092c2e",
+    "ledger.csv": "688ee6dd131a1c1b984d8a24a18918ddd1b888705d28fce60bc3d302ed721518",
+    "payments.jsonl": "335d70efaef723d74c2b5776918242cfabda8e30523c8ae0b61bc4212ade941f",
+    "policy.json": "1aa3516cb8e17a9d59edf08efc8c99d91af65eecfe0c1756d078f262b38d4fc5"
+  },
+  "period_end": "2026-04-01T00:00:00-05:00",
+  "period_start": "2026-01-01T00:00:00-05:00",
+  "rounding": {
+    "mode": "half_up",
+    "scope": "per_conversion"
+  },
+  "schema_version": "1.0",
+  "timezone": "America/Bogota",
+  "utc_offset": "-05:00"
+}
