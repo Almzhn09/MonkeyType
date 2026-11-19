@@ -669,13 +669,15 @@ class _Builder:
                                      "boundary": "period_" + side})
 
         # (b) Near-boundary pool (candidates for wrong_period / fx / combos).
-        reserved = 2 * dis["repeated_amounts"] + dis["split_payments"] + dis["advances"] + 2
+        reserved = 2 * dis["repeated_amounts"] + dis["split_payments"] + dis["advances"] + 2 \
+            + 2 * combos["duplicate_plus_period"] + sum(err.values())
         budget = max(0, min(n_inv // 2 - len(self.specs), n_inv - len(self.specs) - reserved))
         # Dedicated candidates for the fx_partial_payment_boundary combo come
         # first so a small budget cannot starve them (zero when the combo is off,
         # which keeps every other configuration's baseline unchanged).
-        nb_combo = min(budget, 2 * combos["fx_partial_payment_boundary"]) if self.foreign else 0
-        nb_inv = min(budget - nb_combo, 3 + err["wrong_period"] + combos["duplicate_plus_period"]
+        n_fxc = combos["fx_partial_payment_boundary"] if self.foreign else 0
+        nb_combo = min(2 * n_fxc, max(budget, n_fxc))
+        nb_inv = min(max(0, budget - nb_combo), 3 + err["wrong_period"] + combos["duplicate_plus_period"]
                      + (err["fx_conversion"] + 1) // 2)
         nb_pay = min(max(0, budget - nb_inv - nb_combo), 2 + 2 * combos["fx_partial_payment_boundary"]
                      + (err["fx_conversion"] + 1) // 2 + err["payment_allocation"] // 2)
@@ -821,14 +823,23 @@ class _Builder:
         rest = n_inv - len(self.specs)
         if rest < 0:
             raise GenerationError("too many special invoices for size.invoices")
-        for _ in range(rest):
-            if rng.random() < 0.7:
-                d = self._date_between(self.p_first, self.p_last)
+        # With injections configured, make sure enough regular invoices fall
+        # inside the period (same number of draws; nothing changes otherwise).
+        n_issues = sum(err.values()) + 2 * sum(combos.values())
+        need = n_issues + 2 if n_issues else 0
+        have = sum(1 for s in self.specs if "distractor" not in s["tags"]
+                   and "combo_pair" not in s["tags"]
+                   and self.p_first <= self.h.local_date(s["issued"]) < self.p_last)
+        force = max(0, need - have)
+        for k in range(rest):
+            if rng.random() < 0.7 or k < force:
+                d = self._date_between(self.p_first, self.p_last - days(1 if k < force else 0))
             else:
                 d = self._date_between(self.d_first, self.d_last)
             spec = self._spec(self._instant(d))
             self._plain_payment(spec)
         self._ensure_foreign_candidates()
+        self._ensure_payment_candidates()
 
         # (g) Multi-invoice payments: merge two plain payments of the same
         # customer and currency into one payment with two refs.
@@ -878,6 +889,43 @@ class _Builder:
                     not {"twin_source", "combo_pair"} & set(spec["tags"]):
                 spec["currency"] = self.foreign[i % len(self.foreign)]
                 i += 1
+                have += 1
+
+    def _ensure_payment_candidates(self) -> None:
+        """payment_allocation needs regular, fully allocated receipts inside the
+        period: when short, pay unpaid in-period invoices (or move an
+        out-of-period settlement) inside the period. Only runs when
+        payment_allocation is configured and candidates are short."""
+        n_alloc = self.cfg["errors"]["payment_allocation"]
+        if not n_alloc:
+            return
+        want = n_alloc + 2
+        days = _dt.timedelta
+
+        def regular(spec) -> bool:
+            return "distractor" not in spec["tags"] and "combo_pair" not in spec["tags"]
+
+        def in_p(dt_) -> bool:
+            return self.p_first <= self.h.local_date(dt_) <= self.p_last
+
+        have = sum(1 for s in self.specs if regular(s)
+                   for p in s["pays"] if in_p(p["dt"]) and not p.get("overpay_pct"))
+        for spec in self.specs:
+            if have >= want:
+                break
+            issued = self.h.local_date(spec["issued"])
+            if not regular(spec) or not self.p_first <= issued < self.p_last:
+                continue
+            if "unpaid" in spec["tags"] and not spec["pays"]:
+                spec["tags"].remove("unpaid")
+                spec["pays"].append({"dt": self._instant(self._date_between(
+                    issued + days(1), min(self.p_last, issued + days(14)))), "pct": 100,
+                    "tags": []})
+                spec["plain"] = True
+                have += 1
+            elif spec["plain"] and len(spec["pays"]) == 1 and not in_p(spec["pays"][0]["dt"]):
+                spec["pays"][0]["dt"] = self._instant(self._date_between(
+                    issued + days(1), min(self.p_last, issued + days(14))))
                 have += 1
 
     def _ensure_min_documents(self) -> None:

@@ -41,6 +41,14 @@ def pick(ctx: InjectionContext, docs: list, *tiers):
     return None
 
 
+def spares_foreign(ctx: InjectionContext):
+    """Predicate for non-FX injectors: when fx_conversion issues are still to
+    come, leave the (scarce) foreign-currency documents to them."""
+    if not ctx.config["errors"].get("fx_conversion"):
+        return lambda d: True
+    return lambda d: d.currency == ctx.history.base_currency
+
+
 def sole_entry(h: History, doc):
     """The document's single posting entry, or None (already touched / odd)."""
     entries = h.entries_of_doc(doc.doc_id)
