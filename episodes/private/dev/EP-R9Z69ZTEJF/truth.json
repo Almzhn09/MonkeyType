@@ -1,0 +1,45 @@
+{
+  "base_currency": "KWD",
+  "episode_id": "EP-R9Z69ZTEJF",
+  "issues": [
+    {
+      "affected_ids": [
+        "DOC_397V4N"
+      ],
+      "currency": "KWD",
+      "evidence_sets": [
+        [
+          "DOC_397V4N",
+          "R_2WM3HD60",
+          "FX:2026-11-30:USD:KWD"
+        ]
+      ],
+      "expected_amount_minor": 224,
+      "issue_id": "ISS_J615GW",
+      "tolerance_minor": 1,
+      "type": "fx_conversion"
+    },
+    {
+      "affected_ids": [
+        "DOC_397V4N"
+      ],
+      "currency": "KWD",
+      "evidence_sets": [
+        [
+          "DOC_397V4N",
+          "R_DBYQMQPG"
+        ],
+        [
+          "DOC_397V4N",
+          "R_2WM3HD60",
+          "R_3AKKPRH3"
+        ]
+      ],
+      "expected_amount_minor": 283199,
+      "issue_id": "ISS_RVNHKY",
+      "tolerance_minor": 0,
+      "type": "payment_allocation"
+    }
+  ],
+  "schema_version": "1.0"
+}

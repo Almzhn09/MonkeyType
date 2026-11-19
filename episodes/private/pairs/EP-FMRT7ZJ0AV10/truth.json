@@ -1,0 +1,48 @@
+{
+  "base_currency": "USD",
+  "episode_id": "EP-FMRT7ZJ0AV10",
+  "issues": [
+    {
+      "affected_ids": [
+        "SD_HAN4ETXXG4"
+      ],
+      "currency": "USD",
+      "evidence_sets": [
+        [
+          "SD_HAN4ETXXG4",
+          "LR_HBKXR0K7X"
+        ],
+        [
+          "SD_HAN4ETXXG4",
+          "LR_JR4QQ1CZN"
+        ]
+      ],
+      "expected_amount_minor": 50520,
+      "issue_id": "FND_GADFDG5",
+      "tolerance_minor": 0,
+      "type": "payment_allocation"
+    },
+    {
+      "affected_ids": [
+        "SD_JXZTQZGXS8"
+      ],
+      "currency": "USD",
+      "evidence_sets": [
+        [
+          "SD_JXZTQZGXS8",
+          "LR_6XGJSA34K"
+        ],
+        [
+          "SD_JXZTQZGXS8",
+          "LR_TBZ7P58PH",
+          "LR_94Q0H3JYE"
+        ]
+      ],
+      "expected_amount_minor": 2740,
+      "issue_id": "FND_YTR85D3",
+      "tolerance_minor": 0,
+      "type": "payment_allocation"
+    }
+  ],
+  "schema_version": "1.0"
+}

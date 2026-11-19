@@ -1,0 +1,38 @@
+{
+  "base_currency": "KZT",
+  "company": {
+    "name": "Telum Industrial FZ-LLC"
+  },
+  "counts": {
+    "documents": 89,
+    "entries": 229,
+    "fx_rates": 162,
+    "invoices": 48,
+    "ledger_rows": 487,
+    "payments": 41
+  },
+  "currency_exponents": {
+    "EUR": 2,
+    "KZT": 2,
+    "USD": 2
+  },
+  "episode_id": "EP-0CMTEHMK3Z",
+  "extract_end": "2026-12-11T00:00:00+05:00",
+  "extract_start": "2026-09-21T00:00:00+05:00",
+  "files": {
+    "fx.csv": "ca3d1e9908ea6f5f6bbae7f1494fd005c83ae3da42eb6b0d1ecb0400e9fd1071",
+    "invoices.jsonl": "a9389dfec36fcfe8c3335824131bef8dbb0b9defea0dce4d2a193f15ece871e2",
+    "ledger.csv": "53cf1077e69ff83097b1ae92e28f4f97d46e336489124d843a55b7e9665a47e9",
+    "payments.jsonl": "b4bf4d99f42d84b71b2ed2fcbf94c2b6d3991665d795385e82fe62e4dc5f1671",
+    "policy.json": "d75b1bb4041d8640dd28e79cca4d24d6112872204c1ac099371d56fb20e0fa01"
+  },
+  "period_end": "2026-12-01T00:00:00+05:00",
+  "period_start": "2026-10-01T00:00:00+05:00",
+  "rounding": {
+    "mode": "half_even",
+    "scope": "per_conversion"
+  },
+  "schema_version": "1.0",
+  "timezone": "Asia/Almaty",
+  "utc_offset": "+05:00"
+}

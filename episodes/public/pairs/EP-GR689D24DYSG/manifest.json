@@ -1,0 +1,37 @@
+{
+  "base_currency": "JPY",
+  "company": {
+    "name": "Emazhyex Technics LLP"
+  },
+  "counts": {
+    "documents": 54,
+    "entries": 106,
+    "fx_rates": 51,
+    "invoices": 28,
+    "ledger_rows": 220,
+    "payments": 26
+  },
+  "currency_exponents": {
+    "JPY": 0,
+    "USD": 2
+  },
+  "episode_id": "EP-GR689D24DYSG",
+  "extract_end": "2026-09-11T00:00:00+09:00",
+  "extract_start": "2026-07-22T00:00:00+09:00",
+  "files": {
+    "fx.csv": "09056fb4b9be7148e5274a4ad394f0aaee486e6aa2b1c94ea655065834b5d11c",
+    "invoices.jsonl": "d14fdd4ef82be2d51eb4f61e075d06eeec026f78a4f3c622118c8af131366ca7",
+    "ledger.csv": "997a2ff5397edbad5e59b240f423dc9e265ce3680548f68c4012398d2de5e1d2",
+    "payments.jsonl": "f4fa85ca97bf7c83795f4e8c9f44fe6fde0b1748792ca4d32f08dd85a908dde1",
+    "policy.json": "9428d95ebaff2f9762f0688e2dcd0c63ba7baa80d37daba5000f2a0bb8716938"
+  },
+  "period_end": "2026-09-01T00:00:00+09:00",
+  "period_start": "2026-08-01T00:00:00+09:00",
+  "rounding": {
+    "mode": "half_even",
+    "scope": "per_conversion"
+  },
+  "schema_version": "1.0",
+  "timezone": "Asia/Tokyo",
+  "utc_offset": "+09:00"
+}

@@ -1,0 +1,51 @@
+{
+  "base_currency": "JPY",
+  "episode_id": "EP-K7C2PM5XZ2",
+  "issues": [
+    {
+      "affected_ids": [
+        "DK_2EBR80R"
+      ],
+      "currency": "JPY",
+      "evidence_sets": [
+        [
+          "DK_2EBR80R",
+          "RR_SRHN9BG7",
+          "RR_KBHQEQPJ"
+        ],
+        [
+          "DK_2EBR80R",
+          "RR_FB6S27HH",
+          "RR_DNZ6H6FX"
+        ]
+      ],
+      "expected_amount_minor": 28131,
+      "issue_id": "ISS_BFR8AJ",
+      "tolerance_minor": 0,
+      "type": "duplicate_invoice"
+    },
+    {
+      "affected_ids": [
+        "DK_J2G81YZ"
+      ],
+      "currency": "JPY",
+      "evidence_sets": [
+        [
+          "DK_J2G81YZ",
+          "RR_HWFFWVAT",
+          "RR_FF2KSY8C"
+        ],
+        [
+          "DK_J2G81YZ",
+          "RR_Q8QMPCJG",
+          "RR_32NXQ5RP"
+        ]
+      ],
+      "expected_amount_minor": 1704000,
+      "issue_id": "ISS_VJDXGY",
+      "tolerance_minor": 0,
+      "type": "duplicate_invoice"
+    }
+  ],
+  "schema_version": "1.0"
+}

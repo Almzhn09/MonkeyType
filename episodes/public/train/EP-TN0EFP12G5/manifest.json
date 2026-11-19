@@ -1,0 +1,38 @@
+{
+  "base_currency": "JPY",
+  "company": {
+    "name": "Voron Cloud FZ-LLC"
+  },
+  "counts": {
+    "documents": 74,
+    "entries": 174,
+    "fx_rates": 102,
+    "invoices": 45,
+    "ledger_rows": 377,
+    "payments": 29
+  },
+  "currency_exponents": {
+    "EUR": 2,
+    "JPY": 0,
+    "USD": 2
+  },
+  "episode_id": "EP-TN0EFP12G5",
+  "extract_end": "2026-02-11T00:00:00+09:00",
+  "extract_start": "2025-12-22T00:00:00+09:00",
+  "files": {
+    "fx.csv": "5a08558d70c6f89577bda0f5e02559759efcbc3e31f97cd320e3b60473a8477f",
+    "invoices.jsonl": "99ea8614978062774e432df20f836a2895517a7dd7c460d2d7a27c0bf1a25767",
+    "ledger.csv": "35fd7d358b679802a0c076bc54db70e26271dc56f5f0eb4d7ac93279ca9ab76c",
+    "payments.jsonl": "0948042a1d49b4b79e67676a30bdffb43529a7b3564a09a9d45193dc8eed3151",
+    "policy.json": "9cff6cd8e31efb151121e1332bad437bd4422f848f07392281c4f9e5b9ce1d34"
+  },
+  "period_end": "2026-02-01T00:00:00+09:00",
+  "period_start": "2026-01-01T00:00:00+09:00",
+  "rounding": {
+    "mode": "half_up",
+    "scope": "per_conversion"
+  },
+  "schema_version": "1.0",
+  "timezone": "Asia/Tokyo",
+  "utc_offset": "+09:00"
+}

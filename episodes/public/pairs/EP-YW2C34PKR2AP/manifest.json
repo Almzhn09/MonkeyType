@@ -1,0 +1,38 @@
+{
+  "base_currency": "USD",
+  "company": {
+    "name": "Teloroan Agro GmbH"
+  },
+  "counts": {
+    "documents": 72,
+    "entries": 193,
+    "fx_rates": 162,
+    "invoices": 36,
+    "ledger_rows": 412,
+    "payments": 36
+  },
+  "currency_exponents": {
+    "EUR": 2,
+    "JPY": 0,
+    "USD": 2
+  },
+  "episode_id": "EP-YW2C34PKR2AP",
+  "extract_end": "2026-08-11T00:00:00-05:00",
+  "extract_start": "2026-05-22T00:00:00-05:00",
+  "files": {
+    "fx.csv": "ffd32a389cc7f2fa9ee6b21622d2ec6850ce8dd3ab76f9a73fc10e05794f2918",
+    "invoices.jsonl": "7b07dd54ef0016854640796b9567e86f629503e09d6e981f3f493fd8e994a7e6",
+    "ledger.csv": "754f8d2d251275a9b68cf67423c3ba189c1892b4d0499739444f69b8892e67d8",
+    "payments.jsonl": "b71cd52d2f8f7ba348991d24bdac8b08042e4ccbab4f38f3dfc5d2acf4677818",
+    "policy.json": "c630fdef9f8e78c914831c3bed65b08be19ea70af029e2cbcb5daaefd346124b"
+  },
+  "period_end": "2026-08-01T00:00:00-05:00",
+  "period_start": "2026-06-01T00:00:00-05:00",
+  "rounding": {
+    "mode": "half_even",
+    "scope": "per_conversion"
+  },
+  "schema_version": "1.0",
+  "timezone": "America/Bogota",
+  "utc_offset": "-05:00"
+}

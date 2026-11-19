@@ -1,0 +1,38 @@
+{
+  "base_currency": "USD",
+  "company": {
+    "name": "Voron Analytics Pte Ltd"
+  },
+  "counts": {
+    "documents": 93,
+    "entries": 273,
+    "fx_rates": 102,
+    "invoices": 55,
+    "ledger_rows": 587,
+    "payments": 38
+  },
+  "currency_exponents": {
+    "EUR": 2,
+    "KZT": 2,
+    "USD": 2
+  },
+  "episode_id": "EP-PJ4DZXZS5W",
+  "extract_end": "2026-04-11T00:00:00+00:00",
+  "extract_start": "2026-02-19T00:00:00+00:00",
+  "files": {
+    "fx.csv": "1019c76df6a0be8f19a5efa1ed9f3042864cd84d1a5dde0cc1c16749f06ac0eb",
+    "invoices.jsonl": "8f4837cb938c58edf1da40d7f4d9da880802772d4bfa9ec6b2b42a580efd2f4b",
+    "ledger.csv": "c6449088ea8e2ca0db9f7c6bf95b48a4474898a136a5a042d8a7becf4427a061",
+    "payments.jsonl": "13b69d6dab2ad88bf2cbe6ba2db89eb5eea7bad0451b42425ad739e5b0fe6f05",
+    "policy.json": "0b39f192358e2ab0a9b49e178c4d010dc712430187f99e784e2a5ceb8dce0ec2"
+  },
+  "period_end": "2026-04-01T00:00:00+00:00",
+  "period_start": "2026-03-01T00:00:00+00:00",
+  "rounding": {
+    "mode": "half_up",
+    "scope": "per_conversion"
+  },
+  "schema_version": "1.0",
+  "timezone": "Etc/UTC",
+  "utc_offset": "+00:00"
+}

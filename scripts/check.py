@@ -2,6 +2,7 @@
 """Single check command: unit tests, reference checks, data generation and offline evaluation.
 Stdlib only. A failed stage returns a nonzero exit code."""
 import argparse
+import json
 import os
 import resource
 import subprocess
@@ -93,6 +94,47 @@ def st_fresh():
     return ("FAIL" if bad else "PASS"), "\n".join(l for l in lines if "generate" not in l)
 
 
+@stage("fresh-seed")
+def st_fresh_seed():
+    """A20: unseen seed + a combination absent from train/dev, verified and selfchecked."""
+    cfg = {"config_version": "1", "schema_version": "1.0", "seed": 900001, "split": "jury",
+           "size": {"invoices": 64, "background_entries": 150},
+           "period": {"start_month": "2027-01", "months": 2},
+           "timezone": "Asia/Dubai", "base_currency": "EUR",
+           "foreign_currencies": ["USD", "CNY", "KZT"], "rounding_mode": "half_even",
+           "errors": {"duplicate_invoice": 1, "payment_allocation": 0,
+                      "fx_conversion": 2, "wrong_period": 0},
+           "combos": {"fx_partial_payment_boundary": 2, "duplicate_plus_period": 0},
+           "distractors": {"split_payments": 3, "refunds": 1, "repeated_amounts": 3,
+                           "utc_boundary": 3, "advances": 2},
+           "transform": None}
+    used = set()
+    for sp in ("train", "dev"):
+        for c in json.loads((ROOT / f"configs/{sp}.json").read_text())["episodes"]:
+            used.add(c["seed"])
+            if (c["errors"], c["combos"]) == (cfg["errors"], cfg["combos"]):
+                return "FAIL", "combination already present in train/dev"
+    if cfg["seed"] in used:
+        return "FAIL", "seed already used in train/dev"
+    with tempfile.TemporaryDirectory() as d:
+        path = Path(d) / "fresh.json"
+        path.write_text(json.dumps(cfg))
+        out = Path(d) / "out"
+        p, dt = gen(path, out)
+        if p.returncode != 0:
+            return "FAIL", tail(p)
+        v = run(["-m", "fincheck", "verify", "--all", str(out)])
+        if v.returncode != 0:
+            return "FAIL", tail(v)
+        evaluation = run(["-m", "audit_sim", "run", str(out), "--policy", "reconcile"])
+        if evaluation.returncode != 0:
+            return "FAIL", tail(evaluation)
+        if json.loads(evaluation.stdout)["reconcile"]["mean_f1"] != 1.0:
+            return "FAIL", tail(evaluation)
+        s = run(["-m", "fingen", "selfcheck", "--config", str(path), "--out", str(Path(d) / "sc")])
+        return ("PASS" if s.returncode == 0 else "FAIL"), tail(s) + f"generate {dt:.2f}s"
+
+
 @stage("integrated-release")
 def st_release(output):
     args = ["-m", "audit_sim", "release"]
@@ -115,6 +157,7 @@ def main():
     VERBOSE = a.verbose
     sys.path.insert(0, str(ROOT))
     st_tests()
+    st_fresh_seed()
     if a.quick:
         print("[fresh-gen] SKIP (--quick)")
     else:

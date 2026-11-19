@@ -1,0 +1,37 @@
+{
+  "base_currency": "KZT",
+  "company": {
+    "name": "Kaulex Weaving PLC"
+  },
+  "counts": {
+    "documents": 22,
+    "entries": 95,
+    "fx_rates": 51,
+    "invoices": 12,
+    "ledger_rows": 210,
+    "payments": 10
+  },
+  "currency_exponents": {
+    "KZT": 2,
+    "USD": 2
+  },
+  "episode_id": "EP-Y46ETDJPMDGD",
+  "extract_end": "2026-04-11T00:00:00+05:00",
+  "extract_start": "2026-02-19T00:00:00+05:00",
+  "files": {
+    "fx.csv": "f6856f4bd23f58a92e8cdd7e57b65af4e47ac0f2a31895cedea766e6eb2f89ee",
+    "invoices.jsonl": "8116a62b2a49abb980986ff1c471197bcb381743134a35bb88b4dc6b9c15e8b6",
+    "ledger.csv": "7daec59b6215792caa482891db6997b24b5a988ed5adc62753523f1a14a66664",
+    "payments.jsonl": "6d6926a95bfee6aa17ce4acbd75a359d1d2aa4038223241084d91269319a7ae1",
+    "policy.json": "cec6c53b53a0e84c7f155f9598a95d90e9fd59c3686fd5f81d66144151bcc153"
+  },
+  "period_end": "2026-04-01T00:00:00+05:00",
+  "period_start": "2026-03-01T00:00:00+05:00",
+  "rounding": {
+    "mode": "half_up",
+    "scope": "per_conversion"
+  },
+  "schema_version": "1.0",
+  "timezone": "Asia/Almaty",
+  "utc_offset": "+05:00"
+}

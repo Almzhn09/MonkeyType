@@ -1,0 +1,46 @@
+{
+  "base_currency": "KZT",
+  "episode_id": "EP-0CMTEHMK3Z",
+  "issues": [
+    {
+      "affected_ids": [
+        "FILE-TTTDVMC"
+      ],
+      "currency": "KZT",
+      "evidence_sets": [
+        [
+          "FILE-TTTDVMC",
+          "TX-HT49KFD5",
+          "FX:2026-11-14:EUR:KZT"
+        ],
+        [
+          "FILE-TTTDVMC",
+          "TX-B74Z3PYQ",
+          "FX:2026-11-14:EUR:KZT"
+        ]
+      ],
+      "expected_amount_minor": 22554,
+      "issue_id": "ISS-HJ48TV",
+      "tolerance_minor": 1,
+      "type": "fx_conversion"
+    },
+    {
+      "affected_ids": [
+        "FILE-M41BTWZ"
+      ],
+      "currency": "KZT",
+      "evidence_sets": [
+        [
+          "FILE-M41BTWZ",
+          "TX-ZDJBEDHW",
+          "FX:2026-10-01:USD:KZT"
+        ]
+      ],
+      "expected_amount_minor": 2639,
+      "issue_id": "ISS-T2EGZP",
+      "tolerance_minor": 1,
+      "type": "fx_conversion"
+    }
+  ],
+  "schema_version": "1.0"
+}

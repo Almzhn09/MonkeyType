@@ -1,0 +1,92 @@
+{
+  "baseline_sha256": {
+    "fx.csv": "c1b5f14c46a2ef4e51014f4baf05270b5a9c4765342e8a5dc2a990fbd3c9ab35",
+    "invoices.jsonl": "09d2fef157898eb32fcc623ee5c822a8a1ef94ff2fcd6febb88aa8fb4055c528",
+    "ledger.csv": "3f5704d8e0b28d0872d1a9ccca349c280b9165ff0787f8f6b40f844cf2831878",
+    "manifest.json": "628d480b27d65b50ad4b7945937ca81db61b50ee7e68cdfc8f1ed2c56055013b",
+    "payments.jsonl": "a8ad05020bc8d962173c2ececf904fc7c904856bc4691af6914c99579d11be07",
+    "policy.json": "0a3f1e3940e0000e8895e57a580c650f82c53c2f12d8a2be8afc301051d53031"
+  },
+  "changes": [],
+  "config": {
+    "base_currency": "GBP",
+    "combos": {
+      "duplicate_plus_period": 0,
+      "fx_partial_payment_boundary": 0
+    },
+    "config_version": "1",
+    "distractors": {
+      "advances": 0,
+      "refunds": 0,
+      "repeated_amounts": 1,
+      "split_payments": 1,
+      "utc_boundary": 1
+    },
+    "errors": {
+      "duplicate_invoice": 0,
+      "fx_conversion": 0,
+      "payment_allocation": 0,
+      "wrong_period": 0
+    },
+    "foreign_currencies": [
+      "EUR"
+    ],
+    "period": {
+      "months": 1,
+      "start_month": "2026-04"
+    },
+    "rounding_mode": "half_even",
+    "schema_version": "1.0",
+    "seed": 2105,
+    "size": {
+      "background_entries": 0,
+      "invoices": 14
+    },
+    "split": "dev",
+    "timezone": "Asia/Kolkata",
+    "transform": {
+      "kind": "pair",
+      "permute": true,
+      "rename": true,
+      "seed": 2459518836
+    }
+  },
+  "config_sha256": "58d129bbf9c4c1af1656b6f9a81e6a08144438dea6e0f914a43dde2b3fc152f7",
+  "distractors": [
+    {
+      "currency": "EUR",
+      "doc_ids": [
+        "FILE_YQ6GN3",
+        "FILE_D9JS7C"
+      ],
+      "kind": "repeated_amounts",
+      "same_entity": true,
+      "total_minor": 4608
+    },
+    {
+      "doc_ids": [
+        "FILE_XG7KWN",
+        "FILE_ZAZR9J",
+        "FILE_STYP7P"
+      ],
+      "invoice_id": "FAC_0F9WXXQ7",
+      "kind": "split_payments"
+    },
+    {
+      "boundary": "period_end",
+      "doc_ids": [
+        "FILE_YKTGAE"
+      ],
+      "doc_timestamp": "2026-04-30T21:58:15+00:00",
+      "kind": "utc_boundary",
+      "local_date": "2026-05-01",
+      "local_in_period": false,
+      "note": "posted on the local date; UTC date differs",
+      "utc_date": "2026-04-30"
+    }
+  ],
+  "episode_id": "EP-E7KTTYKF56FB",
+  "generator_version": "fingen-0.1.0",
+  "schema_version": "1.0",
+  "seed": 2105
+}

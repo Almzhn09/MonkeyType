@@ -1,0 +1,38 @@
+{
+  "base_currency": "KZT",
+  "company": {
+    "name": "Bekan Industrial LLC"
+  },
+  "counts": {
+    "documents": 70,
+    "entries": 150,
+    "fx_rates": 102,
+    "invoices": 40,
+    "ledger_rows": 323,
+    "payments": 30
+  },
+  "currency_exponents": {
+    "EUR": 2,
+    "KZT": 2,
+    "USD": 2
+  },
+  "episode_id": "EP-9K6F80TV0W",
+  "extract_end": "2026-04-11T00:00:00+05:00",
+  "extract_start": "2026-02-19T00:00:00+05:00",
+  "files": {
+    "fx.csv": "b91f5fe0bebc54f3c0090c89674dab454b4a7d67de3dd987c4a2a826e7014275",
+    "invoices.jsonl": "bc72780453dcc03438fcf973333156991b10892f05f734a14900edaf965d5e73",
+    "ledger.csv": "6009f858575693b1ce4b4cff2d9f60ca5dfa26cabeaa656e6a5d4544d587ecbe",
+    "payments.jsonl": "a29514b50b9fcaa2807e40ed129a7db43b6b09b2387f29b985cd7d85cc202130",
+    "policy.json": "a4379e5c209f75c31801b507c7473a3ef6c116b92fa3f1f3e3c84720ad55e0f1"
+  },
+  "period_end": "2026-04-01T00:00:00+05:00",
+  "period_start": "2026-03-01T00:00:00+05:00",
+  "rounding": {
+    "mode": "half_up",
+    "scope": "per_conversion"
+  },
+  "schema_version": "1.0",
+  "timezone": "Asia/Almaty",
+  "utc_offset": "+05:00"
+}

@@ -1,0 +1,38 @@
+{
+  "base_currency": "USD",
+  "company": {
+    "name": "Zanlenora Analytics GmbH"
+  },
+  "counts": {
+    "documents": 89,
+    "entries": 239,
+    "fx_rates": 162,
+    "invoices": 50,
+    "ledger_rows": 511,
+    "payments": 39
+  },
+  "currency_exponents": {
+    "EUR": 2,
+    "GBP": 2,
+    "USD": 2
+  },
+  "episode_id": "EP-FMRT7ZJ0AV10",
+  "extract_end": "2026-06-11T00:00:00+04:00",
+  "extract_start": "2026-03-22T00:00:00+04:00",
+  "files": {
+    "fx.csv": "e7baef8927eb22053707e06e10fb0cc4fa47e54c782d5eb25f3b206b4452ee9e",
+    "invoices.jsonl": "3efea6434834cbdb4079b18928d1d49dedebbd547e354c474925f70b8f74037a",
+    "ledger.csv": "284ace519f3f557b8231b11421f1f1087ddac8016efe29e1166b08c895bd65d9",
+    "payments.jsonl": "6ad3a2f2ec7b3eed464addee1e5f24468a8d58a4facf0d57ad76b3f00589e405",
+    "policy.json": "b33b153c410c9bd63722f931bf2ac42a2149501fe0786dc86bfded1174069f6d"
+  },
+  "period_end": "2026-06-01T00:00:00+04:00",
+  "period_start": "2026-04-01T00:00:00+04:00",
+  "rounding": {
+    "mode": "half_even",
+    "scope": "per_conversion"
+  },
+  "schema_version": "1.0",
+  "timezone": "Asia/Dubai",
+  "utc_offset": "+04:00"
+}

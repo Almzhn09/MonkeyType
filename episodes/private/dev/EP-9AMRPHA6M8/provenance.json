@@ -1,0 +1,254 @@
+{
+  "baseline_sha256": {
+    "fx.csv": "eb1dbabf37378ff5492a9db114936e599bd701f651250732b19d8ef650338a09",
+    "invoices.jsonl": "e0d3dda7681a90a8222880785b310be77d43c4be4ba4c08ab9eb02e4e995cd86",
+    "ledger.csv": "54fa2ae6c0f73e5bd955c49af46246581f883ef977928f7881bcf126b362c42c",
+    "manifest.json": "4a5bdc27f2509c2ea899c1ee7f07568313ff8d15e92c18418c4b6e23f043444f",
+    "payments.jsonl": "691157573e01fffe4a9aa38d31c44fa46589660c121a68fdef622fc37861bea5",
+    "policy.json": "66d0db292f7547f925c58669a1943024cf837c40b8fefb8a5536f19eaad3a7ba"
+  },
+  "changes": [
+    {
+      "after": {
+        "account": "1208.08",
+        "credit_minor": 0,
+        "currency": "CNY",
+        "debit_minor": 677795,
+        "entity_id": "CP-Q8EBQ",
+        "entry_id": "E-V4FDE6",
+        "invoice_id": "BILL-2026-0YJHC6V",
+        "payment_id": null,
+        "row_id": "R-8X8KESF",
+        "timestamp": "2026-02-19T10:54:59+09:00"
+      },
+      "before": null,
+      "cause": "duplicate_invoice[repost] (combo duplicate_plus_period, step 1/2; sibling D-7ER7AAK59): invoice BILL-2026-0YJHC6V (issued 2026-02-07) posted a second time on 2026-02-19 as a new entry with the same amounts",
+      "issue_id": "ISS-K70Q7T",
+      "op": "add_row",
+      "order": 0,
+      "target": "R-8X8KESF",
+      "type": "duplicate_invoice"
+    },
+    {
+      "after": {
+        "account": "4145.02",
+        "credit_minor": 677795,
+        "currency": "CNY",
+        "debit_minor": 0,
+        "entity_id": "CP-Q8EBQ",
+        "entry_id": "E-V4FDE6",
+        "invoice_id": "BILL-2026-0YJHC6V",
+        "payment_id": null,
+        "row_id": "R-XAT1E5J",
+        "timestamp": "2026-02-19T10:54:59+09:00"
+      },
+      "before": null,
+      "cause": "duplicate_invoice[repost] (combo duplicate_plus_period, step 1/2; sibling D-7ER7AAK59): invoice BILL-2026-0YJHC6V (issued 2026-02-07) posted a second time on 2026-02-19 as a new entry with the same amounts",
+      "issue_id": "ISS-K70Q7T",
+      "op": "add_row",
+      "order": 1,
+      "target": "R-XAT1E5J",
+      "type": "duplicate_invoice"
+    },
+    {
+      "after": {
+        "account": "1208.08",
+        "credit_minor": 0,
+        "currency": "CNY",
+        "debit_minor": 676285,
+        "entity_id": "CP-Q8EBQ",
+        "entry_id": "E-30R1AH",
+        "invoice_id": "BILL-2026-NAADSAY",
+        "payment_id": null,
+        "row_id": "R-8GM3GV8",
+        "timestamp": "2026-05-05T09:16:03+09:00"
+      },
+      "before": {
+        "account": "1208.08",
+        "credit_minor": 0,
+        "currency": "CNY",
+        "debit_minor": 676285,
+        "entity_id": "CP-Q8EBQ",
+        "entry_id": "E-30R1AH",
+        "invoice_id": "BILL-2026-NAADSAY",
+        "payment_id": null,
+        "row_id": "R-8GM3GV8",
+        "timestamp": "2026-04-27T14:46:58+09:00"
+      },
+      "cause": "wrong_period[late_posting] (combo duplicate_plus_period, step 2/2; sibling D-S6WWZ9D75): in-period invoice issued 2026-04-27 posted after period_end on 2026-05-05",
+      "issue_id": "ISS-DNMJX3",
+      "op": "modify_row",
+      "order": 2,
+      "target": "R-8GM3GV8",
+      "type": "wrong_period"
+    },
+    {
+      "after": {
+        "account": "4145.02",
+        "credit_minor": 676285,
+        "currency": "CNY",
+        "debit_minor": 0,
+        "entity_id": "CP-Q8EBQ",
+        "entry_id": "E-30R1AH",
+        "invoice_id": "BILL-2026-NAADSAY",
+        "payment_id": null,
+        "row_id": "R-C0QJCF4",
+        "timestamp": "2026-05-05T09:16:03+09:00"
+      },
+      "before": {
+        "account": "4145.02",
+        "credit_minor": 676285,
+        "currency": "CNY",
+        "debit_minor": 0,
+        "entity_id": "CP-Q8EBQ",
+        "entry_id": "E-30R1AH",
+        "invoice_id": "BILL-2026-NAADSAY",
+        "payment_id": null,
+        "row_id": "R-C0QJCF4",
+        "timestamp": "2026-04-27T14:46:58+09:00"
+      },
+      "cause": "wrong_period[late_posting] (combo duplicate_plus_period, step 2/2; sibling D-S6WWZ9D75): in-period invoice issued 2026-04-27 posted after period_end on 2026-05-05",
+      "issue_id": "ISS-DNMJX3",
+      "op": "modify_row",
+      "order": 3,
+      "target": "R-C0QJCF4",
+      "type": "wrong_period"
+    }
+  ],
+  "config": {
+    "base_currency": "CNY",
+    "combos": {
+      "duplicate_plus_period": 1,
+      "fx_partial_payment_boundary": 0
+    },
+    "config_version": "1",
+    "distractors": {
+      "advances": 1,
+      "refunds": 1,
+      "repeated_amounts": 2,
+      "split_payments": 2,
+      "utc_boundary": 2
+    },
+    "errors": {
+      "duplicate_invoice": 0,
+      "fx_conversion": 0,
+      "payment_allocation": 0,
+      "wrong_period": 0
+    },
+    "foreign_currencies": [
+      "USD",
+      "JPY"
+    ],
+    "period": {
+      "months": 3,
+      "start_month": "2026-02"
+    },
+    "rounding_mode": "half_even",
+    "schema_version": "1.0",
+    "seed": 2108,
+    "size": {
+      "background_entries": 110,
+      "invoices": 38
+    },
+    "split": "dev",
+    "timezone": "Asia/Tokyo",
+    "transform": null
+  },
+  "config_sha256": "7cdf7f0615c1e2870fd21581d2d5b0114bd63a7a7df5d5ab59d226f44ea54568",
+  "distractors": [
+    {
+      "currency": "CNY",
+      "doc_ids": [
+        "D-YFYQYV64C"
+      ],
+      "kind": "advances",
+      "subtype": "prepayment",
+      "unapplied_minor": 945000
+    },
+    {
+      "doc_ids": [
+        "D-ZTWEZYHYG"
+      ],
+      "invoice_ids": [
+        "BILL-2026-RVY95GC",
+        "BILL-2026-4KRKFZM"
+      ],
+      "kind": "multi_invoice_payment"
+    },
+    {
+      "amount_minor": -567000,
+      "currency": "CNY",
+      "doc_ids": [
+        "D-GPB7ANMRM",
+        "D-YFYQYV64C"
+      ],
+      "kind": "refunds"
+    },
+    {
+      "currency": "CNY",
+      "doc_ids": [
+        "D-FP76AD7JE",
+        "D-M2AXBAMTN"
+      ],
+      "kind": "repeated_amounts",
+      "same_entity": true,
+      "total_minor": 10220000
+    },
+    {
+      "currency": "CNY",
+      "doc_ids": [
+        "D-GMJNP91KR",
+        "D-M28N54FGD"
+      ],
+      "kind": "repeated_amounts",
+      "same_entity": false,
+      "total_minor": 122800
+    },
+    {
+      "doc_ids": [
+        "D-9VR76X4KQ",
+        "D-16BKBD3RE",
+        "D-PGX8CNMS5"
+      ],
+      "invoice_id": "BILL-2026-31QB7F9",
+      "kind": "split_payments"
+    },
+    {
+      "doc_ids": [
+        "D-D3ZY1S3EF",
+        "D-AGNQF6YKZ",
+        "D-WT0HJY244"
+      ],
+      "invoice_id": "BILL-2026-M5MMC6Q",
+      "kind": "split_payments"
+    },
+    {
+      "boundary": "period_end",
+      "doc_ids": [
+        "D-DG88HSR5T"
+      ],
+      "doc_timestamp": "2026-04-30T15:43:41+00:00",
+      "kind": "utc_boundary",
+      "local_date": "2026-05-01",
+      "local_in_period": false,
+      "note": "posted on the local date; UTC date differs",
+      "utc_date": "2026-04-30"
+    },
+    {
+      "boundary": "period_end",
+      "doc_ids": [
+        "D-Z5TYA34VM"
+      ],
+      "doc_timestamp": "2026-04-30T17:47:59+00:00",
+      "kind": "utc_boundary",
+      "local_date": "2026-05-01",
+      "local_in_period": false,
+      "note": "posted on the local date; UTC date differs",
+      "utc_date": "2026-04-30"
+    }
+  ],
+  "episode_id": "EP-9AMRPHA6M8",
+  "generator_version": "fingen-0.1.0",
+  "schema_version": "1.0",
+  "seed": 2108
+}
