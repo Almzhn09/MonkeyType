@@ -5,6 +5,7 @@ COPY audit_sim/ audit_sim/
 COPY fincheck/ fincheck/
 COPY fingen/ fingen/
 COPY playground/ playground/
+COPY dashboard/ dashboard/
 COPY configs/ configs/
 COPY episodes/ episodes/
 COPY tests/ tests/
