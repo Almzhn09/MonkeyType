@@ -7,6 +7,7 @@ from urllib.error import HTTPError
 from urllib.request import Request, urlopen
 
 from audit_sim.scoring import oracle_submission
+from playground.client import ApiError, Client, run
 from playground.server import Playground, make_server
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -97,6 +98,22 @@ class TestPlayground(unittest.TestCase):
         with self.assertRaises(HTTPError) as missing:
             post("/api/start", {"episode": "../../etc"})
         self.assertEqual(missing.exception.code, 404)
+
+        client = Client(base)
+        result = run(client, self.with_errors["id"])
+        self.assertEqual(result["reason"], "submitted")
+        self.assertEqual(result["score"]["tp"], 0)
+        self.assertGreater(result["score"]["fn"], 0)
+        self.assertEqual(result["inspection_steps"], client.result()["inspection_steps"])
+        game = client.start(self.with_errors["id"])
+        answer = oracle_submission(self.app._session(client.session)["env"].episode)["findings"]
+        self.assertTrue(client.submit(answer)["finished"])
+        self.assertEqual(client.result()["score"]["f1"], 1)
+        self.assertEqual(game["observation"]["steps_remaining"], 100)
+        after = client.step({"action": "list_records", "table": "ledger", "cursor": None, "limit": 50})
+        self.assertEqual(after["observation"]["error"], "episode_finished")
+        with self.assertRaises(ApiError):
+            Client(base).result()
 
 
 if __name__ == "__main__":
