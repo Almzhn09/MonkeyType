@@ -1,6 +1,6 @@
 """Deterministic one-to-one evidence matching and the common Genesis reward."""
 
-from dataclasses import dataclass
+from dataclasses import asdict, dataclass
 
 from fincheck.load import canon_ids
 
@@ -50,28 +50,43 @@ def key(item):
 
 def candidate_graph(findings, issues, evidence_ids, tolerances):
     """Rows are in submission order; columns in issue ID order."""
+    if not findings:
+        return [], []
     issue_keys = [key(issue) for issue in issues]
-    available = frozenset(canonical_ids(evidence_ids))
+    available = frozenset(value.strip().upper() for value in evidence_ids)
     requirements = [[frozenset(canonical_ids(ids)) for ids in issue["evidence_sets"]] for issue in issues]
     graph = []
+    rejection = []
     for finding in findings:
         evidence = frozenset(canonical_ids(finding["evidence_ids"]))
-        finding_key = key(finding)
         if not evidence <= available:
             graph.append([])
+            rejection.append("unknown_evidence")
             continue
-        graph.append([
-            index
-            for index, issue in enumerate(issues)
-            if finding_key == issue_keys[index]
-            and abs(finding["claimed_amount_minor"] - issue["expected_amount_minor"])
-            <= tolerances.get(issue["type"], issue.get("tolerance_minor", 0))
-            and any(needed <= evidence for needed in requirements[index])
-        ])
-    return graph
+        kind, affected, currency = key(finding)
+        targeted = [i for i, issue in enumerate(issue_keys) if issue[:2] == (kind, affected)]
+        same_currency = [i for i in targeted if issue_keys[i][2] == currency]
+        amount_matched = [i for i in same_currency if amount_matches(finding, issues[i], tolerances)]
+        candidates = [i for i in amount_matched if any(needed <= evidence for needed in requirements[i])]
+        graph.append(candidates)
+        reason = "already_matched"
+        for population, failure in (
+            (targeted, "no_matching_issue"), (same_currency, "wrong_currency"),
+            (amount_matched, "amount_outside_tolerance"), (candidates, "incomplete_evidence"),
+        ):
+            if not population:
+                reason = failure
+                break
+        rejection.append(reason)
+    return graph, rejection
 
 
-def maximum_matches(graph):
+def amount_matches(finding, issue, tolerances):
+    error = abs(finding["claimed_amount_minor"] - issue["expected_amount_minor"])
+    return error <= tolerances.get(issue["type"], issue.get("tolerance_minor", 0))
+
+
+def match_assignments(graph):
     """Use augmenting paths so a flexible match cannot block a more specific one."""
     owners = {}
 
@@ -87,36 +102,69 @@ def maximum_matches(graph):
 
     for finding in range(len(graph)):
         assign(finding, set())
-    return len(owners)
+    return owners
 
 
-def score_submission(episode, payload, inspection_steps, tolerances=None):
+def maximum_matches(graph):
+    return len(match_assignments(graph))
+
+
+def assess_submission(episode, payload, inspection_steps, tolerances=None):
+    """Compute the common score and its private evidence-matching decisions."""
+    issues = sorted(episode.issues, key=lambda issue: issue["issue_id"])
     if not validate_submission(payload, episode.manifest["episode_id"]):
-        return Score(0, 0, len(episode.issues), 0.0, 0.0, 0.0, -1.0, invalid_submission=True)
+        return Score(0, 0, len(issues), 0.0, 0.0, 0.0, -1.0, invalid_submission=True), [], issues
 
     tolerances = {} if tolerances is None else tolerances
     findings = payload["findings"]
-    issues = sorted(episode.issues, key=lambda issue: issue["issue_id"])
     unique = []
-    seen = set()
-    for finding in findings:
+    original_indexes = []
+    seen = {}
+    decisions = []
+    for index, finding in enumerate(findings):
         signature = (
             key(finding),
             finding["claimed_amount_minor"],
             canonical_ids(finding["evidence_ids"]),
         )
-        if signature not in seen:
+        if signature in seen:
+            decisions.append({"index": index, "status": "duplicate", "duplicate_of": seen[signature]})
+        else:
             unique.append(finding)
-            seen.add(signature)
-    graph = candidate_graph(unique, issues, episode.evidence_ids, tolerances)
-    tp = maximum_matches(graph)
+            original_indexes.append(index)
+            seen[signature] = index
+            decisions.append({"index": index})
+    graph, rejections = candidate_graph(unique, issues, episode.evidence_ids, tolerances)
+    owners = match_assignments(graph)
+    pairs = {finding: issue for issue, finding in owners.items()}
+    for position, original in enumerate(original_indexes):
+        if position in pairs:
+            decisions[original].update(status="matched", issue_id=issues[pairs[position]]["issue_id"])
+        else:
+            decisions[original]["status"] = rejections[position]
+    tp = len(owners)
     fp = len(findings) - tp
     fn = len(issues) - tp
     precision = tp / (tp + fp) if tp + fp else 0.0
     recall = tp / (tp + fn) if tp + fn else 0.0
     f1 = 2 * tp / (2 * tp + fp + fn) if tp + fp + fn else 1.0
     reward = max(-1.0, min(1.0, 2 * f1 - 1 - 0.002 * inspection_steps))
-    return Score(tp, fp, fn, precision, recall, f1, reward)
+    missing = [issue for index, issue in enumerate(issues) if index not in owners]
+    return Score(tp, fp, fn, precision, recall, f1, reward), decisions, missing
+
+
+def score_submission(episode, payload, inspection_steps, tolerances=None):
+    score, _, _ = assess_submission(episode, payload, inspection_steps, tolerances)
+    return score
+
+
+def explain_submission(episode, payload, inspection_steps, tolerances=None):
+    score, decisions, missing = assess_submission(episode, payload, inspection_steps, tolerances)
+    return {
+        "score": asdict(score),
+        "findings": decisions,
+        "missed": [{"issue_id": issue["issue_id"], "type": issue["type"]} for issue in missing],
+    }
 
 
 def oracle_submission(episode):

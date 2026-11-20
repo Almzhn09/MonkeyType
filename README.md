@@ -25,10 +25,11 @@ docker run --rm --network none --cpus=2 --memory=4g --read-only \
 ## Комплект сдачи
 
 ```sh
-python3 scripts/check.py --output .audit-sim/submission
+python3 scripts/check.py --archive .audit-sim/genesis-submission.zip
+python3 -m audit_sim verify-package .audit-sim/genesis-submission.zip
 ```
 
-Команда записывает в новый или пустой каталог исходники, лицензию, Dockerfile, конфигурации, 10 train- и 10 dev-эпизодов, 20 парных вариантов, отчёты, тесты, `trajectories.jsonl` и инструкции. В `episodes/public/` находятся записи для чтения, в `episodes/private/` — файлы оценщика. Конфигурации и seed открытых наборов находятся в `configs/`. Материалы закрытой проверки жюри подаются отдельно.
+Архив содержит исходники, лицензию, Dockerfile, конфигурации, 10 train- и 10 dev-эпизодов, 20 парных вариантов, отчёты, тесты, `trajectories.jsonl` и инструкции. В `episodes/public/` находятся записи для чтения, в `episodes/private/` — файлы оценщика. Конфигурации и seed открытых наборов находятся в `configs/`. Материалы закрытой проверки жюри подаются отдельно.
 
 ## Генерация и оценка другого набора
 
@@ -40,4 +41,4 @@ python3 -m audit_sim run .audit-sim/episodes --split dev --output .audit-sim/dev
 
 Для одного эпизода с раздельными каталогами передайте `python3 -m audit_sim run PUBLIC --private PRIVATE`. Политики `random`, `reconcile`, `mark_all` и `oracle` запускаются на одних данных. `--policy` выбирает одну из них. В режиме `closed` итог остаётся у оценщика, в режиме `train` политика получает терминальную награду, которая также записывается в траекторию. Oracle работает на доверенной стороне, и его ответы исключены из публичного журнала.
 
-[Контракт данных v1.0](docs/CONTRACT.md) · [Дизайн, награда и ограничения](docs/DESIGN.md) · [Единая проверка](scripts/README.md)
+[Контракт данных v1.0](docs/CONTRACT.md) · [Дизайн, награда и ограничения](docs/DESIGN.md) · [Единая проверка](scripts/README.md) · [Сессии, повторы и диагностика](docs/OPERATIONS.md)

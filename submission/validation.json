@@ -4,7 +4,8 @@
   "verified_pairs": 20,
   "dev_runs": 40,
   "recorded_train_steps": 222,
-  "max_dev_episode_seconds": 0.930646,
+  "replayed_train_steps": 222,
+  "max_dev_episode_seconds": 0.476264,
   "dev": {
     "random": {
       "episodes": 10,
@@ -13,7 +14,7 @@
       "mean_f1": 0.2,
       "mean_return": -0.6064,
       "mean_steps": 17,
-      "mean_seconds": 0.5362554,
+      "mean_seconds": 0.3357992,
       "truncated": 0,
       "invalid_submissions": 0
     },
@@ -24,7 +25,7 @@
       "mean_f1": 1.0,
       "mean_return": 0.961,
       "mean_steps": 20.5,
-      "mean_seconds": 0.5424237,
+      "mean_seconds": 0.3616623,
       "truncated": 0,
       "invalid_submissions": 0
     },
@@ -34,8 +35,8 @@
       "mean_recall": 0.0,
       "mean_f1": 0.0,
       "mean_return": -1.0,
-      "mean_steps": 2,
-      "mean_seconds": 0.4384459,
+      "mean_steps": 4,
+      "mean_seconds": 0.3272935,
       "truncated": 0,
       "invalid_submissions": 0
     },
@@ -46,7 +47,7 @@
       "mean_f1": 1.0,
       "mean_return": 1.0,
       "mean_steps": 1,
-      "mean_seconds": 0.0264621,
+      "mean_seconds": 0.0005753,
       "truncated": 0,
       "invalid_submissions": 0
     }

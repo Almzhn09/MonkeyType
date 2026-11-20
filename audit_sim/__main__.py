@@ -1,6 +1,7 @@
 """Command line for generating integration fixtures and running offline evaluation."""
 
 import argparse
+from concurrent.futures import ThreadPoolExecutor
 import json
 from pathlib import Path
 from shutil import copytree
@@ -12,11 +13,18 @@ import unittest
 from fincheck.load import SchemaError, fx_key
 from fincheck.verify import discover
 
-from .data import load_json
+from .benchmark import benchmark
+from .data import Episode, load_json
+from .environment import AuditEnv, STEP_LIMIT
 from .fixtures import dump_json, dump_jsonl, make_dev
+from .package import build_package, verify_package
 from .policies import POLICIES
 from .release import ROOT, prepare_release
-from .runner import WorkerProtocolError, run_policy
+from .replay import replay
+from .report import report_directory, write_report
+from .runner import WorkerProtocolError, run_loaded_policy
+from .scoring import explain_submission
+from .session import run_session
 
 
 def episodes(directory, *, private_directory=None, split=None):
@@ -60,18 +68,37 @@ def summarize(reports, choices):
     return metrics
 
 
+def episode_locations(directory, *, private_directory=None, split=None):
+    available = {}
+    for public, private in episodes(directory, private_directory=private_directory, split=split):
+        manifest = public / "manifest.json" if private is not None else public / "public" / "manifest.json"
+        episode_id = load_json(manifest)["episode_id"]
+        if episode_id in available:
+            raise ValueError(f"Duplicate episode ID in dataset: {episode_id}")
+        available[episode_id] = public, private
+    return available
+
+
 def evaluate(directory, *, choices=POLICIES, mode="closed", policy_seed=0,
-             timeout=60.0, tolerances=None, output=None, split=None, private_directory=None):
+             timeout=60.0, tolerances=None, output=None, split=None, private_directory=None, jobs=1):
+    if jobs < 1:
+        raise ValueError("jobs must be positive")
+    locations = episodes(directory, split=split, private_directory=private_directory)
+
+    def evaluate_location(location):
+        loaded = Episode.load(*location)
+        return [run_loaded_policy(
+            loaded, policy, mode=mode, policy_seed=policy_seed,
+            timeout=timeout, tolerances=tolerances,
+        ) for policy in choices]
+
     reports = []
     trajectories = []
-    for episode, private in episodes(directory, split=split, private_directory=private_directory):
-        for policy in choices:
-            report, trajectory = run_policy(
-                episode, policy, private_directory=private, mode=mode, policy_seed=policy_seed,
-                timeout=timeout, tolerances=tolerances,
-            )
-            reports.append(report)
-            trajectories.extend({"policy": policy, **row} for row in trajectory)
+    with ThreadPoolExecutor(max_workers=min(jobs, len(locations))) as executor:
+        for batch in executor.map(evaluate_location, locations):
+            for report, trajectory in batch:
+                reports.append(report)
+                trajectories.extend({"policy": report["policy"], **row} for row in trajectory)
     summary = summarize(reports, choices)
     if output is not None:
         output.mkdir(parents=True, exist_ok=True)
@@ -92,6 +119,8 @@ def demo(output):
         reports, _, trajectories = evaluate(
             directory, split="demo", choices=("reconcile", "mark_all"), output=output,
         )
+    if output is not None:
+        write_report(output / "report.html", reports, trajectories)
     # Display only the same public documents and records used as agent evidence.
     public_records = {}
     for row in trajectories:
@@ -154,8 +183,47 @@ def main():
     run.add_argument("--mode", choices=("closed", "train"), default="closed")
     run.add_argument("--policy-seed", type=int, default=0)
     run.add_argument("--timeout", type=float, default=60.0)
+    run.add_argument("--jobs", type=int, default=1, help="Evaluate independent episodes concurrently")
     run.add_argument("--tolerances", type=Path)
     run.add_argument("--output", type=Path)
+    replay_parser = commands.add_parser("replay", help="Re-execute a trajectory and verify the recorded results")
+    replay_parser.add_argument("directory", type=Path)
+    replay_parser.add_argument("trajectory", type=Path)
+    replay_parser.add_argument("--private", type=Path)
+    replay_parser.add_argument("--split")
+    replay_parser.add_argument("--mode", choices=("closed", "train"))
+    replay_parser.add_argument("--reports", type=Path)
+    replay_parser.add_argument("--tolerances", type=Path)
+    session = commands.add_parser("session", help="Run one episode over JSON lines on stdin/stdout")
+    session.add_argument("directory", type=Path, nargs="?")
+    session.add_argument("--private", type=Path)
+    session.add_argument("--config", type=Path)
+    session.add_argument("--seed", type=int)
+    session.add_argument("--mode", choices=("closed", "train"), default="closed")
+    session.add_argument("--timeout", type=float, default=60.0)
+    session.add_argument("--tolerances", type=Path)
+    session.add_argument("--output", type=Path)
+    report = commands.add_parser("report", help="Render a saved run as a self-contained offline HTML report")
+    report.add_argument("directory", type=Path)
+    report.add_argument("--output", type=Path)
+    score = commands.add_parser("score", help="Evaluate a saved submission with the production matcher")
+    score.add_argument("directory", type=Path)
+    score.add_argument("submission", type=Path)
+    score.add_argument("--private", type=Path)
+    score.add_argument("--inspection-steps", type=int, default=0)
+    score.add_argument("--tolerances", type=Path)
+    score.add_argument("--details", action="store_true", help="Include private matching diagnostics")
+    bench = commands.add_parser("benchmark", help="Check generated holdout cohorts and transformed pairs")
+    bench.add_argument("--seed", type=int, default=6217)
+    bench.add_argument("--batches", type=int, default=1)
+    bench.add_argument("--start-index", type=int, default=0)
+    bench.add_argument("--progress-every", type=int, default=1)
+    bench.add_argument("--output", type=Path)
+    package = commands.add_parser("package", help="Create a ZIP from a checked release directory")
+    package.add_argument("directory", type=Path)
+    package.add_argument("archive", type=Path)
+    verify_zip = commands.add_parser("verify-package", help="Verify all members and checksums in a release ZIP")
+    verify_zip.add_argument("archive", type=Path)
     demo_parser = commands.add_parser("demo", help="Show two paired terminal demonstrations")
     demo_parser.add_argument("--output", type=Path)
     commands.add_parser("verify", help="Run tests and the dev integration check")
@@ -171,11 +239,55 @@ def main():
                 args.directory, choices=POLICIES if args.policy == "all" else (args.policy,),
                 mode=args.mode, policy_seed=args.policy_seed, timeout=args.timeout,
                 tolerances=load_json(args.tolerances) if args.tolerances else None,
-                output=args.output, split=args.split, private_directory=args.private,
+                output=args.output, split=args.split, private_directory=args.private, jobs=args.jobs,
             )
             print(json.dumps(summary, indent=2))
         elif args.command == "demo":
             demo(args.output)
+        elif args.command == "report":
+            report_directory(args.directory, args.output or args.directory / "report.html")
+        elif args.command == "score":
+            if not 0 <= args.inspection_steps < STEP_LIMIT:
+                raise ValueError(f"Inspection steps must be between 0 and {STEP_LIMIT - 1}")
+            env = AuditEnv(tolerances=load_json(args.tolerances) if args.tolerances else None)
+            env.reset(config={"episode": args.directory, "private": args.private})
+            result = explain_submission(
+                env.episode, load_json(args.submission), args.inspection_steps, env.tolerances,
+            )
+            print(json.dumps(result if args.details else result["score"], indent=2))
+        elif args.command == "benchmark":
+            result = benchmark(
+                args.seed, args.batches, start_index=args.start_index,
+                output=args.output, progress_every=args.progress_every,
+            )
+            print(json.dumps(result, indent=2))
+        elif args.command == "package":
+            print(json.dumps(build_package(args.directory, args.archive), indent=2))
+        elif args.command == "verify-package":
+            print(json.dumps(verify_package(args.archive), indent=2))
+        elif args.command == "replay":
+            locations = episode_locations(args.directory, private_directory=args.private, split=args.split)
+            result = replay(
+                locations, args.trajectory, mode=args.mode, reports_path=args.reports,
+                tolerances=load_json(args.tolerances) if args.tolerances else None,
+            )
+            print(json.dumps(result, indent=2))
+        elif args.command == "session":
+            if args.directory is None:
+                if args.private is not None or (args.config is None and args.seed is None):
+                    raise ValueError("Provide an episode path, or select a generator --config or --seed")
+                config = load_json(args.config) if args.config else {}
+            else:
+                if args.config is not None or args.seed is not None:
+                    raise ValueError("Select an episode path or generator inputs")
+                config = {"episode": args.directory, "private": args.private}
+            if not isinstance(config, dict):
+                raise ValueError("Generator configuration must be a JSON object")
+            run_session(
+                sys.stdin.fileno(), sys.stdout.fileno(), config=config, seed=args.seed,
+                mode=args.mode, timeout=args.timeout, output=args.output,
+                tolerances=load_json(args.tolerances) if args.tolerances else None,
+            )
         elif args.command == "verify":
             return verify()
         elif args.command == "release":

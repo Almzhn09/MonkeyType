@@ -11,6 +11,8 @@ from fingen.config import load_config_file
 
 from .data import Episode, load_json
 from .fixtures import dump_json, dump_jsonl
+from .replay import replay
+from .report import write_report
 from .scoring import oracle_submission, score_submission
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -92,10 +94,19 @@ def prepare_release(evaluate, output=None):
         counts = Counter(row["episode_id"] for row in trajectories)
         if any(counts[item["episode_id"]] != item["steps"] for item in train_reports):
             raise ValueError("Training trajectory length disagrees with executed actions")
+        trace_file = Path(temp) / "trajectories.jsonl"
+        report_file = Path(temp) / "train-reports.json"
+        dump_jsonl(trace_file, trajectories)
+        dump_json(report_file, train_reports)
+        training_public = dataset / "public" / "train"
+        training_private = dataset / "private" / "train"
+        locations = {item.name: (item, training_private / item.name) for item in training_public.iterdir()}
+        replayed = replay(locations, trace_file, reports_path=report_file)
 
         result = {
             "train_episodes": 10, "dev_episodes": 10, "verified_pairs": pairs,
             "dev_runs": len(reports), "recorded_train_steps": len(trajectories),
+            "replayed_train_steps": replayed["steps"],
             "max_dev_episode_seconds": max(item["duration_seconds"] for item in reports),
             "dev": summary,
         }
@@ -107,6 +118,8 @@ def prepare_release(evaluate, output=None):
                 copy2(ROOT / filename, output / filename)
             copytree(dataset, output / "episodes")
             dump_json(output / "dev-reports.json", reports)
+            copy2(report_file, output / report_file.name)
             dump_json(output / "validation.json", result)
-            dump_jsonl(output / "trajectories.jsonl", trajectories)
+            copy2(trace_file, output / trace_file.name)
+            write_report(output / "train-report.html", train_reports, trajectories)
         return result

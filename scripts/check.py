@@ -147,12 +147,31 @@ def st_release(output):
     return "PASS", None
 
 
+@stage("package")
+def st_package(directory, archive):
+    result = run(["-m", "audit_sim", "package", str(directory), str(archive)])
+    if result.returncode != 0:
+        return "FAIL", tail(result)
+    print(result.stdout.strip())
+    return "PASS", None
+
+
+def release_and_package(output, archive):
+    if output is None and archive is not None:
+        with tempfile.TemporaryDirectory(prefix="audit-release-") as temp:
+            release_and_package(Path(temp), archive)
+        return
+    if st_release(output) == "PASS" and archive is not None:
+        st_package(output, archive)
+
+
 def main():
     global VERBOSE
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--quick", action="store_true", help="skip the extra example checks")
     ap.add_argument("--verbose", action="store_true")
     ap.add_argument("--output", type=Path, help="Export the source code, checked episodes and trajectories")
+    ap.add_argument("--archive", type=Path, help="Write a checked ZIP with a checksum manifest")
     a = ap.parse_args()
     VERBOSE = a.verbose
     sys.path.insert(0, str(ROOT))
@@ -163,7 +182,10 @@ def main():
     else:
         st_fresh()
     can_export = all(status == "PASS" for _, status in RESULTS)
-    st_release(a.output.resolve() if a.output and can_export else None)
+    release_and_package(
+        a.output.resolve() if a.output and can_export else None,
+        a.archive.resolve() if a.archive and can_export else None,
+    )
     print(f"peak RSS (self+children): {peak_rss_mb():.0f} MB")
     failed = [n for n, s in RESULTS if s == "FAIL"]
     print("RESULT: " + ("FAIL (" + ", ".join(failed) + ")" if failed else "OK"))
