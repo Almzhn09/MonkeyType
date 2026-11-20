@@ -19,7 +19,7 @@ ROOT = Path(__file__).resolve().parents[1]
 CONFIGS = ROOT / "configs"
 SPLITS = ("train", "dev")
 SOURCE_DIRS = ("audit_sim", "fingen", "fincheck", "configs", "tests", "scripts", "docs")
-SOURCE_FILES = (".dockerignore", ".gitignore", "Dockerfile", "LICENSE", "README.md", "requirements.txt")
+SOURCE_FILES = (".dockerignore", ".gitignore", "Dockerfile", "LICENSE", "README.md", "requirements.txt", "start-genesis.command")
 DEMO_ERROR_ID = "EP-CHK-A08"
 DEMO_CLEAN_ID = "EP-QRS8HS6811"
 

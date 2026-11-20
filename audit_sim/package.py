@@ -66,7 +66,8 @@ def assert_release_contents(names):
 def zip_entry(name):
     entry = ZipInfo(name)
     entry.create_system = 3
-    entry.external_attr = (stat.S_IFREG | 0o644) << 16
+    permissions = 0o755 if name == "start-genesis.command" else 0o644
+    entry.external_attr = (stat.S_IFREG | permissions) << 16
     entry.compress_type = ZIP_DEFLATED
     return entry
 

@@ -218,6 +218,10 @@ def main():
     verify_zip.add_argument("archive", type=Path)
     demo_parser = commands.add_parser("demo", help="Show two paired terminal demonstrations")
     demo_parser.add_argument("--output", type=Path)
+    admin = commands.add_parser("serve", help="Open the local workspace for synthetic companies")
+    admin.add_argument("--host", choices=("127.0.0.1", "0.0.0.0"), default="127.0.0.1")
+    admin.add_argument("--port", type=int, default=8765)
+    admin.add_argument("--state", type=Path, default=Path(".audit-sim/admin"))
     commands.add_parser("verify", help="Run tests and the dev integration check")
     release = commands.add_parser("release", help="Verify and optionally export all submission data")
     release.add_argument("--output", type=Path)
@@ -236,6 +240,14 @@ def main():
             print(json.dumps(summary, indent=2))
         elif args.command == "demo":
             demo(args.output)
+        elif args.command == "serve":
+            if sys.platform != "linux":
+                raise ValueError("Use the Docker launcher on macOS to run the isolated audit agent")
+            if not 0 <= args.port <= 65535:
+                raise ValueError("Port must be between 0 and 65535")
+            from .admin import serve
+
+            serve(args.host, args.port, args.state)
         elif args.command == "report":
             report_directory(args.directory, args.output or args.directory / "report.html")
         elif args.command == "score":

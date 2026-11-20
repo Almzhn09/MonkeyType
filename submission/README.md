@@ -1,6 +1,6 @@
 # Комплект сдачи Genesis
 
-[Архив genesis-submission.zip](genesis-submission.zip) содержит исходники, лицензию, Dockerfile, инструкции, 10 train- и 10 dev-эпизодов, 20 парных вариантов, результаты проверки и обучающие траектории. После распаковки откройте `demo-report.html` для просмотра демо в браузере или `train-report.html` для просмотра обучающих сессий. Список проверок и измерения находятся в [validation.json](validation.json).
+[Архив genesis-submission.zip](genesis-submission.zip) содержит исходники, лицензию, Dockerfile, инструкции, 10 train- и 10 dev-эпизодов, 20 парных вариантов, результаты проверки и обучающие траектории. После распаковки откройте `start-genesis.command` на Mac с запущенным Docker Desktop, чтобы создавать вымышленные компании в браузере. Самостоятельные `demo-report.html` и `train-report.html` показывают сохранённые прогоны. Список проверок и измерения находятся в [validation.json](validation.json).
 
 В [review-validation.json](review-validation.json) сохранена расширенная проверка генератора и политик, проведённая до добавления графиков. Группы из `fresh_policy_cohorts` можно повторить с указанными `seed`, `start_index` и `completed_cohorts` через `benchmark --seed … --start-index … --batches …`. Замеры более ранней сборки сохранены в [extended-validation.json](extended-validation.json). [Команды прогона](../docs/OPERATIONS.md#проверка-на-новых-данных)
 

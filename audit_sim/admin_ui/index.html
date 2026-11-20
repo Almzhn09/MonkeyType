@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Genesis — Панель администратора</title>
+  <link href="/assets/admin.css" rel="stylesheet">
+  <script src="/assets/admin.js" defer></script>
+</head>
+<body>
+  <header class="app-bar">
+    <div class="frame navigation">
+      <a class="brand" href="/">Genesis <span>FinTech</span></a>
+      <span class="admin-label">Панель администратора</span>
+    </div>
+  </header>
+  <main class="frame">
+    <div class="intro">
+      <h1>Синтетические компании</h1>
+      <p>Настройте эпизод. Genesis сам создаст документы, запустит сверку и сохранит графики аудита.</p>
+    </div>
+    <div class="layout">
+      <section class="card create" aria-labelledby="create-title">
+        <h2 id="create-title">Новая компания</h2>
+        <form id="company-form">
+          <label>Название в списке<input name="name" placeholder="Например, Склад Север" required maxlength="80" autocomplete="off"></label>
+          <div class="fields">
+            <label>Валюта<select name="currency">
+              <option value="KZT">KZT — тенге</option><option>USD</option><option>EUR</option>
+              <option>GBP</option><option>JPY</option><option>KWD</option><option>CNY</option>
+            </select></label>
+            <label>Число счетов<input name="invoices" type="number" value="40" min="12" max="95" required></label>
+            <label>Начало периода<input name="start_month" type="month" value="2026-03" placeholder="ГГГГ-ММ" pattern="[0-9]{4}-[0-9]{2}" required></label>
+            <label>Месяцев<select name="months"><option>1</option><option>2</option><option>3</option></select></label>
+          </div>
+          <fieldset>
+            <legend>Ошибки в документах</legend>
+            <div class="scenarios">
+              <label><input name="scenarios" type="checkbox" value="duplicate_invoice" checked> Дубль счёта</label>
+              <label><input name="scenarios" type="checkbox" value="payment_allocation"> Распределение платежа</label>
+              <label><input name="scenarios" type="checkbox" value="fx_conversion"> Валютный курс</label>
+              <label><input name="scenarios" type="checkbox" value="wrong_period"> Отчётный период</label>
+            </div>
+            <p class="hint">Снимите все отметки, чтобы создать чистый эпизод.</p>
+          </fieldset>
+          <details>
+            <summary>Комбинации и повторяемость</summary>
+            <div class="advanced">
+              <label class="check"><input name="scenarios" type="checkbox" value="fx_partial_payment_boundary"> Валютный курс и частичный платёж</label>
+              <label class="check"><input name="scenarios" type="checkbox" value="duplicate_plus_period"> Дубль и отчётный период</label>
+              <label>Seed<input name="seed" type="text" inputmode="numeric" pattern="[0-9]{1,19}" maxlength="19" placeholder="Сгенерировать автоматически"></label>
+            </div>
+          </details>
+          <button id="create-button" type="submit">Создать и проверить</button>
+          <p id="form-message" role="status" aria-live="polite" hidden></p>
+        </form>
+      </section>
+      <div class="results">
+        <section class="learning" aria-labelledby="training-title">
+          <div class="learning-head"><h2 id="training-title">Данные для обучения</h2><a id="export" href="/export/trajectories.jsonl" hidden>Скачать JSONL</a></div>
+          <dl><div><dt>Учебные прогоны</dt><dd id="run-count">0</dd></div><div><dt>Записанные шаги</dt><dd id="step-count">0</dd></div></dl>
+          <p>Сейчас работает скриптовая сверка. Учебная запись содержит действия, наблюдения и награду. Обучение модели запускается отдельно.</p>
+        </section>
+        <section class="card companies" aria-labelledby="companies-title">
+          <div class="companies-head"><h2 id="companies-title">Компании</h2><span id="company-count" aria-live="polite">0</span></div>
+          <p id="list-message" class="empty" role="status">Загружаем список…</p>
+          <ul id="company-list"></ul>
+        </section>
+      </div>
+    </div>
+  </main>
+</body>
+</html>

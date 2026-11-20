@@ -13,5 +13,6 @@
 !.dockerignore
 !.gitignore
 !Dockerfile
+!start-genesis.command
 **/__pycache__/
 **/*.pyc
