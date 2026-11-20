@@ -24,9 +24,13 @@ from .load import (HASHED_FILES, PUBLIC_FILES, SchemaError, canon_ids,
 from .matcher_stub import explain_unmatched, match
 from .recompute import RecomputeError, amount_from_evidence, audit, reconcile
 
-LEAK_WORDS = re.compile(r"duplicat|inject|error|truth|provenance|distractor|mistake|wrong|"
-                        r"oracle|tamper|expected_amount|evidence_set|issue_id",
-                        re.IGNORECASE)
+# Separators delimit marker words; opaque alphanumeric IDs can include their letters by chance.
+LEAK_WORDS = re.compile(
+    r"(?<![A-Za-z0-9])(?:duplicat(?:e[ds]?|ions?|ing|ors?)|"
+    r"inject(?:ed|ing|ions?|ors?|s)?|errors?|truths?|provenance|distractors?|mistakes?|wrong|"
+    r"oracles?|tamper(?:ed|ing|s)?|expected_amount(?:_minor)?|evidence_sets?|issue_ids?)"
+    r"(?![A-Za-z0-9])", re.IGNORECASE,
+)
 ABS_PATH = re.compile(r"(^/|^~/|[A-Za-z]:\\|file:|/home/|/tmp/|/Users/|/root/|/var/|/mnt/)")
 
 

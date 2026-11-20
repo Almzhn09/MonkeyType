@@ -176,6 +176,12 @@ class TestBrokenEpisodes(VerifyCase):
         fx.rehash_manifest(pub)
         self.assertFails(verify_episode(pub, prv), "truth-like words")
 
+    def test_opaque_invoice_id_is_not_a_leakage_marker(self):
+        source = json.dumps(fx.a08_spec())
+        spec = json.loads(source.replace('"INV-77-041"', '"ITAMPER"'))
+        report = verify_episode(*self.build(spec))
+        self.assertTrue(report.ok, report.format())
+
     def test_leakage_issue_id_and_path(self):
         pub, prv = self.build(fx.a08_spec())
         self.edit(os.path.join(pub, "invoices.jsonl"), "Drying service", "Drying ISS-7Q1")
