@@ -173,7 +173,7 @@ class _Namer:
                  old_ids: set[str]) -> None:
         self._rng = rng
         self._old = old_ids
-        self._old_re = _id_regex(old_ids, bounded=False)
+        self._old_widths = _id_widths(old_ids)
         self._used: set[str] = set()
         leads = {k: _lead(v) for k, v in old_by_kind.items()}
         all_leads = [x for x in leads.values() if x]
@@ -199,19 +199,42 @@ class _Namer:
             value = st["prefix"] + st["sep"] + token
             if value in self._used or value in self._old or value.startswith("FX"):
                 continue
-            if self._old_re is not None and self._old_re.search(value):
+            if next(_id_spans(value, self._old, self._old_widths, bounded=False), None) is not None:
                 continue  # never embed an old ID inside a new one
             self._used.add(value)
             return value
 
 
-def _id_regex(ids, bounded=True):
-    if not ids:
-        return None
-    alt = "|".join(re.escape(i) for i in sorted(ids, key=lambda s: (-len(s), s)))
-    if bounded:
-        return re.compile(rf"(?<![A-Za-z0-9])(?:{alt})(?![A-Za-z0-9])")
-    return re.compile(alt)
+def _id_widths(ids):
+    by_prefix = {}
+    for value in ids:
+        by_prefix.setdefault(value[0], set()).add(len(value))
+    return {first: sorted(widths, reverse=True) for first, widths in by_prefix.items()}
+
+
+def _ascii_alnum(character):
+    return character.isascii() and character.isalnum()
+
+
+def _id_spans(text, ids, widths, *, bounded):
+    """Find the leftmost longest ID matches without caching episode-specific patterns."""
+    consumed = 0
+    for start, first in enumerate(text):
+        options = widths.get(first)
+        if options is None or start < consumed:
+            continue
+        if bounded and start and _ascii_alnum(text[start - 1]):
+            continue
+        for width in options:
+            end = start + width
+            if end > len(text):
+                continue
+            if bounded and end < len(text) and _ascii_alnum(text[end]):
+                continue
+            if text[start:end] in ids:
+                yield start, end
+                consumed = end
+                break
 
 
 def new_episode_id(source_episode_id: str, transform_seed: int, permute: bool,
@@ -230,14 +253,22 @@ def new_episode_id(source_episode_id: str, transform_seed: int, permute: bool,
 
 def _rewriter(mapping: dict[str, str]):
     """Return f(obj) that maps exact-ID strings and IDs quoted inside text."""
-    rx = _id_regex(mapping)
+    widths = _id_widths(mapping)
 
     def sub(s: str) -> str:
         if s in mapping:
             return mapping[s]
-        if rx is None or s.startswith("FX:"):
+        if not widths or s.startswith("FX:"):
             return s
-        return rx.sub(lambda m: mapping[m.group(0)], s)
+        parts = []
+        previous = 0
+        for start, end in _id_spans(s, mapping, widths, bounded=True):
+            parts.extend((s[previous:start], mapping[s[start:end]]))
+            previous = end
+        if not parts:
+            return s
+        parts.append(s[previous:])
+        return "".join(parts)
 
     def walk(obj):
         if isinstance(obj, str):

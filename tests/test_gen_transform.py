@@ -21,7 +21,7 @@ from fingen.config import load_config_file, resolve_config
 from fingen.generate import generate_episode
 from fingen.inject import REGISTRY, load_injectors
 from fingen.reader import load_private, load_public
-from fingen.transform import make_pair
+from fingen.transform import _rewriter, make_pair
 from tests.gen_support import EXAMPLE, REPO, episode, read_tree, tmpdir
 
 A08 = os.path.join(REPO, "fincheck", "fixtures", "a08")
@@ -376,6 +376,16 @@ class TestCli(unittest.TestCase):
         with open(os.path.join(b, "y.txt"), "w") as fh:
             fh.write("extra")
         self.assertEqual(tree_diff(a, b), ["only in second: y.txt", "differs: x.txt"])
+
+
+class TestLiteralIdentifierReplacement(unittest.TestCase):
+    def test_longer_ids_and_punctuation_are_rewritten_with_ascii_boundaries(self):
+        rewrite = _rewriter({"AB": "short", "AB-1": "long", "[X]": "literal"})
+        self.assertEqual(
+            rewrite("AB-1 / AB / [X] / ZAB-1 / AB-12"),
+            "long / short / literal / ZAB-1 / short-12",
+        )
+        self.assertEqual(rewrite("FX:2027-01-01:AB:KZT"), "FX:2027-01-01:AB:KZT")
 
 
 if __name__ == "__main__":
