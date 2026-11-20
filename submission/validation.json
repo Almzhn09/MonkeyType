@@ -5,7 +5,7 @@
   "dev_runs": 40,
   "recorded_train_steps": 222,
   "replayed_train_steps": 222,
-  "max_dev_episode_seconds": 0.476264,
+  "max_dev_episode_seconds": 1.728466,
   "dev": {
     "random": {
       "episodes": 10,
@@ -14,7 +14,7 @@
       "mean_f1": 0.2,
       "mean_return": -0.6064,
       "mean_steps": 17,
-      "mean_seconds": 0.3357992,
+      "mean_seconds": 0.6338932,
       "truncated": 0,
       "invalid_submissions": 0
     },
@@ -25,7 +25,7 @@
       "mean_f1": 1.0,
       "mean_return": 0.961,
       "mean_steps": 20.5,
-      "mean_seconds": 0.3616623,
+      "mean_seconds": 0.6080024,
       "truncated": 0,
       "invalid_submissions": 0
     },
@@ -36,7 +36,7 @@
       "mean_f1": 0.0,
       "mean_return": -1.0,
       "mean_steps": 4,
-      "mean_seconds": 0.3272935,
+      "mean_seconds": 0.6591134000000001,
       "truncated": 0,
       "invalid_submissions": 0
     },
@@ -47,7 +47,7 @@
       "mean_f1": 1.0,
       "mean_return": 1.0,
       "mean_steps": 1,
-      "mean_seconds": 0.0005753,
+      "mean_seconds": 0.0011813,
       "truncated": 0,
       "invalid_submissions": 0
     }

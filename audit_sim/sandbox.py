@@ -5,6 +5,8 @@ import errno
 import platform
 import resource
 
+from .limits import MIB, cap_address_space
+
 # Only operations needed by an already initialized interpreter and its JSON pipes.
 WORKER_SYSCALLS = (
     "read", "write", "close", "exit", "exit_group",
@@ -29,7 +31,7 @@ def enter_worker_sandbox():
     allow = 0x7FFF0000
     deny = 0x00050000 | errno.EPERM
     resource.setrlimit(resource.RLIMIT_CORE, (0, 0))
-    resource.setrlimit(resource.RLIMIT_AS, (256 * 1024**2, 256 * 1024**2))
+    cap_address_space(256 * MIB)
     context = library.seccomp_init(deny)
     if not context:
         raise RuntimeError("Could not initialize policy isolation")

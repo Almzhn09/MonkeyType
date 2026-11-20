@@ -172,9 +172,19 @@ def main():
     ap.add_argument("--verbose", action="store_true")
     ap.add_argument("--output", type=Path, help="Export the source code, checked episodes and trajectories")
     ap.add_argument("--archive", type=Path, help="Write a checked ZIP with a checksum manifest")
+    ap.add_argument("--cpus", type=int, help="Limit inherited CPU affinity for this check")
+    ap.add_argument("--process-memory-mib", type=int, help="Limit address space per process")
+    ap.add_argument("--offline", action="store_true", help="Require a loopback-only network namespace")
     a = ap.parse_args()
     VERBOSE = a.verbose
     sys.path.insert(0, str(ROOT))
+    from audit_sim.limits import apply_limits
+    try:
+        limits = apply_limits(cpus=a.cpus, process_memory_mib=a.process_memory_mib, offline=a.offline)
+    except (ValueError, OSError) as error:
+        ap.error(str(error))
+    if limits:
+        print("OS limits " + json.dumps(limits), flush=True)
     st_tests()
     st_fresh_seed()
     if a.quick:

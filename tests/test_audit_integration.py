@@ -1,4 +1,6 @@
 from pathlib import Path
+import subprocess
+import sys
 from tempfile import TemporaryDirectory
 import unittest
 from unittest.mock import patch
@@ -20,6 +22,19 @@ class TestAuditIntegration(unittest.TestCase):
         self.assertTrue(trajectory[-1]["terminated"])
         self.assertEqual(trajectory[-1]["reward"], 0)
         self.assertNotIn("seed", trajectory[0]["observation"])
+
+    def test_worker_respects_a_stricter_inherited_address_space_limit(self):
+        program = """
+from pathlib import Path
+import sys
+from audit_sim.limits import MIB, cap_address_space
+from audit_sim.runner import run_policy
+
+assert cap_address_space(192 * MIB) == 192 * MIB
+report, _ = run_policy(Path(sys.argv[1]), "reconcile")
+assert (report["tp"], report["f1"], report["reason"]) == (2, 1, "submitted")
+"""
+        subprocess.run([sys.executable, "-c", program, str(A08)], check=True, timeout=8)
 
     def test_terminal_reward_reaches_the_policy_only_in_train_mode(self):
         with TemporaryDirectory() as temp:
