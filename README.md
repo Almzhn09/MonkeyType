@@ -24,6 +24,26 @@ docker run --rm --network none --cpus=2 --memory=4g --read-only \
   --security-opt no-new-privileges:true genesis-audit
 ```
 
+## Панель проверяющего
+
+```sh
+python3 -m dashboard demo
+```
+
+Команда запускает демо через существующий CLI, готовит из его вывода очищенный набор данных в `.audit-sim/dashboard/` и открывает панель на http://127.0.0.1:8770/. В панели можно сравнить политики, открыть прогон и пройти от вывода к процитированным записям: счетам, платежам, строкам книги и курсам. Панель только читает данные. Оценка и генерация остаются в CLI.
+
+Другие источники подключаются так:
+
+```sh
+python3 -m audit_sim run episodes --split dev --output .audit-sim/dev-results
+python3 -m dashboard prepare --run .audit-sim/dev-results --episodes episodes --audience reviewer --name dev
+python3 -m audit_sim release --output .audit-sim/release
+python3 -m dashboard prepare --release .audit-sim/release --audience reviewer --name release
+python3 -m dashboard serve
+```
+
+`--audience reviewer` показывает метрики оценщика и допускается только для синтетических сплитов demo, train, dev и pairs. `--audience public` скрывает F1, награду, TP/FP/FN и прогоны oracle. В браузер попадают только разрешённые поля и проверенные открытые записи v1.0. Файлы `truth.json`, `provenance.json` и `id_map.json`, ответы oracle и закрытые пути в браузер не передаются. Сервер слушает только 127.0.0.1 и отдаёт лишь файлы панели и подготовленный каталог.
+
 ## Игровой режим: аудитор — человек
 
 ```sh
