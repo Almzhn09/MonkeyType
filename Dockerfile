@@ -9,7 +9,7 @@ COPY episodes/ episodes/
 COPY tests/ tests/
 COPY scripts/ scripts/
 COPY docs/ docs/
-COPY .dockerignore .gitignore Dockerfile LICENSE README.md requirements.txt ./
+COPY .dockerignore .gitattributes .gitignore Dockerfile LICENSE README.md requirements.txt ./
 RUN chmod -R a+rX /app
 USER 65532:65532
 CMD ["python", "scripts/check.py"]

@@ -12,6 +12,7 @@
 !requirements.txt
 !.dockerignore
 !.gitignore
+!.gitattributes
 !Dockerfile
 **/__pycache__/
 **/*.pyc

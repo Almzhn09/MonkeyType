@@ -23,7 +23,7 @@ class LoadCase(unittest.TestCase):
             return fh.read()
 
     def write(self, name, text, rehash=True):
-        with open(self.path(name), "w", encoding="utf-8") as fh:
+        with open(self.path(name), "w", encoding="utf-8", newline="\n") as fh:
             fh.write(text)
         if rehash:
             fx.rehash_manifest(self.pub)
@@ -164,7 +164,7 @@ class TestLoadErrors(LoadCase):
         with open(p, encoding="utf-8") as fh:
             t = json.load(fh)
         t["issues"][0]["tolerance_minor"] = 5
-        with open(p, "w", encoding="utf-8") as fh:
+        with open(p, "w", encoding="utf-8", newline="\n") as fh:
             json.dump(t, fh, sort_keys=True)
         with self.assertRaises(SchemaError) as cm:
             load_private(self.prv)
