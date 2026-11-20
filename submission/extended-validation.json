@@ -1,0 +1,694 @@
+{
+  "holdout_validation": {
+    "profile_version": 1,
+    "seed": 74533,
+    "completed_cohorts": 137,
+    "latest_phase_source_commit": "2463e4252cd3e5fadb7fbcb0a97522d731b6370c",
+    "latest_phase_limits": {
+      "loopback_only": true,
+      "cpu_affinity": [
+        0,
+        1
+      ],
+      "process_address_space_bytes": 402653184
+    },
+    "verified_originals": 2740,
+    "verified_pairs": 2740,
+    "policy_checks": 16440,
+    "phases": [
+      {
+        "start_index": 0,
+        "completed_cohorts": 20,
+        "verified_originals": 400,
+        "verified_pairs": 400,
+        "policy_checks": 2400,
+        "elapsed_seconds": 872.478,
+        "policies": {
+          "random": {
+            "runs": 400,
+            "mean_f1": 0.25,
+            "mean_reward": -0.5080000000000006,
+            "max_steps": 17,
+            "max_seconds": 1.194455
+          },
+          "reconcile": {
+            "runs": 400,
+            "mean_f1": 1.0,
+            "mean_reward": 0.9459550000000001,
+            "max_steps": 48,
+            "max_seconds": 1.113606
+          },
+          "mark_all": {
+            "runs": 400,
+            "mean_f1": 0.0,
+            "mean_reward": -1.0,
+            "max_steps": 2,
+            "max_seconds": 0.959093
+          },
+          "oracle": {
+            "runs": 400,
+            "mean_f1": 1.0,
+            "mean_reward": 1.0,
+            "max_steps": 1,
+            "max_seconds": 0.105535
+          }
+        },
+        "phase": "soak",
+        "end_index_exclusive": 20,
+        "checkpoint_status": "running",
+        "stop_reason": "superseded_by_improved_policies"
+      },
+      {
+        "start_index": 20,
+        "completed_cohorts": 15,
+        "verified_originals": 300,
+        "verified_pairs": 300,
+        "policy_checks": 1800,
+        "elapsed_seconds": 713.301,
+        "policies": {
+          "random": {
+            "runs": 300,
+            "mean_f1": 0.25,
+            "mean_reward": -0.5079999999999998,
+            "max_steps": 17,
+            "max_seconds": 1.802092
+          },
+          "reconcile": {
+            "runs": 300,
+            "mean_f1": 1.0,
+            "mean_reward": 0.9456733333333321,
+            "max_steps": 47,
+            "max_seconds": 1.578204
+          },
+          "mark_all": {
+            "runs": 300,
+            "mean_f1": 0.000989003709591945,
+            "mean_reward": -0.9981219925808161,
+            "max_steps": 4,
+            "max_seconds": 1.569709
+          },
+          "oracle": {
+            "runs": 300,
+            "mean_f1": 1.0,
+            "mean_reward": 1.0,
+            "max_steps": 1,
+            "max_seconds": 0.126064
+          }
+        },
+        "phase": "final-soak",
+        "end_index_exclusive": 35,
+        "checkpoint_status": "running",
+        "stop_reason": "superseded_by_bounded_cache",
+        "memory_samples": [
+          {
+            "checked_cohorts": 5,
+            "original_episodes": 100,
+            "policy_runs": 600,
+            "container_parent_memory_kib": {
+              "VmHWM": 147536,
+              "VmRSS": 147536
+            },
+            "recorded_at": "2026-11-20T03:23:15.271496+00:00"
+          },
+          {
+            "checked_cohorts": 10,
+            "original_episodes": 200,
+            "policy_runs": 1200,
+            "container_parent_memory_kib": {
+              "VmHWM": 192468,
+              "VmRSS": 192468
+            },
+            "recorded_at": "2026-11-20T03:26:45.515942+00:00"
+          }
+        ]
+      },
+      {
+        "start_index": 35,
+        "completed_cohorts": 10,
+        "verified_originals": 200,
+        "verified_pairs": 200,
+        "policy_checks": 1200,
+        "elapsed_seconds": 610.651,
+        "policies": {
+          "random": {
+            "runs": 200,
+            "mean_f1": 0.25,
+            "mean_reward": -0.5079999999999995,
+            "max_steps": 17,
+            "max_seconds": 2.893854
+          },
+          "reconcile": {
+            "runs": 200,
+            "mean_f1": 1.0,
+            "mean_reward": 0.9468899999999989,
+            "max_steps": 47,
+            "max_seconds": 1.60208
+          },
+          "mark_all": {
+            "runs": 200,
+            "mean_f1": 0.0005643879173290938,
+            "mean_reward": -0.9989312241653419,
+            "max_steps": 4,
+            "max_seconds": 1.366103
+          },
+          "oracle": {
+            "runs": 200,
+            "mean_f1": 1.0,
+            "mean_reward": 1.0,
+            "max_steps": 1,
+            "max_seconds": 0.187315
+          }
+        },
+        "phase": "cache-soak",
+        "end_index_exclusive": 45,
+        "checkpoint_status": "failed",
+        "stop_reason": "leakage_false_positive_fixed",
+        "failed_cohort": 45,
+        "failure": "Independent data check failed: FAIL EP-V5Z566RVCG1M  issues=4 findings=4 F1=1.000  errors=1 warnings=3\n    - (f) public values contain truth-like words: ['ITAMPER']\n    ! invoices.jsonl: documents not sorted by doc_id (accepted)\n    ! payments.jsonl: documents not sorted by doc_id (accepted)\n    ! ledger.csv: rows not sorted by (timestamp, row_id) (accepted)",
+        "memory_samples": [
+          {
+            "checked_cohorts": 5,
+            "original_episodes": 100,
+            "policy_runs": 600,
+            "container_parent_memory_kib": {
+              "VmHWM": 129592,
+              "VmRSS": 129592
+            },
+            "recorded_at": "2026-11-20T03:37:52.237246+00:00"
+          }
+        ]
+      },
+      {
+        "start_index": 45,
+        "completed_cohorts": 27,
+        "verified_originals": 540,
+        "verified_pairs": 540,
+        "policy_checks": 3240,
+        "elapsed_seconds": 1150.841,
+        "policies": {
+          "random": {
+            "runs": 540,
+            "mean_f1": 0.25,
+            "mean_reward": -0.5080000000000008,
+            "max_steps": 17,
+            "max_seconds": 1.235012
+          },
+          "reconcile": {
+            "runs": 540,
+            "mean_f1": 1.0,
+            "mean_reward": 0.9473592592592601,
+            "max_steps": 50,
+            "max_seconds": 1.414516
+          },
+          "mark_all": {
+            "runs": 540,
+            "mean_f1": 0.00039220768387435053,
+            "mean_reward": -0.9992600290766955,
+            "max_steps": 4,
+            "max_seconds": 0.881355
+          },
+          "oracle": {
+            "runs": 540,
+            "mean_f1": 1.0,
+            "mean_reward": 1.0,
+            "max_steps": 1,
+            "max_seconds": 0.210439
+          }
+        },
+        "phase": "reviewed-soak",
+        "end_index_exclusive": 72,
+        "checkpoint_status": "running",
+        "stop_reason": "superseded_by_memory_bounded_identifier_replacement",
+        "memory_samples": [
+          {
+            "checked_cohorts": 5,
+            "original_episodes": 100,
+            "policy_runs": 600,
+            "container_parent_memory_kib": {
+              "VmHWM": 133140,
+              "VmRSS": 133140
+            },
+            "recorded_at": "2026-11-20T03:47:34.906197+00:00"
+          },
+          {
+            "checked_cohorts": 10,
+            "original_episodes": 200,
+            "policy_runs": 1200,
+            "container_parent_memory_kib": {
+              "VmHWM": 159340,
+              "VmRSS": 159340
+            },
+            "recorded_at": "2026-11-20T03:50:50.073839+00:00"
+          },
+          {
+            "checked_cohorts": 15,
+            "original_episodes": 300,
+            "policy_runs": 1800,
+            "container_parent_memory_kib": {
+              "VmHWM": 176216,
+              "VmRSS": 174460
+            },
+            "recorded_at": "2026-11-20T03:54:05.558306+00:00"
+          },
+          {
+            "checked_cohorts": 20,
+            "original_episodes": 400,
+            "policy_runs": 2400,
+            "container_parent_memory_kib": {
+              "VmHWM": 182544,
+              "VmRSS": 182544
+            },
+            "recorded_at": "2026-11-20T03:57:35.992075+00:00"
+          },
+          {
+            "checked_cohorts": 25,
+            "original_episodes": 500,
+            "policy_runs": 3000,
+            "container_parent_memory_kib": {
+              "VmHWM": 185352,
+              "VmRSS": 183548
+            },
+            "recorded_at": "2026-11-20T04:01:06.446461+00:00"
+          }
+        ]
+      },
+      {
+        "start_index": 72,
+        "completed_cohorts": 65,
+        "verified_originals": 1300,
+        "verified_pairs": 1300,
+        "policy_checks": 7800,
+        "elapsed_seconds": 2685.127,
+        "policies": {
+          "random": {
+            "runs": 1300,
+            "mean_f1": 0.25,
+            "mean_reward": -0.5080000000000008,
+            "max_steps": 17,
+            "max_seconds": 1.388831
+          },
+          "reconcile": {
+            "runs": 1300,
+            "mean_f1": 1.0,
+            "mean_reward": 0.9461230769230788,
+            "max_steps": 50,
+            "max_seconds": 1.402174
+          },
+          "mark_all": {
+            "runs": 1300,
+            "mean_f1": 0.0005391829288888113,
+            "mean_reward": -0.9989770187576071,
+            "max_steps": 4,
+            "max_seconds": 1.285199
+          },
+          "oracle": {
+            "runs": 1300,
+            "mean_f1": 1.0,
+            "mean_reward": 1.0,
+            "max_steps": 1,
+            "max_seconds": 0.279732
+          }
+        },
+        "phase": "latest-soak",
+        "end_index_exclusive": 137,
+        "checkpoint_status": "running",
+        "stop_reason": "time_budget_reached",
+        "memory_samples": [
+          {
+            "checked_cohorts": 5,
+            "original_episodes": 100,
+            "policy_runs": 600,
+            "container_parent_memory_kib": {
+              "VmHWM": 92532,
+              "VmRSS": 92532
+            },
+            "recorded_at": "2026-11-20T04:07:24.596823+00:00"
+          },
+          {
+            "checked_cohorts": 10,
+            "original_episodes": 200,
+            "policy_runs": 1200,
+            "container_parent_memory_kib": {
+              "VmHWM": 95032,
+              "VmRSS": 94696
+            },
+            "recorded_at": "2026-11-20T04:10:54.918370+00:00"
+          },
+          {
+            "checked_cohorts": 15,
+            "original_episodes": 300,
+            "policy_runs": 1800,
+            "container_parent_memory_kib": {
+              "VmHWM": 95032,
+              "VmRSS": 93372
+            },
+            "recorded_at": "2026-11-20T04:14:10.451222+00:00"
+          },
+          {
+            "checked_cohorts": 20,
+            "original_episodes": 400,
+            "policy_runs": 2400,
+            "container_parent_memory_kib": {
+              "VmHWM": 95032,
+              "VmRSS": 89680
+            },
+            "recorded_at": "2026-11-20T04:16:55.647351+00:00"
+          },
+          {
+            "checked_cohorts": 25,
+            "original_episodes": 500,
+            "policy_runs": 3000,
+            "container_parent_memory_kib": {
+              "VmHWM": 97744,
+              "VmRSS": 92744
+            },
+            "recorded_at": "2026-11-20T04:19:55.973901+00:00"
+          },
+          {
+            "checked_cohorts": 30,
+            "original_episodes": 600,
+            "policy_runs": 3600,
+            "container_parent_memory_kib": {
+              "VmHWM": 97744,
+              "VmRSS": 90008
+            },
+            "recorded_at": "2026-11-20T04:23:11.348701+00:00"
+          },
+          {
+            "checked_cohorts": 35,
+            "original_episodes": 700,
+            "policy_runs": 4200,
+            "container_parent_memory_kib": {
+              "VmHWM": 97744,
+              "VmRSS": 90088
+            },
+            "recorded_at": "2026-11-20T04:26:41.565772+00:00"
+          },
+          {
+            "checked_cohorts": 40,
+            "original_episodes": 800,
+            "policy_runs": 4800,
+            "container_parent_memory_kib": {
+              "VmHWM": 97744,
+              "VmRSS": 95396
+            },
+            "recorded_at": "2026-11-20T04:30:26.902256+00:00"
+          },
+          {
+            "checked_cohorts": 45,
+            "original_episodes": 900,
+            "policy_runs": 5400,
+            "container_parent_memory_kib": {
+              "VmHWM": 97744,
+              "VmRSS": 95516
+            },
+            "recorded_at": "2026-11-20T04:33:57.084299+00:00"
+          },
+          {
+            "checked_cohorts": 50,
+            "original_episodes": 1000,
+            "policy_runs": 6000,
+            "container_parent_memory_kib": {
+              "VmHWM": 97744,
+              "VmRSS": 89460
+            },
+            "recorded_at": "2026-11-20T04:37:27.512298+00:00"
+          },
+          {
+            "checked_cohorts": 55,
+            "original_episodes": 1100,
+            "policy_runs": 6600,
+            "container_parent_memory_kib": {
+              "VmHWM": 97744,
+              "VmRSS": 91476
+            },
+            "recorded_at": "2026-11-20T04:40:42.831378+00:00"
+          },
+          {
+            "checked_cohorts": 60,
+            "original_episodes": 1200,
+            "policy_runs": 7200,
+            "container_parent_memory_kib": {
+              "VmHWM": 97744,
+              "VmRSS": 91476
+            },
+            "recorded_at": "2026-11-20T04:43:58.057586+00:00"
+          },
+          {
+            "checked_cohorts": 65,
+            "original_episodes": 1300,
+            "policy_runs": 7800,
+            "container_parent_memory_kib": {
+              "VmHWM": 97744,
+              "VmRSS": 91652
+            },
+            "recorded_at": "2026-11-20T04:47:52.207713+00:00"
+          }
+        ]
+      }
+    ]
+  },
+  "release": {
+    "files": 448,
+    "sha256": "d0a994dc17af50fcbe93e7bcdc210a5e8bf2bd580d8bea31d9b170e23f86f857",
+    "bytes": 1858000,
+    "official_checks": {
+      "train_episodes": 10,
+      "dev_episodes": 10,
+      "verified_pairs": 20,
+      "dev_runs": 40,
+      "recorded_train_steps": 222,
+      "replayed_train_steps": 222,
+      "max_dev_episode_seconds": 0.72074,
+      "dev": {
+        "random": {
+          "episodes": 10,
+          "mean_precision": 0.0,
+          "mean_recall": 0.0,
+          "mean_f1": 0.2,
+          "mean_return": -0.6064,
+          "mean_steps": 17,
+          "mean_seconds": 0.551027,
+          "truncated": 0,
+          "invalid_submissions": 0
+        },
+        "reconcile": {
+          "episodes": 10,
+          "mean_precision": 0.8,
+          "mean_recall": 0.8,
+          "mean_f1": 1.0,
+          "mean_return": 0.961,
+          "mean_steps": 20.5,
+          "mean_seconds": 0.5628216,
+          "truncated": 0,
+          "invalid_submissions": 0
+        },
+        "mark_all": {
+          "episodes": 10,
+          "mean_precision": 0.0,
+          "mean_recall": 0.0,
+          "mean_f1": 0.0,
+          "mean_return": -1.0,
+          "mean_steps": 4,
+          "mean_seconds": 0.5313716,
+          "truncated": 0,
+          "invalid_submissions": 0
+        },
+        "oracle": {
+          "episodes": 10,
+          "mean_precision": 0.8,
+          "mean_recall": 0.8,
+          "mean_f1": 1.0,
+          "mean_return": 1.0,
+          "mean_steps": 1,
+          "mean_seconds": 0.0008583,
+          "truncated": 0,
+          "invalid_submissions": 0
+        }
+      }
+    },
+    "unit_tests": 197,
+    "verification_limits": {
+      "build_and_verify": {
+        "loopback_only": true,
+        "cpu_affinity": [
+          0,
+          1
+        ],
+        "process_address_space_bytes": 402653184
+      },
+      "fresh_archive_extraction": {
+        "loopback_only": true,
+        "cpu_affinity": [
+          0
+        ],
+        "process_address_space_bytes": 201326592
+      }
+    }
+  },
+  "independent_checks": {
+    "interactive_cli_a08": {
+      "closed": {
+        "api_reward": 0.0,
+        "evaluator_reward": 0.996,
+        "replayed_steps": 3
+      },
+      "train": {
+        "api_reward": 0.996,
+        "evaluator_reward": 0.996,
+        "replayed_steps": 3
+      },
+      "config_file": "passed"
+    },
+    "demo_html_parity": {
+      "actions": 22,
+      "external_asset_count": 0,
+      "mean_f1": {
+        "mark_all": 0.08695652173913043,
+        "reconcile": 1.0
+      },
+      "reports": 4,
+      "script_digest_verified": true
+    },
+    "api_input_matrix": {
+      "resets": 8663,
+      "unknown_action": 56122,
+      "unknown_id": 9933,
+      "valid_or_finished": 9715,
+      "invalid_submission": 8662,
+      "invalid_expression": 8105,
+      "unknown_table": 14754,
+      "invalid_limit": 1272,
+      "invalid_cursor": 99
+    },
+    "jsonl_sessions": {
+      "sessions": 240,
+      "steps": 3744,
+      "scenarios": {
+        "closed:step_limit": 24,
+        "train:input_closed": 24,
+        "closed:submitted": 82,
+        "train:submitted": 96,
+        "closed:invalid_submission": 14
+      }
+    },
+    "resource_stability": {
+      "passed_profiles": 4,
+      "trace_byte_parity": true,
+      "runs": [
+        {
+          "profile": "1x192",
+          "trace_sha256": "43e527ac07355e09f3b561fa1a62e57a7cbb9f12b95ca64596aee9c599593a73",
+          "trace_steps": 222,
+          "dev_f1": {
+            "random": 0.2,
+            "reconcile": 1.0,
+            "mark_all": 0.0,
+            "oracle": 1.0
+          }
+        },
+        {
+          "profile": "1x384",
+          "trace_sha256": "43e527ac07355e09f3b561fa1a62e57a7cbb9f12b95ca64596aee9c599593a73",
+          "trace_steps": 222,
+          "dev_f1": {
+            "random": 0.2,
+            "reconcile": 1.0,
+            "mark_all": 0.0,
+            "oracle": 1.0
+          }
+        },
+        {
+          "profile": "2x256",
+          "trace_sha256": "43e527ac07355e09f3b561fa1a62e57a7cbb9f12b95ca64596aee9c599593a73",
+          "trace_steps": 222,
+          "dev_f1": {
+            "random": 0.2,
+            "reconcile": 1.0,
+            "mark_all": 0.0,
+            "oracle": 1.0
+          }
+        },
+        {
+          "profile": "2x384",
+          "trace_sha256": "43e527ac07355e09f3b561fa1a62e57a7cbb9f12b95ca64596aee9c599593a73",
+          "trace_steps": 222,
+          "dev_f1": {
+            "random": 0.2,
+            "reconcile": 1.0,
+            "mark_all": 0.0,
+            "oracle": 1.0
+          }
+        }
+      ]
+    },
+    "hash_seed_stability": {
+      "tested_hash_seeds": 5,
+      "originals": 40,
+      "pairs": 40,
+      "runs": [
+        {
+          "python_hash_seed": "0",
+          "bytes_identical": 680
+        },
+        {
+          "python_hash_seed": "1",
+          "bytes_identical": 680
+        },
+        {
+          "python_hash_seed": "1234567",
+          "bytes_identical": 680
+        },
+        {
+          "python_hash_seed": "4294967295",
+          "bytes_identical": 680
+        },
+        {
+          "python_hash_seed": "random",
+          "bytes_identical": 680
+        }
+      ]
+    },
+    "parallel_order_and_metrics": {
+      "sequential_median": 3.409,
+      "parallel_median": 2.136,
+      "perfect_trace_parity": true,
+      "repeats_per_mode": 3
+    },
+    "score_parity_assessments": 32000,
+    "exact_fx_comparisons": {
+      "currency_pairs_sampled": 42,
+      "comparisons": 500000,
+      "cases": {
+        "ties": 125097,
+        "half_even": 250127,
+        "non_ties": 374903,
+        "half_up": 249873
+      },
+      "mismatches": 0
+    },
+    "paired_rewrite_comparison": {
+      "before": {
+        "case_count": 60,
+        "archive_hash": "97f211423ff3baece76ecc26def792c40b18875ff1887328620188d966eda87e",
+        "live_python_bytes": 21121342,
+        "peak_python_bytes": 26422978,
+        "peak_rss_kib": 53280,
+        "rewrite_wall_seconds": 36.06029786599902
+      },
+      "after": {
+        "case_count": 60,
+        "archive_hash": "97f211423ff3baece76ecc26def792c40b18875ff1887328620188d966eda87e",
+        "live_python_bytes": 251559,
+        "peak_python_bytes": 6205364,
+        "peak_rss_kib": 31244,
+        "rewrite_wall_seconds": 27.332759039999473
+      }
+    },
+    "timestamp_cache_comparison": [
+      "before CacheInfo(hits=0, misses=300000, maxsize=None, currsize=300000) peak RSS KiB 82568",
+      "after CacheInfo(hits=0, misses=300000, maxsize=8192, currsize=8192) peak RSS KiB 16924"
+    ]
+  },
+  "recorded_at": "2026-11-20T09:48:05+05:00"
+}
