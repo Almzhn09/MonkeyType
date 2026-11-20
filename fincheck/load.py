@@ -87,7 +87,7 @@ def is_id(v) -> bool:
     return isinstance(v, str) and bool(_ID_RE.match(v)) and v == v.upper()
 
 
-@lru_cache(maxsize=None)
+@lru_cache(maxsize=64)
 def parse_offset(s: str) -> timedelta:
     m = _OFFSET_RE.match(s or "")
     if not m:
@@ -96,7 +96,8 @@ def parse_offset(s: str) -> timedelta:
     return sign * timedelta(hours=int(m.group(2)), minutes=int(m.group(3)))
 
 
-@lru_cache(maxsize=None)
+# Keep repeated reads within an episode fast without retaining every past date.
+@lru_cache(maxsize=8192)
 def parse_ts(s: str) -> datetime:
     """ISO-8601 with explicit ±HH:MM offset (no 'Z', no naive)."""
     if not isinstance(s, str) or not _TS_RE.match(s):

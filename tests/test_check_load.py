@@ -1,11 +1,24 @@
 """fincheck.load: strict schema validation with precise messages."""
 import json
+from datetime import datetime, timedelta
 import os
 import tempfile
 import unittest
 
 from fincheck.fixtures import builder as fx
-from fincheck.load import SchemaError, load_private, load_public, row_sort_key
+from fincheck.load import SchemaError, load_private, load_public, parse_ts, row_sort_key
+
+
+class TestTimestampCache(unittest.TestCase):
+    def test_many_new_timestamps_do_not_accumulate_across_episodes(self):
+        parse_ts.cache_clear()
+        self.addCleanup(parse_ts.cache_clear)
+        first = datetime.fromisoformat("2027-01-01T00:00:00+05:00")
+        for index in range(12_000):
+            timestamp = first + timedelta(seconds=index)
+            self.assertEqual(parse_ts(timestamp.isoformat()), timestamp)
+        self.assertLess(parse_ts.cache_info().currsize, 12_000)
+        self.assertEqual(parse_ts(first.isoformat()), first)
 
 
 class LoadCase(unittest.TestCase):
