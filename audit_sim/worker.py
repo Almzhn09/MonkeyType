@@ -12,11 +12,16 @@ from audit_sim.sandbox import enter_worker_sandbox
 
 
 def send(message):
-    print(json.dumps(message, ensure_ascii=True, allow_nan=False), flush=True)
+    # Binary streams keep the protocol identical on every platform (no CRLF translation).
+    sys.stdout.buffer.write(json.dumps(message, ensure_ascii=True, allow_nan=False).encode() + b"\n")
+    sys.stdout.buffer.flush()
 
 
 def receive():
-    return json.loads(input())
+    line = sys.stdin.buffer.readline()
+    if not line:
+        raise SystemExit(0)
+    return json.loads(line)
 
 
 def request(action):

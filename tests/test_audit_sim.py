@@ -6,6 +6,7 @@ import subprocess
 import sys
 from tempfile import TemporaryDirectory
 import unittest
+from unittest import mock
 
 from audit_sim.calculator import calculate
 from audit_sim.data import Episode
@@ -226,7 +227,7 @@ class TestFixtures(unittest.TestCase):
         folder = self.directory / "altered"
         make_episode(folder, "altered", seed=1, errors=("duplicate_invoice",))
         path = folder / "private" / "truth.json"
-        truth = json.loads(path.read_text())
+        truth = json.loads(path.read_text(encoding="utf-8"))
         alternate = ["R-doc-invoice-1", "R-row-002", "R-row-004"]
         truth["issues"][0]["evidence_sets"].append(alternate)
         dump_json(path, truth)
@@ -243,7 +244,7 @@ class TestFixtures(unittest.TestCase):
         folder = self.directory / "metadata"
         make_episode(folder, "metadata", seed=1234)
         manifest = folder / "public" / "manifest.json"
-        data = json.loads(manifest.read_text())
+        data = json.loads(manifest.read_text(encoding="utf-8"))
         dump_json(manifest, data | {"seed": 1234, "truth_path": "/private/truth.json"})
         env = AuditEnv()
         observation, _ = env.reset(1234, {"episode": folder})
@@ -272,18 +273,24 @@ class TestFixtures(unittest.TestCase):
         self.assertEqual(actions, [])
         self.assertNotIn("submitted_findings", oracle)
 
-    @unittest.skipUnless(sys.platform == "linux", "worker requires Linux")
-    def test_worker_kernel_blocks_file_and_network_access(self):
+    def isolation_kinds(self):
+        # The audit hook is the macOS/Windows path; exercise it everywhere so Linux CI covers it.
+        return ("seccomp", "audit-hook") if sys.platform.startswith("linux") else ("audit-hook",)
+
+    def test_worker_isolation_blocks_file_network_and_process_access(self):
         trusted_file = self.mixed / "private" / "truth.json"
         code = """
 import os
 import socket
+import subprocess
 import sys
-from audit_sim.sandbox import enter_worker_sandbox
+from audit_sim import sandbox
 
 assert os.path.isfile(sys.argv[1])
-enter_worker_sandbox()
-for call in (lambda: open(sys.argv[1]), lambda: socket.socket()):
+sandbox.isolation_kind = lambda: sys.argv[2]
+sandbox.enter_worker_sandbox()
+for call in (lambda: open(sys.argv[1]), lambda: socket.socket(),
+             lambda: subprocess.run([sys.executable, "-c", "pass"])):
     try:
         call()
     except PermissionError as error:
@@ -291,11 +298,38 @@ for call in (lambda: open(sys.argv[1]), lambda: socket.socket()):
     else:
         raise AssertionError("Sandbox allowed the operation")
 """
-        completed = subprocess.run(
-            [sys.executable, "-B", "-c", code, str(trusted_file)],
-            capture_output=True, text=True, check=True, timeout=5,
-        )
-        self.assertEqual(completed.stdout.splitlines(), [str(errno.EPERM)] * 2)
+        root = str(Path(__file__).resolve().parents[1])
+        for kind in self.isolation_kinds():
+            with self.subTest(kind=kind):
+                completed = subprocess.run(
+                    [sys.executable, "-B", "-c", code, str(trusted_file), kind],
+                    capture_output=True, text=True, check=True, timeout=10, cwd=root,
+                )
+                self.assertEqual(completed.stdout.splitlines(), [str(errno.EPERM)] * 3)
+
+    def test_policies_run_under_audit_hook_isolation(self):
+        root = Path(__file__).resolve().parents[1]
+        expected, expected_actions = run_policy(self.mixed, "reconcile")
+        with TemporaryDirectory() as temp:
+            shim = Path(temp) / "worker.py"
+            shim.write_text(
+                "import sys\n"
+                f"sys.path.insert(0, {str(root)!r})\n"
+                "from audit_sim import sandbox\n"
+                "sandbox.isolation_kind = lambda: 'audit-hook'\n"
+                "from audit_sim.worker import main\n"
+                "main()\n",
+                encoding="utf-8",
+            )
+            with mock.patch("audit_sim.runner.WORKER", shim):
+                for policy in ("random", "reconcile", "mark_all"):
+                    with self.subTest(policy=policy):
+                        report, _ = run_policy(self.mixed, policy)
+                        self.assertEqual(report["reason"], "submitted")
+                actual, actions = run_policy(self.mixed, "reconcile")
+        self.assertEqual(actual["submitted_findings"], expected["submitted_findings"])
+        self.assertEqual(actual["f1"], expected["f1"])
+        self.assertEqual(actions, expected_actions)
 
 
 class TestCalculator(unittest.TestCase):

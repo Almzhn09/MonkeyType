@@ -42,7 +42,7 @@ def _cmd_reconcile(a) -> int:
     out = {"episode_id": pub.manifest["episode_id"], "findings": reconcile(pub)}
     text = json.dumps(out, indent=2, sort_keys=True, ensure_ascii=False) + "\n"
     if a.output:
-        with open(a.output, "w", encoding="utf-8") as fh:
+        with open(a.output, "w", encoding="utf-8", newline="\n") as fh:
             fh.write(text)
     else:
         sys.stdout.write(text)
