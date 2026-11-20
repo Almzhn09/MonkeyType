@@ -2,6 +2,7 @@
 !audit_sim/
 !fincheck/
 !fingen/
+!playground/
 !configs/
 !tests/
 !scripts/

@@ -16,7 +16,7 @@ from .scoring import oracle_submission, score_submission
 ROOT = Path(__file__).resolve().parents[1]
 CONFIGS = ROOT / "configs"
 SPLITS = ("train", "dev")
-SOURCE_DIRS = ("audit_sim", "fingen", "fincheck", "configs", "tests", "scripts", "docs")
+SOURCE_DIRS = ("audit_sim", "fingen", "fincheck", "playground", "configs", "tests", "scripts", "docs")
 SOURCE_FILES = (".dockerignore", ".gitattributes", ".gitignore", "Dockerfile", "LICENSE", "README.md", "requirements.txt")
 
 

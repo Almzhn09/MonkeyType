@@ -1,0 +1,787 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Audit Playground</title>
+<style>
+:root {
+  --bg: #f6f7f9; --panel: #ffffff; --panel-2: #f1f3f6; --text: #1b1f24; --muted: #5d6673;
+  --border: #dde1e6; --accent: #2457d6; --accent-text: #ffffff; --accent-soft: #e6edfc;
+  --good: #1d7a46; --good-soft: #e3f4ea; --bad: #b42318; --bad-soft: #fde8e6;
+  --warn: #9a5b00; --warn-soft: #fff3dc; --shadow: 0 1px 2px rgba(16,24,40,.06);
+  --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #111418; --panel: #191d23; --panel-2: #20252c; --text: #e7eaee; --muted: #9aa4b1;
+    --border: #2d343d; --accent: #6e95ff; --accent-text: #0d1117; --accent-soft: #1f2a44;
+    --good: #5cc98a; --good-soft: #15291e; --bad: #ff8a80; --bad-soft: #351b1a;
+    --warn: #f0b75a; --warn-soft: #33270f; --shadow: none;
+  }
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body { background: var(--bg); color: var(--text); font: 14px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+button, input, select, textarea { font: inherit; color: inherit; }
+h1, h2, h3 { margin: 0; line-height: 1.25; }
+h1 { font-size: 22px; } h2 { font-size: 17px; } h3 { font-size: 14px; }
+p { margin: 0 0 10px; }
+.muted { color: var(--muted); }
+.mono { font-family: var(--mono); font-size: 12.5px; }
+.hidden { display: none !important; }
+.wrap { max-width: 1440px; margin: 0 auto; padding: 20px 16px 48px; }
+.panel { background: var(--panel); border: 1px solid var(--border); border-radius: 10px; box-shadow: var(--shadow); }
+.pad { padding: 16px; }
+.row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.spread { justify-content: space-between; }
+.stack > * + * { margin-top: 12px; }
+.btn { border: 1px solid var(--border); background: var(--panel); border-radius: 7px; padding: 6px 12px; cursor: pointer; white-space: nowrap; }
+.btn:hover:not(:disabled) { border-color: var(--accent); }
+.btn:disabled { opacity: .5; cursor: not-allowed; }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-text); font-weight: 600; }
+.btn.small { padding: 3px 8px; font-size: 12.5px; }
+.btn.link { border: none; background: none; padding: 0; color: var(--accent); }
+.cost { font-size: 11.5px; color: var(--muted); margin-left: 4px; }
+input[type=text], input[type=search], select, textarea { width: 100%; border: 1px solid var(--border); border-radius: 7px; padding: 6px 9px; background: var(--panel); }
+textarea { resize: vertical; min-height: 64px; }
+label { display: block; font-weight: 600; font-size: 12.5px; margin-bottom: 4px; }
+.hint { font-size: 12px; color: var(--muted); margin-top: 3px; }
+.badge { display: inline-block; border-radius: 999px; padding: 1px 8px; font-size: 12px; font-weight: 600; background: var(--panel-2); color: var(--muted); }
+.badge.good { background: var(--good-soft); color: var(--good); }
+.badge.bad { background: var(--bad-soft); color: var(--bad); }
+.badge.warn { background: var(--warn-soft); color: var(--warn); }
+.badge.accent { background: var(--accent-soft); color: var(--accent); }
+.chip { display: inline-flex; align-items: center; gap: 4px; background: var(--panel-2); border: 1px solid var(--border); border-radius: 6px; padding: 1px 6px; font-family: var(--mono); font-size: 12px; margin: 2px 4px 2px 0; }
+.chip button { border: none; background: none; cursor: pointer; color: var(--muted); padding: 0 2px; }
+.error { color: var(--bad); font-size: 12.5px; }
+.notice { border-radius: 8px; padding: 10px 12px; font-size: 13px; }
+.notice.warn { background: var(--warn-soft); color: var(--warn); }
+.notice.info { background: var(--accent-soft); color: var(--text); }
+
+/* Picker */
+.hero { display: grid; grid-template-columns: 1.4fr 1fr; gap: 16px; margin-bottom: 16px; }
+.steps-list { margin: 0; padding-left: 20px; } .steps-list li { margin-bottom: 4px; }
+.cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; }
+.card { text-align: left; cursor: pointer; padding: 14px; }
+.card:hover { border-color: var(--accent); }
+.card .name { font-weight: 600; margin-bottom: 4px; }
+
+/* Workspace */
+.topbar { position: sticky; top: 0; z-index: 5; background: var(--panel); border-bottom: 1px solid var(--border); }
+.topbar .wrap { padding-top: 10px; padding-bottom: 10px; }
+.meter { width: 160px; height: 8px; border-radius: 4px; background: var(--panel-2); overflow: hidden; }
+.meter > div { height: 100%; background: var(--accent); transition: width .2s; }
+.meter.warn > div { background: var(--warn); }
+.layout { display: grid; grid-template-columns: minmax(0, 1fr) 380px; gap: 16px; align-items: start; }
+.side { position: sticky; top: 72px; max-height: calc(100vh - 88px); overflow: auto; }
+.tabs { display: flex; gap: 2px; border-bottom: 1px solid var(--border); padding: 0 12px; overflow-x: auto; }
+.tab { border: none; background: none; padding: 10px 12px; cursor: pointer; border-bottom: 2px solid transparent; color: var(--muted); font-weight: 600; white-space: nowrap; }
+.tab.active { color: var(--text); border-bottom-color: var(--accent); }
+.tablewrap { overflow: auto; max-height: 58vh; }
+table { border-collapse: collapse; width: 100%; font-size: 12.5px; }
+th, td { text-align: left; padding: 6px 10px; border-bottom: 1px solid var(--border); white-space: nowrap; }
+th { position: sticky; top: 0; background: var(--panel-2); font-weight: 600; z-index: 1; }
+td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+tbody tr { cursor: pointer; }
+tbody tr:hover { background: var(--panel-2); }
+tbody tr.selected { background: var(--accent-soft); }
+tbody tr.cited td:first-child { box-shadow: inset 3px 0 0 var(--accent); }
+.empty { padding: 28px 16px; text-align: center; color: var(--muted); }
+dl.kv { display: grid; grid-template-columns: max-content 1fr; gap: 3px 12px; margin: 0; font-size: 12.5px; }
+dl.kv dt { color: var(--muted); } dl.kv dd { margin: 0; overflow-wrap: anywhere; }
+.subtable td, .subtable th { padding: 3px 6px; font-size: 12px; }
+.finding { border: 1px solid var(--border); border-radius: 8px; padding: 10px; font-size: 12.5px; }
+.rules { font-size: 13px; margin: 0; padding-left: 18px; } .rules li { margin-bottom: 3px; }
+
+/* Results */
+.scoregrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; }
+.stat { padding: 14px; } .stat .v { font-size: 26px; font-weight: 700; font-variant-numeric: tabular-nums; } .stat .k { color: var(--muted); font-size: 12.5px; }
+.results-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.you td { font-weight: 700; }
+
+@media (max-width: 1000px) {
+  .layout, .hero, .results-cols { grid-template-columns: minmax(0, 1fr); }
+  .topbar .wrap > .row { width: 100%; justify-content: space-between; }
+  .side { position: static; max-height: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- Episode picker -->
+<section id="picker">
+  <div class="wrap stack">
+    <div class="hero">
+      <div class="panel pad">
+        <h1>Audit Playground</h1>
+        <p class="muted" style="margin-top:6px">You are the auditor. Each company below is a fictional business with a ledger, invoices, payments and exchange rates. Some contain planted accounting errors; some are clean. Find the errors, back each one with evidence, and submit. The same grader that scores AI agents scores you.</p>
+        <ol class="steps-list">
+          <li>Pick a company.</li>
+          <li>Browse its records. Every page you open costs one step, as it does for an AI agent (100 steps maximum).</li>
+          <li>For each error: choose its type, the affected invoice or payment, the amount, and the records that prove it.</li>
+          <li>Submit. You see your score, the answer key, and how the baseline policies did on the same company.</li>
+        </ol>
+      </div>
+      <div class="panel pad">
+        <h2>The four kinds of error</h2>
+        <dl class="kv" style="margin-top:10px;font-size:13px" id="type-help"></dl>
+      </div>
+    </div>
+    <div class="row spread">
+      <div class="row">
+        <h2>Choose a company</h2>
+        <span class="muted" id="picker-count"></span>
+      </div>
+      <div class="row">
+        <select id="split-filter" style="width:auto"></select>
+        <button class="btn" id="random-btn">Random company</button>
+      </div>
+    </div>
+    <div id="picker-error" class="error"></div>
+    <div class="cards" id="cards"></div>
+  </div>
+</section>
+
+<!-- Workspace -->
+<section id="workspace" class="hidden">
+  <div class="topbar">
+    <div class="wrap row spread">
+      <div>
+        <div class="row"><h2 id="ws-company"></h2><span class="badge" id="ws-split"></span></div>
+        <div class="muted" id="ws-period" style="font-size:12.5px"></div>
+      </div>
+      <div class="row">
+        <div>
+          <div style="font-size:12px" class="muted"><span id="ws-steps"></span></div>
+          <div class="meter" id="ws-meter"><div></div></div>
+        </div>
+        <button class="btn" id="quit-btn">Change company</button>
+        <button class="btn primary" id="submit-btn">Submit findings</button>
+      </div>
+    </div>
+  </div>
+  <div class="wrap">
+    <div id="step-warning" class="notice warn hidden" style="margin-bottom:12px"></div>
+    <div class="layout">
+      <div class="stack">
+        <div class="panel">
+          <div class="tabs" id="tabs"></div>
+          <div class="pad row spread" style="padding-bottom:8px">
+            <div class="row" style="flex:1;min-width:200px">
+              <input type="search" id="filter" placeholder="Filter loaded rows (free)" style="max-width:320px">
+              <span class="muted" id="table-status" style="font-size:12.5px"></span>
+            </div>
+            <div class="row">
+              <button class="btn" id="more-btn">Load next 50<span class="cost">1 step</span></button>
+              <button class="btn" id="all-btn"></button>
+            </div>
+          </div>
+          <div class="tablewrap" id="tablewrap"></div>
+        </div>
+        <details class="panel pad">
+          <summary style="cursor:pointer;font-weight:600">Accounting rules for this company</summary>
+          <ul class="rules" id="rules" style="margin-top:10px"></ul>
+        </details>
+      </div>
+
+      <aside class="side stack">
+        <div class="panel pad" id="detail">
+          <h3>Selected record</h3>
+          <p class="muted" style="margin:6px 0 0">Click a row to see its details and cite it.</p>
+        </div>
+
+        <div class="panel pad stack">
+          <div class="row spread"><h3 id="form-title">New finding</h3><button class="btn link small hidden" id="cancel-edit">Cancel edit</button></div>
+          <div>
+            <label for="f-type">Error type</label>
+            <select id="f-type"></select>
+            <div class="hint" id="f-type-hint"></div>
+          </div>
+          <div>
+            <label>Affected invoice or payment</label>
+            <div id="f-affected"></div>
+            <div class="hint">Select an invoice or payment and press “Mark affected”, or type a document ID: <input type="text" id="f-affected-input" class="mono" placeholder="e.g. FILE-TTTDVMC" style="margin-top:4px"></div>
+          </div>
+          <div class="row" style="align-items:flex-start;flex-wrap:nowrap">
+            <div style="flex:2">
+              <label for="f-amount">Amount</label>
+              <input type="text" id="f-amount" inputmode="decimal" placeholder="e.g. 225.54">
+              <div class="hint" id="f-amount-hint"></div>
+            </div>
+            <div style="flex:1">
+              <label for="f-currency">Currency</label>
+              <select id="f-currency"></select>
+            </div>
+          </div>
+          <div>
+            <label>Evidence <span class="muted" style="font-weight:400">(up to 10 record IDs)</span></label>
+            <div id="f-evidence"></div>
+            <div class="hint">Select records and press “Cite as evidence”, or type an ID: <input type="text" id="f-evidence-input" class="mono" placeholder="e.g. TX-HT49KFD5" style="margin-top:4px"></div>
+          </div>
+          <div>
+            <label for="f-explanation">Explanation <span class="muted" style="font-weight:400">(optional, not scored)</span></label>
+            <textarea id="f-explanation" maxlength="1000" placeholder="What is wrong and how you worked out the amount"></textarea>
+          </div>
+          <div class="error" id="f-error"></div>
+          <button class="btn primary" id="f-save">Add finding</button>
+        </div>
+
+        <div class="panel pad stack">
+          <div class="row spread"><h3>Your findings</h3><span class="badge" id="findings-count">0 / 30</span></div>
+          <div id="findings-list"></div>
+        </div>
+
+        <div class="panel pad stack">
+          <h3>Calculator <span class="cost">1 step per calculation</span></h3>
+          <div class="row" style="flex-wrap:nowrap">
+            <input type="text" id="calc-input" class="mono" placeholder="80550 * 473.0904">
+            <button class="btn" id="calc-btn">=</button>
+          </div>
+          <div class="mono" id="calc-output"></div>
+          <div class="hint">Supports + − × ÷ and brackets with exact decimals. Your own calculator is free.</div>
+        </div>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<!-- Results -->
+<section id="results" class="hidden">
+  <div class="wrap stack">
+    <div class="row spread">
+      <div>
+        <h1 id="r-title"></h1>
+        <div class="muted" id="r-sub"></div>
+      </div>
+      <button class="btn primary" id="again-btn">Play another company</button>
+    </div>
+    <div class="scoregrid" id="r-stats"></div>
+    <div class="notice info" id="r-explain"></div>
+    <div class="panel pad stack">
+      <h2>You against the baseline policies</h2>
+      <p class="muted">The same company, scored by the same grader. Oracle reads the answer key; reconcile is a simple rule-based checker; random browses then submits nothing; mark_all flags 30 guesses.</p>
+      <div style="overflow:auto"><table id="r-baselines"></table></div>
+    </div>
+    <div class="results-cols">
+      <div class="panel pad stack"><h2>Your findings</h2><div id="r-findings"></div></div>
+      <div class="panel pad stack"><h2>Answer key</h2><div id="r-key"></div></div>
+    </div>
+  </div>
+</section>
+
+<script>
+"use strict";
+const $ = (id) => document.getElementById(id);
+const esc = (value) => String(value ?? "").replace(/[&<>"']/g, (c) => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"}[c]));
+
+const TYPE_INFO = {
+  duplicate_invoice: ["Duplicate invoice", "The same invoice is booked in the ledger more than once.", "Usually the amount of the extra booking (the second debit to accounts receivable)."],
+  payment_allocation: ["Payment not applied correctly", "A payment says which invoices it pays, but the ledger parks some or all of it in the unapplied account instead.", "Usually the amount that went to the unapplied account, in the base currency."],
+  fx_conversion: ["Wrong currency conversion", "A foreign-currency invoice or payment was converted at the wrong rate or date.", "The difference between the correct and the booked base-currency amount."],
+  wrong_period: ["Wrong reporting period", "An invoice is booked in a different reporting period from the one its date belongs to.", "Usually the amount that was booked."],
+  reporting_period: ["Wrong reporting period", "An invoice is booked in a different reporting period from the one its date belongs to.", "Usually the amount that was booked."],
+};
+const TABLES = {
+  ledger: { label: "Ledger", count: "ledger_rows", columns: [
+    ["row_id", "Row"], ["entry_id", "Entry"], ["timestamp", "Time"], ["account", "Account", "account"],
+    ["debit_minor", "Debit", "money"], ["credit_minor", "Credit", "money"], ["currency", "Cur"],
+    ["invoice_id", "Invoice"], ["payment_id", "Payment"], ["entity_id", "Counterparty"]] },
+  invoices: { label: "Invoices", count: "invoices", columns: [
+    ["doc_id", "Document"], ["invoice_id", "Invoice"], ["entity_id", "Counterparty"], ["issued_at", "Issued"],
+    ["due_at", "Due"], ["currency", "Cur"], ["total_minor", "Total", "money"], ["line_items", "Lines", "count"]] },
+  payments: { label: "Payments", count: "payments", columns: [
+    ["doc_id", "Document"], ["payment_id", "Payment"], ["entity_id", "Counterparty"], ["timestamp", "Time"],
+    ["currency", "Cur"], ["amount_minor", "Amount", "money"], ["invoice_refs", "Pays invoices", "refs"]] },
+  fx: { label: "Exchange rates", count: "fx_rates", columns: [
+    ["date", "Date"], ["source_currency", "From"], ["target_currency", "To"], ["rate", "Rate", "num"]] },
+};
+const PAGE = 50;
+
+let episodes = [];
+let S = null; // current game state
+
+async function api(path, body) {
+  const response = await fetch(path, body === undefined ? {} : {
+    method: "POST", headers: {"Content-Type": "application/json"}, body: JSON.stringify(body),
+  });
+  const data = await response.json().catch(() => ({error: "Bad response from server"}));
+  if (!response.ok) throw new Error(data.error || response.statusText);
+  return data;
+}
+
+function show(id) {
+  for (const name of ["picker", "workspace", "results"]) $(name).classList.toggle("hidden", name !== id);
+  window.scrollTo(0, 0);
+}
+
+/* ---------- money & ids ---------- */
+function exponent(currency) { return S.manifest.currency_exponents?.[currency] ?? 2; }
+function fmtMoney(minor, currency) {
+  if (minor === null || minor === undefined || minor === "") return "";
+  const exp = exponent(currency);
+  const negative = minor < 0;
+  const digits = String(Math.abs(minor)).padStart(exp + 1, "0");
+  const whole = digits.slice(0, digits.length - exp).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  const frac = exp ? "." + digits.slice(-exp) : "";
+  return (negative ? "−" : "") + whole + frac;
+}
+function toMinor(text, currency) {
+  const clean = String(text).trim().replace(/[,\s]/g, "");
+  if (!/^-?\d+(\.\d+)?$/.test(clean)) return null;
+  const exp = exponent(currency);
+  const [whole, frac = ""] = clean.replace("-", "").split(".");
+  if (frac.length > exp) return null;
+  const value = Number(whole + frac.padEnd(exp, "0"));
+  if (!Number.isSafeInteger(value)) return null;
+  return clean.startsWith("-") ? -value : value;
+}
+function isV1() { return String(S.manifest.schema_version) === "1.0"; }
+function evidenceId(table, row) {
+  if (table === "ledger") return row.row_id;
+  if (table === "fx") return (isV1() ? "FX:" : "") + `${row.date}:${row.source_currency}:${row.target_currency}`;
+  return row.doc_id;
+}
+function rowKey(table, row) {
+  return {ledger: row.row_id, invoices: row.invoice_id, payments: row.payment_id}[table] ?? evidenceId(table, row);
+}
+function accountLabel(code) {
+  const accounts = S.policy.accounts || {};
+  for (const [role, value] of Object.entries(accounts)) {
+    if (value === code || (Array.isArray(value) && value.includes(code))) {
+      return {ar: "Receivables", bank: "Bank", revenue: "Revenue", unapplied: "Unapplied", expense: "Expense"}[role] || role;
+    }
+  }
+  return "";
+}
+
+/* ---------- picker ---------- */
+function renderTypeHelp() {
+  $("type-help").innerHTML = ["duplicate_invoice", "payment_allocation", "fx_conversion", "wrong_period"]
+    .map((t) => `<dt><b>${esc(TYPE_INFO[t][0])}</b></dt><dd>${esc(TYPE_INFO[t][1])}</dd>`).join("");
+}
+function renderCards() {
+  const split = $("split-filter").value;
+  const list = episodes.filter((e) => !split || e.split === split);
+  $("picker-count").textContent = `${list.length} companies`;
+  $("cards").innerHTML = list.map((e) => `
+    <button class="panel card" data-id="${esc(e.id)}">
+      <div class="name">${esc(e.company)}</div>
+      <div class="row" style="margin-bottom:6px"><span class="badge accent">${esc(e.split)}</span><span class="badge">${esc(e.base_currency)}</span></div>
+      <div class="muted" style="font-size:12.5px">Period ${esc(e.period_start.slice(0, 10))} to ${esc(e.period_end.slice(0, 10))}<br>
+      ${esc(e.ledger_rows ?? "?")} ledger rows · ${esc(e.documents ?? "?")} documents</div>
+    </button>`).join("");
+}
+async function loadEpisodes() {
+  try {
+    episodes = await api("/api/episodes");
+  } catch (error) {
+    $("picker-error").textContent = error.message;
+    return;
+  }
+  const splits = [...new Set(episodes.map((e) => e.split))];
+  $("split-filter").innerHTML = `<option value="">All sets</option>` + splits.map((s) => `<option value="${esc(s)}">${esc(s)}</option>`).join("");
+  if (splits.includes("dev")) $("split-filter").value = "dev";
+  renderCards();
+}
+
+/* ---------- game ---------- */
+async function startEpisode(id) {
+  $("picker-error").textContent = "";
+  let data;
+  try { data = await api("/api/start", {episode: id}); } catch (error) { $("picker-error").textContent = error.message; return; }
+  const obs = data.observation;
+  S = {
+    session: data.session, episode: data.episode, manifest: obs.manifest, policy: obs.policy,
+    issueTypes: data.issue_types, stepLimit: data.step_limit, stepsUsed: 0, busy: false,
+    tables: Object.fromEntries(Object.keys(TABLES).map((t) => [t, {rows: [], cursor: undefined, byKey: new Map()}])),
+    tab: "ledger", selected: null, findings: [], editing: null,
+    draft: {affected: [], evidence: []},
+  };
+  $("ws-company").textContent = data.episode.company;
+  $("ws-split").textContent = data.episode.split;
+  const m = S.manifest;
+  $("ws-period").textContent = `Reporting period ${m.period_start.slice(0, 10)} to ${m.period_end.slice(0, 10)} (end excluded) · ${m.timezone} · base currency ${m.base_currency}`;
+  $("f-type").innerHTML = S.issueTypes.map((t) => `<option value="${esc(t)}">${esc((TYPE_INFO[t] || [t])[0])}</option>`).join("");
+  $("f-currency").innerHTML = Object.keys(m.currency_exponents || {[m.base_currency]: 2})
+    .map((c) => `<option ${c === m.base_currency ? "selected" : ""}>${esc(c)}</option>`).join("");
+  $("calc-output").textContent = "";
+  $("filter").value = "";
+  renderRules(); resetForm(); renderTabs(); renderTable(); renderDetail(); renderFindings(); renderSteps();
+  show("workspace");
+}
+
+function renderRules() {
+  const p = S.policy, m = S.manifest, items = [];
+  if (p.period) items.push(`Only transactions dated from ${esc(p.period.start)} up to ${p.period.end_exclusive ? "but not including" : "and including"} ${esc(p.period.end)} (${esc(p.period.timezone)}) belong to this period.`);
+  if (p.recognition) items.push(`Invoices count on the local date they were issued; payments on the local date they were received.`);
+  if (p.fx) items.push(`Foreign amounts are converted into ${esc(p.fx.target_currency || m.base_currency)} using the rate for the ${p.fx.date_rule === "event_local_date" ? "local date of the invoice or payment" : esc(p.fx.date_rule)}. A rate means 1 unit of the foreign currency = rate × ${esc(p.fx.target_currency || m.base_currency)}.`);
+  if (p.rounding) items.push(`Round each conversion to the currency's smallest unit using ${p.rounding.mode === "half_even" ? "banker's rounding (half to even)" : esc(p.rounding.mode)}.`);
+  if (p.allocation) items.push(`A payment is applied to the invoices listed in its “pays invoices” field; anything not applied goes to the unapplied account.`);
+  if (p.accounts) items.push(`Accounts: ` + Object.entries(p.accounts).map(([role, code]) => `${esc(role)} = ${esc([].concat(code).join(", "))}`).join(" · "));
+  items.push(`Amounts are in each currency's smallest unit in the data; this page shows them with decimals (${Object.entries(m.currency_exponents || {}).map(([c, e]) => `${esc(c)}: ${e} decimals`).join(", ")}).`);
+  $("rules").innerHTML = items.map((i) => `<li>${i}</li>`).join("");
+}
+
+function renderSteps() {
+  const left = S.stepLimit - S.stepsUsed;
+  $("ws-steps").textContent = `${S.stepsUsed} of ${S.stepLimit} steps used · each costs 0.002 of your score`;
+  $("ws-meter").firstElementChild.style.width = `${Math.min(100, 100 * S.stepsUsed / S.stepLimit)}%`;
+  $("ws-meter").classList.toggle("warn", left <= 10);
+  const warning = $("step-warning");
+  if (left <= 1) {
+    warning.textContent = "You have no inspection steps left. Submit your findings now; one more look would end the episode with nothing submitted.";
+  } else if (left <= 10) {
+    warning.textContent = `Only ${left - 1} looks left before you must submit.`;
+  }
+  warning.classList.toggle("hidden", left > 10);
+  renderTableButtons();
+}
+function canInspect(cost = 1) { return S.stepLimit - S.stepsUsed - cost >= 1; }
+
+async function step(action) {
+  if (S.busy) return null;
+  S.busy = true;
+  try {
+    const data = await api("/api/step", {session: S.session, action});
+    S.stepsUsed = data.steps_used;
+    renderSteps();
+    if (data.finished) { await showResults(); return null; }
+    return data.observation;
+  } catch (error) {
+    alert(error.message);
+    return null;
+  } finally {
+    S.busy = false;
+  }
+}
+
+/* ---------- tables ---------- */
+function renderTabs() {
+  $("tabs").innerHTML = Object.entries(TABLES).map(([name, t]) => {
+    const loaded = S.tables[name].rows.length, total = S.manifest.counts?.[t.count];
+    return `<button class="tab ${S.tab === name ? "active" : ""}" data-tab="${name}">${esc(t.label)} <span class="muted" style="font-weight:400">${loaded}${total !== undefined ? "/" + total : ""}</span></button>`;
+  }).join("");
+}
+function remainingPages(name) {
+  const state = S.tables[name], total = S.manifest.counts?.[TABLES[name].count];
+  if (state.cursor === null) return 0;
+  if (total === undefined) return state.cursor === undefined ? 1 : 1;
+  return Math.ceil((total - state.rows.length) / PAGE);
+}
+function renderTableButtons() {
+  if (!S) return;
+  const pages = remainingPages(S.tab);
+  $("more-btn").disabled = pages === 0 || !canInspect();
+  $("all-btn").innerHTML = `Load all<span class="cost">${pages} step${pages === 1 ? "" : "s"}</span>`;
+  $("all-btn").disabled = pages <= 1 || !canInspect(pages);
+  $("all-btn").classList.toggle("hidden", pages <= 1);
+  $("more-btn").classList.toggle("hidden", pages === 0);
+  const state = S.tables[S.tab];
+  $("table-status").textContent = state.cursor === undefined ? "" : (state.cursor === null ? "All rows loaded" : `${state.rows.length} rows loaded`);
+}
+async function loadPage(name) {
+  const state = S.tables[name];
+  if (state.cursor === null || !canInspect()) return false;
+  const obs = await step({action: "list_records", table: name, cursor: state.cursor ?? null, limit: PAGE});
+  if (!obs) return false;
+  if (obs.error) { alert(`The environment answered: ${obs.error}`); return false; }
+  for (const row of obs.result) {
+    state.rows.push(row);
+    state.byKey.set(rowKey(name, row), row);
+  }
+  state.cursor = obs.next_cursor;
+  return true;
+}
+function citedIds() {
+  const ids = new Set(S.draft.evidence.concat(S.draft.affected));
+  for (const f of S.findings) for (const id of f.evidence_ids.concat(f.affected_ids)) ids.add(id);
+  return ids;
+}
+function cell(table, row, [field, , kind]) {
+  const value = row[field];
+  if (value === null || value === undefined) return `<td class="muted">—</td>`;
+  if (kind === "money") return `<td class="num">${value ? esc(fmtMoney(value, row.currency)) : `<span class="muted">0</span>`}</td>`;
+  if (kind === "num") return `<td class="num">${esc(value)}</td>`;
+  if (kind === "count") return `<td class="num">${esc(value.length)}</td>`;
+  if (kind === "refs") return `<td>${esc(value.map((r) => r.invoice_id).join(", "))}</td>`;
+  if (kind === "account") { const l = accountLabel(value); return `<td>${esc(value)}${l ? ` <span class="muted">${esc(l)}</span>` : ""}</td>`; }
+  return `<td class="${field.endsWith("_id") ? "mono" : ""}">${esc(value)}</td>`;
+}
+function renderTable() {
+  const name = S.tab, spec = TABLES[name], state = S.tables[name];
+  const query = $("filter").value.trim().toLowerCase();
+  const columns = spec.columns.filter(([field]) => state.rows.length === 0 || field in state.rows[0]);
+  if (state.cursor === undefined) {
+    $("tablewrap").innerHTML = `<div class="empty">Nothing loaded yet. Opening the first page of ${esc(spec.label.toLowerCase())} costs 1 step.<br><br><button class="btn primary" id="first-page">Load first 50 rows<span class="cost" style="color:inherit">1 step</span></button></div>`;
+    renderTableButtons(); return;
+  }
+  const rows = query ? state.rows.filter((r) => JSON.stringify(r).toLowerCase().includes(query)) : state.rows;
+  const cited = citedIds(), selectedId = S.selected && S.selected.table === name ? evidenceId(name, S.selected.row) : null;
+  $("tablewrap").innerHTML = `<table><thead><tr>${columns.map(([, label, kind]) => `<th class="${kind === "money" || kind === "num" || kind === "count" ? "num" : ""}">${esc(label)}</th>`).join("")}</tr></thead>
+    <tbody>${rows.map((row) => {
+      const id = evidenceId(name, row), i = state.rows.indexOf(row);
+      return `<tr data-i="${i}" class="${id === selectedId ? "selected" : ""} ${cited.has(id) ? "cited" : ""}">${columns.map((c) => cell(name, row, c)).join("")}</tr>`;
+    }).join("")}</tbody></table>${rows.length ? "" : `<div class="empty">No loaded rows match “${esc(query)}”.</div>`}`;
+  renderTableButtons();
+}
+
+/* ---------- selected record ---------- */
+function linkButton(table, id) {
+  if (!id) return "";
+  const loaded = S.tables[table].byKey.has(id);
+  return `<button class="btn link mono" data-goto="${esc(table)}" data-key="${esc(id)}">${esc(id)}</button>${loaded ? "" : ` <span class="cost">1 step</span>`}`;
+}
+function renderDetail() {
+  const box = $("detail");
+  if (!S.selected) {
+    box.innerHTML = `<h3>Selected record</h3><p class="muted" style="margin:6px 0 0">Click a row to see its details and cite it.</p>`;
+    return;
+  }
+  const {table, row} = S.selected, id = evidenceId(table, row);
+  const isDoc = table === "invoices" || table === "payments";
+  const fields = [];
+  for (const [field, label, kind] of TABLES[table].columns) {
+    if (!(field in row) || kind === "count" || kind === "refs") continue;
+    let value = row[field];
+    if (field === "invoice_id" && table === "ledger") value = linkButton("invoices", value);
+    else if (field === "payment_id" && table === "ledger") value = linkButton("payments", value);
+    else if (kind === "money") value = `${esc(fmtMoney(value, row.currency))} ${esc(row.currency)} <span class="muted mono">(${esc(value)})</span>`;
+    else if (kind === "account") value = `${esc(value)} ${esc(accountLabel(value))}`;
+    else value = value === null ? `<span class="muted">—</span>` : esc(value);
+    fields.push(`<dt>${esc(label)}</dt><dd>${value}</dd>`);
+  }
+  let extra = "";
+  if (table === "invoices" && row.line_items) {
+    extra = `<table class="subtable" style="margin-top:8px"><thead><tr><th>Line</th><th class="num">Qty</th><th class="num">Unit</th><th class="num">Amount</th></tr></thead><tbody>${
+      row.line_items.map((l) => `<tr><td>${esc(l.description)}</td><td class="num">${esc(l.quantity)}</td><td class="num">${esc(fmtMoney(l.unit_price_minor, row.currency))}</td><td class="num">${esc(fmtMoney(l.amount_minor, row.currency))}</td></tr>`).join("")
+    }</tbody></table>`;
+  }
+  if (table === "payments") {
+    extra = `<div style="margin-top:8px;font-size:12.5px"><b>Pays invoices</b>${
+      row.invoice_refs && row.invoice_refs.length ? `<table class="subtable"><tbody>${row.invoice_refs.map((r) => `<tr><td>${linkButton("invoices", r.invoice_id)}</td><td class="num">${esc(fmtMoney(r.amount_minor, row.currency))} ${esc(row.currency)}</td></tr>`).join("")}</tbody></table>` : ` <span class="muted">none listed</span>`
+    }</div>`;
+  }
+  if (table === "invoices" || table === "payments") {
+    const key = table === "invoices" ? "invoice_id" : "payment_id";
+    const related = S.tables.ledger.rows.filter((r) => r[key] === row[key]);
+    extra += `<div style="margin-top:8px;font-size:12.5px"><b>Ledger rows loaded so far for this ${table === "invoices" ? "invoice" : "payment"}</b>${
+      related.length ? `<table class="subtable"><tbody>${related.map((r) => `<tr><td><button class="btn link mono" data-goto="ledger" data-key="${esc(r.row_id)}">${esc(r.row_id)}</button></td><td>${esc(r.timestamp.slice(0, 10))}</td><td>${esc(accountLabel(r.account) || r.account)}</td><td class="num">${r.debit_minor ? "Dr " + esc(fmtMoney(r.debit_minor, r.currency)) : "Cr " + esc(fmtMoney(r.credit_minor, r.currency))}</td></tr>`).join("")}</tbody></table>` : ` <span class="muted">none yet (load more ledger pages)</span>`
+    }</div>`;
+  }
+  const inEvidence = S.draft.evidence.includes(id), inAffected = S.draft.affected.includes(id);
+  box.innerHTML = `<div class="row spread"><h3>${esc(TABLES[table].label.replace(/s$/, ""))} <span class="mono">${esc(id)}</span></h3></div>
+    <dl class="kv" style="margin-top:8px">${fields.join("")}</dl>${extra}
+    <div class="row" style="margin-top:12px">
+      <button class="btn small ${inEvidence ? "" : "primary"}" id="cite-btn">${inEvidence ? "Remove from evidence" : "Cite as evidence"}</button>
+      ${isDoc ? `<button class="btn small" id="affect-btn">${inAffected ? "Unmark affected" : "Mark affected"}</button>` : ""}
+    </div>`;
+  $("cite-btn").onclick = () => { toggle(S.draft.evidence, id, 10); renderDraft(); renderDetail(); renderTable(); };
+  if (isDoc) $("affect-btn").onclick = () => {
+    toggle(S.draft.affected, id, 100);
+    if (!S.draft.evidence.includes(id) && S.draft.affected.includes(id) && S.draft.evidence.length < 10) S.draft.evidence.push(id);
+    if (S.draft.affected.includes(id)) $("f-currency").value = S.manifest.base_currency;
+    renderDraft(); renderDetail(); renderTable();
+  };
+}
+function toggle(list, value, max) {
+  const i = list.indexOf(value);
+  if (i >= 0) list.splice(i, 1); else if (list.length < max) list.push(value);
+}
+async function gotoRecord(table, key) {
+  let row = S.tables[table].byKey.get(key);
+  if (!row) {
+    if (!canInspect()) return alert("No inspection steps left. Submit your findings.");
+    const obs = await step({action: "get_record", table, id: key});
+    if (!obs) return;
+    if (obs.error) return alert(`The environment answered: ${obs.error}`);
+    row = obs.result;
+  }
+  S.selected = {table, row};
+  S.tab = table;
+  $("filter").value = "";
+  renderTabs(); renderTable(); renderDetail();
+  const selectedRow = document.querySelector("tbody tr.selected");
+  if (selectedRow) selectedRow.scrollIntoView({block: "nearest"});
+}
+
+/* ---------- finding form ---------- */
+function chips(list, name) {
+  return list.length ? list.map((id, i) => `<span class="chip">${esc(id)}<button title="Remove" data-remove="${name}" data-i="${i}">×</button></span>`).join("") : `<span class="muted" style="font-size:12.5px">None yet</span>`;
+}
+function renderDraft() {
+  $("f-affected").innerHTML = chips(S.draft.affected, "affected");
+  $("f-evidence").innerHTML = chips(S.draft.evidence, "evidence");
+  const info = TYPE_INFO[$("f-type").value];
+  $("f-type-hint").textContent = info ? `${info[1]} Amount: ${info[2]}` : "";
+  const minor = toMinor($("f-amount").value, $("f-currency").value);
+  $("f-amount-hint").textContent = $("f-amount").value.trim() === "" ? `In ${$("f-currency").value}, with up to ${exponent($("f-currency").value)} decimals.`
+    : minor === null ? `Not a valid ${$("f-currency").value} amount (max ${exponent($("f-currency").value)} decimals).` : `Submitted as ${minor} smallest units.`;
+}
+function resetForm() {
+  S.draft = {affected: [], evidence: []};
+  S.editing = null;
+  $("f-amount").value = ""; $("f-explanation").value = ""; $("f-error").textContent = "";
+  $("f-affected-input").value = ""; $("f-evidence-input").value = "";
+  $("f-currency").value = S.manifest.base_currency;
+  $("form-title").textContent = "New finding"; $("f-save").textContent = "Add finding";
+  $("cancel-edit").classList.add("hidden");
+  renderDraft();
+}
+function saveFinding() {
+  const type = $("f-type").value, currency = $("f-currency").value;
+  const amount = toMinor($("f-amount").value, currency);
+  const errors = [];
+  if (!S.draft.affected.length) errors.push("Mark at least one affected invoice or payment.");
+  if (amount === null) errors.push("Enter a valid amount.");
+  if (S.editing === null && S.findings.length >= 30) errors.push("You can submit at most 30 findings.");
+  if (errors.length) { $("f-error").textContent = errors.join(" "); return; }
+  const finding = {
+    type, affected_ids: [...S.draft.affected], claimed_amount_minor: amount, currency,
+    evidence_ids: [...S.draft.evidence], explanation: $("f-explanation").value.slice(0, 1000),
+  };
+  if (S.editing === null) S.findings.push(finding); else S.findings[S.editing] = finding;
+  resetForm(); renderFindings(); renderTable(); renderDetail();
+}
+function editFinding(i) {
+  const f = S.findings[i];
+  S.editing = i;
+  S.draft = {affected: [...f.affected_ids], evidence: [...f.evidence_ids]};
+  $("f-type").value = f.type; $("f-currency").value = f.currency;
+  $("f-amount").value = fmtMoney(f.claimed_amount_minor, f.currency).replace(/,/g, "").replace("−", "-");
+  $("f-explanation").value = f.explanation;
+  $("form-title").textContent = `Editing finding ${i + 1}`; $("f-save").textContent = "Save changes";
+  $("cancel-edit").classList.remove("hidden");
+  renderDraft(); renderDetail();
+}
+function findingSummary(f) {
+  return `<div class="row spread"><b>${esc((TYPE_INFO[f.type] || [f.type])[0])}</b><span class="mono">${esc(fmtMoney(f.claimed_amount_minor, f.currency))} ${esc(f.currency)}</span></div>
+    <div style="margin-top:4px"><span class="muted">Affected:</span> ${f.affected_ids.map((id) => `<span class="chip">${esc(id)}</span>`).join("")}</div>
+    <div><span class="muted">Evidence:</span> ${f.evidence_ids.length ? f.evidence_ids.map((id) => `<span class="chip">${esc(id)}</span>`).join("") : `<span class="muted">none</span>`}</div>
+    ${f.explanation ? `<div class="muted" style="margin-top:4px">${esc(f.explanation)}</div>` : ""}`;
+}
+function renderFindings() {
+  $("findings-count").textContent = `${S.findings.length} / 30`;
+  $("findings-list").innerHTML = S.findings.length ? S.findings.map((f, i) => `
+    <div class="finding" style="margin-bottom:8px">${findingSummary(f)}
+      <div class="row" style="margin-top:6px"><button class="btn small" data-edit="${i}">Edit</button><button class="btn small" data-delete="${i}">Delete</button></div>
+    </div>`).join("") : `<p class="muted" style="margin:0">No findings yet. If you think this company is clean, submitting no findings is a valid answer.</p>`;
+}
+async function submitFindings() {
+  const n = S.findings.length;
+  const message = n ? `Submit ${n} finding${n === 1 ? "" : "s"}? The episode ends and you cannot change them.` : "Submit with no findings, meaning you believe this company is clean? The episode ends.";
+  if (!confirm(message)) return;
+  await step({action: "submit", findings: {episode_id: S.manifest.episode_id, findings: S.findings}});
+}
+
+/* ---------- results ---------- */
+async function showResults() {
+  let r;
+  try { r = await api("/api/result", {session: S.session}); } catch (error) { alert(error.message); return; }
+  const s = r.score, issues = r.review.issues;
+  $("r-title").textContent = r.reason === "step_limit" ? "Out of steps" : "Results";
+  $("r-sub").textContent = `${S.episode.company} · ${issues.length ? `${issues.length} planted error${issues.length === 1 ? "" : "s"}` : "a clean company (no planted errors)"} · ${r.steps} steps used`;
+  const stat = (v, k, cls = "") => `<div class="panel stat"><div class="v ${cls}">${v}</div><div class="k">${k}</div></div>`;
+  $("r-stats").innerHTML = [
+    stat(s.reward.toFixed(3), "Reward (−1 to 1)"),
+    stat(s.f1.toFixed(2), "F1 score"),
+    stat(`${s.tp} / ${s.tp + s.fn}`, "Errors found"),
+    stat(s.fp, "False alarms"),
+  ].join("");
+  let explain;
+  if (r.reason === "invalid_submission") explain = "The submission was structurally invalid, which always scores −1.";
+  else if (r.reason === "step_limit") explain = "You used all 100 steps without submitting, so the episode ended with an empty submission.";
+  else explain = `Reward = 2 × F1 − 1 − 0.002 × ${r.inspection_steps} inspection steps, kept between −1 and 1. F1 balances errors found against false alarms; on a clean company an empty submission scores F1 = 1.`;
+  $("r-explain").textContent = explain;
+
+  const rows = [["You", {tp: s.tp, fp: s.fp, fn: s.fn, f1: s.f1, reward: s.reward, steps: r.steps}, true]]
+    .concat(Object.entries(r.baselines).map(([name, b]) => [name, b, false]))
+    .sort((a, b) => b[1].reward - a[1].reward);
+  $("r-baselines").innerHTML = `<thead><tr><th>Policy</th><th class="num">Reward</th><th class="num">F1</th><th class="num">Found</th><th class="num">False alarms</th><th class="num">Steps</th></tr></thead><tbody>${
+    rows.map(([name, b, you]) => `<tr class="${you ? "you" : ""}"><td>${esc(name)}${you ? ` <span class="badge accent">you</span>` : ""}</td><td class="num">${b.reward.toFixed(3)}</td><td class="num">${b.f1.toFixed(2)}</td><td class="num">${b.tp} / ${b.tp + b.fn}</td><td class="num">${b.fp}</td><td class="num">${b.steps}</td></tr>`).join("")
+  }</tbody>`;
+
+  $("r-findings").innerHTML = r.review.findings.length ? r.review.findings.map((f, i) => {
+    const v = f.verdict || {status: "wrong", detail: ""};
+    const badge = v.status === "correct" ? `<span class="badge good">Correct</span>` : v.status === "duplicate" ? `<span class="badge warn">Duplicate</span>` : `<span class="badge bad">False alarm</span>`;
+    return `<div class="finding" style="margin-bottom:8px"><div class="row spread" style="margin-bottom:4px"><span class="muted">Finding ${i + 1}</span>${badge}</div>${findingSummary(f)}${v.detail ? `<div style="margin-top:6px" class="${v.status === "correct" ? "" : "error"}">${esc(v.detail)}</div>` : ""}</div>`;
+  }).join("") : `<p class="muted">You submitted no findings.</p>`;
+
+  $("r-key").innerHTML = issues.length ? issues.map((issue) => `
+    <div class="finding" style="margin-bottom:8px">
+      <div class="row spread" style="margin-bottom:4px"><b>${esc((TYPE_INFO[issue.type] || [issue.type])[0])}</b>${issue.found_by ? `<span class="badge good">Found (your finding ${issue.found_by})</span>` : `<span class="badge bad">Missed</span>`}</div>
+      <div><span class="muted">Affected:</span> ${issue.affected_ids.map((id) => `<span class="chip">${esc(id)}</span>`).join("")}</div>
+      <div><span class="muted">Amount:</span> <span class="mono">${esc(fmtMoney(issue.expected_amount_minor, issue.currency))} ${esc(issue.currency)}</span>${issue.tolerance_minor ? ` <span class="muted">(± ${esc(issue.tolerance_minor)} smallest unit)</span>` : ""}</div>
+      <div><span class="muted">Evidence that proves it${issue.evidence_sets.length > 1 ? " (any one set)" : ""}:</span>${issue.evidence_sets.map((set) => `<div>${set.map((id) => `<span class="chip">${esc(id)}</span>`).join("")}</div>`).join("")}</div>
+    </div>`).join("") : `<p>This company was clean: there were no planted errors. The best answer was to submit nothing.</p>`;
+  show("results");
+}
+
+/* ---------- events ---------- */
+$("split-filter").onchange = renderCards;
+$("cards").onclick = (e) => { const card = e.target.closest("[data-id]"); if (card) startEpisode(card.dataset.id); };
+$("random-btn").onclick = () => {
+  const split = $("split-filter").value, list = episodes.filter((e) => !split || e.split === split);
+  if (list.length) startEpisode(list[Math.floor(Math.random() * list.length)].id);
+};
+$("tabs").onclick = (e) => { const t = e.target.closest("[data-tab]"); if (!t) return; S.tab = t.dataset.tab; $("filter").value = ""; renderTabs(); renderTable(); };
+$("filter").oninput = renderTable;
+$("more-btn").onclick = async () => { if (await loadPage(S.tab)) { renderTabs(); renderTable(); renderDetail(); } };
+$("all-btn").onclick = async () => {
+  const pages = remainingPages(S.tab);
+  if (!confirm(`Load all remaining ${TABLES[S.tab].label.toLowerCase()}? This uses ${pages} steps.`)) return;
+  for (let i = 0; i < pages; i++) if (!(await loadPage(S.tab))) break;
+  renderTabs(); renderTable(); renderDetail();
+};
+$("tablewrap").onclick = async (e) => {
+  if (e.target.id === "first-page") { if (await loadPage(S.tab)) { renderTabs(); renderTable(); } return; }
+  const tr = e.target.closest("tr[data-i]");
+  if (!tr) return;
+  S.selected = {table: S.tab, row: S.tables[S.tab].rows[Number(tr.dataset.i)]};
+  renderTable(); renderDetail();
+};
+$("detail").addEventListener("click", (e) => { const b = e.target.closest("[data-goto]"); if (b) gotoRecord(b.dataset.goto, b.dataset.key); });
+for (const name of ["affected", "evidence"]) {
+  $(`f-${name}`).onclick = (e) => {
+    const b = e.target.closest("[data-remove]"); if (!b) return;
+    S.draft[name].splice(Number(b.dataset.i), 1); renderDraft(); renderDetail(); renderTable();
+  };
+  $(`f-${name}-input`).onkeydown = (e) => {
+    if (e.key !== "Enter") return;
+    e.preventDefault();
+    const value = e.target.value.trim();
+    if (value && !S.draft[name].includes(value) && S.draft[name].length < (name === "evidence" ? 10 : 100)) S.draft[name].push(value);
+    e.target.value = ""; renderDraft(); renderTable();
+  };
+}
+for (const id of ["f-type", "f-currency"]) $(id).onchange = renderDraft;
+$("f-amount").oninput = renderDraft;
+$("f-save").onclick = saveFinding;
+$("cancel-edit").onclick = () => { resetForm(); renderDetail(); };
+$("findings-list").onclick = (e) => {
+  const edit = e.target.closest("[data-edit]"), del = e.target.closest("[data-delete]");
+  if (edit) editFinding(Number(edit.dataset.edit));
+  if (del && confirm("Delete this finding?")) {
+    const i = Number(del.dataset.delete);
+    S.findings.splice(i, 1);
+    if (S.editing === i) resetForm(); else if (S.editing !== null && S.editing > i) S.editing -= 1;
+    renderFindings(); renderTable();
+  }
+};
+$("calc-btn").onclick = async () => {
+  const expression = $("calc-input").value.trim();
+  if (!expression) return;
+  if (!canInspect()) return alert("No inspection steps left. Submit your findings.");
+  const obs = await step({action: "calculator", expression: expression.replace(/×/g, "*").replace(/÷/g, "/").replace(/−/g, "-")});
+  if (obs) $("calc-output").textContent = obs.error ? "Invalid expression" : `= ${obs.result}`;
+};
+$("calc-input").onkeydown = (e) => { if (e.key === "Enter") $("calc-btn").click(); };
+$("submit-btn").onclick = submitFindings;
+$("quit-btn").onclick = () => { if (confirm("Leave this company? Your progress is lost and nothing is scored.")) show("picker"); };
+$("again-btn").onclick = () => show("picker");
+
+renderTypeHelp();
+loadEpisodes();
+</script>
+</body>
+</html>

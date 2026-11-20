@@ -4,6 +4,7 @@ WORKDIR /app
 COPY audit_sim/ audit_sim/
 COPY fincheck/ fincheck/
 COPY fingen/ fingen/
+COPY playground/ playground/
 COPY configs/ configs/
 COPY episodes/ episodes/
 COPY tests/ tests/
