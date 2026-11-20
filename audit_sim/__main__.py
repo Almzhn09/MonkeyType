@@ -4,7 +4,6 @@ import argparse
 from concurrent.futures import ThreadPoolExecutor
 import json
 from pathlib import Path
-from shutil import copytree
 from statistics import mean
 import sys
 import tempfile
@@ -12,6 +11,8 @@ import unittest
 
 from fincheck.load import SchemaError, fx_key
 from fincheck.verify import discover
+from fingen.history import GenerationError
+from fingen.inject import InjectionError
 
 from .benchmark import benchmark
 from .data import Episode, load_json
@@ -19,7 +20,7 @@ from .environment import AuditEnv, STEP_LIMIT
 from .fixtures import dump_json, dump_jsonl, make_dev
 from .package import build_package, verify_package
 from .policies import POLICIES
-from .release import ROOT, prepare_release
+from .release import evaluate_demo, prepare_release
 from .replay import replay
 from .report import report_directory, write_report
 from .runner import WorkerProtocolError, run_loaded_policy
@@ -109,16 +110,7 @@ def evaluate(directory, *, choices=POLICIES, mode="closed", policy_seed=0,
 
 
 def demo(output):
-    control = ROOT / "fincheck" / "fixtures" / "a08"
-    clean = "EP-QRS8HS6811"
-    with tempfile.TemporaryDirectory() as temp:
-        directory = Path(temp)
-        for scope in ("public", "private"):
-            copytree(control / scope, directory / scope / "demo" / "EP-CHK-A08")
-            copytree(ROOT / "episodes" / scope / "dev" / clean, directory / scope / "demo" / clean)
-        reports, _, trajectories = evaluate(
-            directory, split="demo", choices=("reconcile", "mark_all"), output=output,
-        )
+    reports, _, trajectories = evaluate_demo(evaluate, output=output)
     if output is not None:
         write_report(output / "report.html", reports, trajectories)
     # Display only the same public documents and records used as agent evidence.
@@ -292,7 +284,8 @@ def main():
             return verify()
         elif args.command == "release":
             print(json.dumps(prepare_release(evaluate, args.output), indent=2))
-    except (ValueError, OSError, KeyError, SchemaError, WorkerProtocolError) as error:
+    except (ValueError, OSError, KeyError, SchemaError, GenerationError, InjectionError,
+            WorkerProtocolError) as error:
         print(f"audit_sim: {error}", file=sys.stderr)
         return 1
     return 0

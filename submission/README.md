@@ -1,8 +1,8 @@
 # Комплект сдачи Genesis
 
-[Архив genesis-submission.zip](genesis-submission.zip) содержит исходники, лицензию, Dockerfile, инструкции, 10 train- и 10 dev-эпизодов, 20 парных вариантов, результаты проверки, обучающие траектории и автономный `train-report.html`. Список проверок и измерения находятся в [validation.json](validation.json).
+[Архив genesis-submission.zip](genesis-submission.zip) содержит исходники, лицензию, Dockerfile, инструкции, 10 train- и 10 dev-эпизодов, 20 парных вариантов, результаты проверки и обучающие траектории. После распаковки откройте `demo-report.html` для просмотра демо в браузере или `train-report.html` для просмотра обучающих сессий. Список проверок и измерения находятся в [validation.json](validation.json).
 
-В [extended-validation.json](extended-validation.json) записаны результаты длительного прогона на новых синтетических эпизодах, замеры памяти и результаты отдельной проверки распакованного архива. Чтобы повторить последние завершённые группы на текущем коде, возьмите `seed`, `start_index` и `completed_cohorts` последней фазы и передайте их в `benchmark` как `--seed`, `--start-index` и `--batches`. [Команды прогона](../docs/OPERATIONS.md#проверка-на-новых-данных)
+В [review-validation.json](review-validation.json) записаны результаты последней проверки готового архива, проверка граничных настроек генератора и прогоны политик на новых эпизодах. Группы из `fresh_policy_cohorts` можно повторить с указанными `seed`, `start_index` и `completed_cohorts` через `benchmark --seed … --start-index … --batches …`. Замеры предыдущей сборки сохранены в [extended-validation.json](extended-validation.json). [Команды прогона](../docs/OPERATIONS.md#проверка-на-новых-данных)
 
 После распаковки команда `python3 scripts/check.py` выполняет проверку. Для пересборки архива используйте `python3 scripts/check.py --archive .audit-sim/genesis-submission.zip` из корня репозитория. Команда `python3 -m audit_sim verify-package submission/genesis-submission.zip` сверяет контрольные суммы файлов.
 

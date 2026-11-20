@@ -90,7 +90,7 @@ def local_midnight(d: _dt.date, offset: str) -> _dt.datetime:
 
 
 def parse_month(value: str) -> tuple[int, int]:
-    m = re.match(r"^(\d{4})-(\d{2})$", value or "")
+    m = re.fullmatch(r"([0-9]{4})-([0-9]{2})", value) if isinstance(value, str) else None
     if not m or not 1 <= int(m.group(2)) <= 12:
         raise ValueError(f"start_month must be YYYY-MM: {value!r}")
     return int(m.group(1)), int(m.group(2))

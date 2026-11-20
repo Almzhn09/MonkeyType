@@ -4,7 +4,6 @@ import csv
 from dataclasses import dataclass
 from datetime import date, datetime
 from decimal import Decimal, InvalidOperation
-import json
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
@@ -12,6 +11,7 @@ from fincheck.load import fx_key as v1_fx_key, load_private, load_public
 from fingen.generate import generate_episode
 
 from .schema import ISSUE_TYPES, TABLES, is_currency, is_id, record_id, valid_ids
+from .wire import parse_json
 
 MANIFEST_FIELDS = (
     "schema_version", "episode_id", "base_currency", "period_start", "period_end",
@@ -26,12 +26,12 @@ DOCUMENT_FIELDS = {
 
 
 def load_json(path):
-    return json.loads(path.read_text(encoding="utf-8"))
+    return parse_json(path.read_bytes())
 
 
 def load_jsonl(path):
     with path.open(encoding="utf-8") as stream:
-        return [json.loads(line) for line in stream if line.strip()]
+        return [parse_json(line) for line in stream if line.strip()]
 
 
 def load_csv(path):

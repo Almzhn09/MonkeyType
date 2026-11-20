@@ -13,6 +13,7 @@ under DIR and compares the trees byte for byte (exit 1 on any difference).
 from __future__ import annotations
 
 import argparse
+from json import JSONDecodeError
 import os
 import shutil
 import sys
@@ -20,6 +21,8 @@ import tempfile
 
 from .config import ConfigError, load_config_file
 from .generate import generate_episode
+from .history import GenerationError
+from .inject import InjectionError
 from .transform import TransformError, make_pair, pair_seed
 
 
@@ -151,7 +154,8 @@ def main(argv: list[str] | None = None) -> int:
             print(f"built {len(ids)} episode(s) in {args.out}")
         else:
             return _cmd_selfcheck(args)
-    except (ConfigError, IndexError, NotImplementedError, TransformError) as exc:
+    except (ConfigError, IndexError, JSONDecodeError, OSError, GenerationError, InjectionError,
+            NotImplementedError, TransformError) as exc:
         print(f"error: {exc}", file=sys.stderr)
         return 2
     return 0

@@ -1,5 +1,6 @@
 from pathlib import Path
 import json
+import os
 import subprocess
 import sys
 from tempfile import TemporaryDirectory
@@ -81,6 +82,32 @@ class TestAuditRecordings(unittest.TestCase):
         self.assertEqual(replayed["reports"][0]["reason"], "input_closed")
         with self.assertRaisesRegex(ValueError, "No recorded"):
             replay(self.locations, self.trace, mode="closed")
+
+    def test_escaped_unicode_is_recorded_and_forged_findings_are_rejected(self):
+        response = self.session(
+            '{"action":"calculator","expression":"\\ud800"}\n'
+            '{"action":"submit","findings":{"episode_id":"EP-CHK-A08","findings":[]}}\n',
+        )
+        self.assertEqual(json.loads(response.stdout.splitlines()[1])["observation"]["error"], "invalid_expression")
+        self.assertEqual(replay(self.locations, self.trace, reports_path=self.reports)["steps"], 2)
+        reports = json.loads(self.reports.read_text())
+        reports[0]["submitted_findings"] = ["not in the submitted action"]
+        dump_json(self.reports, reports)
+        with self.assertRaisesRegex(ValueError, "differs for submitted_findings"):
+            replay(self.locations, self.trace, reports_path=self.reports)
+
+    def test_disconnected_output_preserves_a_replayable_report(self):
+        reader, writer = os.pipe()
+        os.close(reader)
+        try:
+            subprocess.run(
+                [sys.executable, "-m", "audit_sim", "session", str(A08), "--output", str(self.output)],
+                stdin=subprocess.DEVNULL, stdout=writer, timeout=5, check=True,
+            )
+        finally:
+            os.close(writer)
+        result = replay(self.locations, self.trace, reports_path=self.reports)
+        self.assertEqual((result["steps"], result["reports"][0]["reason"]), (0, "output_closed"))
 
     def test_watchdog_returns_a_public_terminal_without_an_action(self):
         with subprocess.Popen(

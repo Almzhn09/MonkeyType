@@ -106,7 +106,7 @@ def replay_session(location, key, entries, mode, report, tolerances):
         apply_recorded_step(env, entry, index, label)
     if env.score is None:
         reason = report.get("reason") if report is not None else None
-        if reason not in ("timeout", "input_closed", "input_limit"):
+        if reason not in ("timeout", "input_closed", "input_limit", "output_closed"):
             raise ValueError(f"{label}: missing terminal transition")
         env.truncate(reason)
 
@@ -120,6 +120,10 @@ def replay_session(location, key, entries, mode, report, tolerances):
         for key, value in result.items():
             if key not in report or not same_value(value, report[key]):
                 raise ValueError(f"{label}: evaluator report differs for {key}")
+        if "submitted_findings" in report:
+            findings = [] if env.submission is None else env.submission["findings"]
+            if not same_value(findings, report["submitted_findings"]):
+                raise ValueError(f"{label}: evaluator report differs for submitted_findings")
     return result
 
 

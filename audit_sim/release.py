@@ -20,6 +20,19 @@ CONFIGS = ROOT / "configs"
 SPLITS = ("train", "dev")
 SOURCE_DIRS = ("audit_sim", "fingen", "fincheck", "configs", "tests", "scripts", "docs")
 SOURCE_FILES = (".dockerignore", ".gitignore", "Dockerfile", "LICENSE", "README.md", "requirements.txt")
+DEMO_ERROR_ID = "EP-CHK-A08"
+DEMO_CLEAN_ID = "EP-QRS8HS6811"
+
+
+def evaluate_demo(evaluate, *, dataset=ROOT / "episodes", output=None):
+    control = ROOT / "fincheck" / "fixtures" / "a08"
+    with TemporaryDirectory(prefix="audit-demo-") as temp:
+        directory = Path(temp)
+        for scope in ("public", "private"):
+            target = directory / scope / "demo"
+            copytree(control / scope, target / DEMO_ERROR_ID)
+            copytree(dataset / scope / "dev" / DEMO_CLEAN_ID, target / DEMO_CLEAN_ID)
+        return evaluate(directory, split="demo", choices=("reconcile", "mark_all"), output=output)
 
 
 def check_oracle_pairs(dataset):
@@ -103,10 +116,21 @@ def prepare_release(evaluate, output=None):
         locations = {item.name: (item, training_private / item.name) for item in training_public.iterdir()}
         replayed = replay(locations, trace_file, reports_path=report_file)
 
+        demo_reports, _, demo_trace = evaluate_demo(evaluate, dataset=dataset)
+        demo_scores = {(item["episode_id"], item["policy"]): item for item in demo_reports}
+        error = demo_scores[DEMO_ERROR_ID, "reconcile"]
+        clean = demo_scores[DEMO_CLEAN_ID, "reconcile"]
+        broad = demo_scores[DEMO_CLEAN_ID, "mark_all"]
+        if ((error["tp"], error["fp"], error["fn"]) != (2, 0, 0)
+                or not clean["terminated"] or clean["invalid_submission"]
+                or clean["submitted_findings"] or not broad["fp"] or clean["reward"] <= broad["reward"]):
+            raise ValueError("The demonstration failed to distinguish supported findings from false accusations")
+
         result = {
             "train_episodes": 10, "dev_episodes": 10, "verified_pairs": pairs,
             "dev_runs": len(reports), "recorded_train_steps": len(trajectories),
             "replayed_train_steps": replayed["steps"],
+            "demo_runs": len(demo_reports),
             "max_dev_episode_seconds": max(item["duration_seconds"] for item in reports),
             "dev": summary,
         }
@@ -122,4 +146,5 @@ def prepare_release(evaluate, output=None):
             dump_json(output / "validation.json", result)
             copy2(trace_file, output / trace_file.name)
             write_report(output / "train-report.html", train_reports, trajectories)
+            write_report(output / "demo-report.html", demo_reports, demo_trace)
         return result

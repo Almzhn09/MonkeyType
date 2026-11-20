@@ -24,13 +24,12 @@ from dataclasses import dataclass, field
 from decimal import Decimal
 
 from . import money, names
-from .config import BASELINE_MAX_ROWS, BASELINE_MIN_ROWS, MAX_DOCUMENTS, MIN_DOCUMENTS, config_sha256
+from .config import (BASELINE_MIN_ROWS, MAX_DOCUMENTS, MAX_LEDGER_ROWS, MAX_PAYMENT_TERMS_DAYS,
+                     MIN_DOCUMENTS, WINDOW_PAD_DAYS, config_sha256)
 from .ids import IdFactory, episode_id_from, fx_key
 from .rng import EpisodeRng
 from .timeutil import (UTC_OFFSET, date_range, format_ts, local_date, local_datetime, offset_for,
                        offset_minutes, period_bounds, reformat, to_offset, utc_date)
-
-WINDOW_PAD_DAYS = 10
 
 LEDGER_COLUMNS = ("row_id", "entry_id", "timestamp", "account", "debit_minor", "credit_minor",
                   "currency", "entity_id", "invoice_id", "payment_id")
@@ -749,17 +748,12 @@ class _Builder:
         # "same amount, same customer" alone never identifies a duplicate.
         # (c3) Pairs for the duplicate_plus_period combo: two regular invoices
         # of one customer with equal totals. Both only when configured.
-        def room(reserve_errors: bool) -> int:
-            # keep space for the (d)/(e) specs (and, for the optional twins,
-            # for regular candidates of the other error types)
-            return n_inv - len(self.specs) - dis["split_payments"] - dis["advances"] \
-                - (sum(err.values()) + 2 if reserve_errors else 0)
-
         n_pairs = combos["duplicate_plus_period"]
         n_twins = err["duplicate_invoice"] if dis["repeated_amounts"] else 0
         for k in range(n_pairs + n_twins):
             twin = k >= n_pairs
-            if room(twin) < 2:
+            room = n_inv - len(self.specs) - dis["split_payments"]
+            if twin and room - dis["advances"] - sum(err.values()) < 4:
                 break
             d1 = self._date_between(self.p_first, self.p_last - days(5))
             if d1 is None:
@@ -793,10 +787,15 @@ class _Builder:
 
         # (e) Advances (prepayment without refs, or overpayment of an invoice)
         # and refunds of advances (Dr unapplied / Cr bank).
+        regular = sum("distractor" not in spec["tags"] and "combo_pair" not in spec["tags"]
+                      and self.p_first <= h.local_date(spec["issued"]) < self.p_last
+                      and not any({"distractor", "fx_combo"} & set(p["tags"]) for p in spec["pays"])
+                      for spec in self.specs)
+        reserve = max(0, sum(err.values()) - regular)
         for i in range(dis["advances"]):
             d = self._date_between(self.p_first, self.p_last - days(5))
             refund = i < dis["refunds"]
-            if rng.random() < 0.5:
+            if rng.random() < 0.5 or len(self.specs) >= n_inv - reserve:
                 currency, entity = self._currency(0.4), self._entity()
                 amount = self._price_minor(currency) * rng.choice((2, 3, 5, 10))
                 adv = {"dt": self._instant(d), "entity": entity, "currency": currency,
@@ -912,7 +911,8 @@ class _Builder:
             return self.p_first <= self.h.local_date(dt_) <= self.p_last
 
         have = sum(1 for s in self.specs if regular(s)
-                   for p in s["pays"] if in_p(p["dt"]) and not p.get("overpay_pct"))
+                   for p in s["pays"] if in_p(p["dt"]) and not p.get("overpay_pct")
+                   and not {"distractor", "fx_combo"} & set(p["tags"]))
         for spec in self.specs:
             if have >= want:
                 break
@@ -979,7 +979,7 @@ class _Builder:
             else:
                 lines = self._lines(spec["currency"])
             issued = spec["issued"]
-            terms = rng.choice((7, 14, 15, 30, 30, 45, 60))
+            terms = rng.choice((7, 14, 15, 30, 30, 45, MAX_PAYMENT_TERMS_DAYS))
             inv = Invoice(h.ids.new("doc"), h.ids.new("invoice"), spec["entity"],
                           self._ts(issued, spec["utc_repr"]),
                           self._ts(issued + _dt.timedelta(days=terms), spec["utc_repr"]),
@@ -1080,11 +1080,18 @@ class _Builder:
         h = self.h
         rng = self.er.stream("background")
         expense = h.accounts["expense"]
+        errors, combos = self.cfg["errors"], self.cfg["combos"]
+        added_rows = 2 * (errors["duplicate_invoice"] + combos["duplicate_plus_period"])
+        added_rows += errors["payment_allocation"] + combos["fx_partial_payment_boundary"]
+        ceiling = MAX_LEDGER_ROWS - added_rows
+        requested = self.cfg["size"]["background_entries"]
+        if len(h.rows) + 2 * requested > ceiling:
+            raise GenerationError("size.background_entries leaves insufficient ledger rows for the configured documents and errors")
 
-        def add_one() -> None:
+        def add_one(remaining: int) -> None:
             d = self.d_first + _dt.timedelta(days=rng.randint(0, (self.d_last - self.d_first).days))
             ts = local_datetime(d, rng.randint(7 * 60, 21 * 60), self.offset, rng.randint(0, 59))
-            n_lines = 1 if rng.random() < 0.75 else 2
+            n_lines = 1 if rng.random() < 0.75 or len(h.rows) + 2 * remaining >= ceiling else 2
             amounts = []
             for _ in range(n_lines):
                 usd_cents = rng.choice((2000, 5000, 10000, 25000, 60000, 150000, 400000)) \
@@ -1098,10 +1105,10 @@ class _Builder:
                 h.make_row(entry, format_ts(ts), "expense", amt, 0, account=acct)
             h.make_row(entry, format_ts(ts), "bank", 0, sum(amounts))
 
-        for _ in range(self.cfg["size"]["background_entries"]):
-            add_one()
+        for remaining in range(requested, 0, -1):
+            add_one(remaining)
         while len(h.rows) < BASELINE_MIN_ROWS:
-            add_one()
+            add_one(1)
 
     def _tag_edges(self) -> None:
         h = self.h
@@ -1117,9 +1124,6 @@ class _Builder:
         n_docs = len(h.invoices) + len(h.payments)
         if not MIN_DOCUMENTS <= n_docs <= MAX_DOCUMENTS:
             raise GenerationError(f"documents {n_docs} outside [{MIN_DOCUMENTS}, {MAX_DOCUMENTS}]")
-        if len(h.rows) > BASELINE_MAX_ROWS:
-            raise GenerationError(f"ledger rows {len(h.rows)} exceed {BASELINE_MAX_ROWS}; "
-                                  "reduce size.background_entries")
         for row in h.rows.values():
             if (row.debit_minor > 0) == (row.credit_minor > 0) or min(row.debit_minor,
                                                                        row.credit_minor) < 0:

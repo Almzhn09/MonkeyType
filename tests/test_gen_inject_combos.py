@@ -62,6 +62,29 @@ class FxPartialPaymentBoundaryTest(InjectCase):
                                     if c["type"] == "payment_allocation"))
         self.assertGreaterEqual(kinds["utc_date"], 4, kinds)
 
+    def test_flat_adjacent_quotes_use_another_published_day(self):
+        cfg = {"seed": 3112018831, "size": {"invoices": 12, "background_entries": 700},
+               "period": {"start_month": "2026-12", "months": 2}, "timezone": "Asia/Almaty",
+               "base_currency": "USD", "foreign_currencies": ["KZT"],
+               "combos": {"fx_partial_payment_boundary": 2},
+               "distractors": {"advances": 8, "split_payments": 1, "repeated_amounts": 1, "utc_boundary": 1},
+               "split": "audit"}
+        episode = make(cfg)
+        self.assertAll(episode, 4)
+        self.assertIn("nearby_day", variants(episode).values())
+
+    def test_separate_payment_errors_have_candidates_after_combinations(self):
+        cfg = {"seed": 3112017682, "size": {"invoices": 15, "background_entries": 700},
+               "period": {"start_month": "2026-01", "months": 2}, "timezone": "Etc/UTC",
+               "base_currency": "GBP", "foreign_currencies": ["USD", "EUR"],
+               "errors": {"payment_allocation": 1}, "combos": {"fx_partial_payment_boundary": 2},
+               "distractors": {"advances": 10, "refunds": 10, "split_payments": 3, "utc_boundary": 6},
+               "split": "audit"}
+        episode = make(cfg)
+        self.assertAll(episode, 5)
+        counts = Counter(issue["type"] for issue in episode["private"]["truth"]["issues"])
+        self.assertEqual(counts, {"fx_conversion": 2, "payment_allocation": 3})
+
 
 class DuplicatePlusPeriodTest(InjectCase):
     def test_combo(self):

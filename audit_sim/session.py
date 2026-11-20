@@ -45,6 +45,8 @@ def run_session(input_fd, output_fd, *, config, seed=None, mode="closed", timeou
             send_result(output_fd, result, monotonic() + 0.1 if env.reason == "timeout" else env.deadline)
     except TimeoutError:
         env.truncate("timeout")
+    except BrokenPipeError:
+        env.truncate("output_closed")
     finally:
         os.set_blocking(output_fd, blocking)
 

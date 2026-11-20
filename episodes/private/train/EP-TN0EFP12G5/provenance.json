@@ -346,7 +346,7 @@
     }
   ],
   "episode_id": "EP-TN0EFP12G5",
-  "generator_version": "fingen-0.1.0",
+  "generator_version": "fingen-0.1.1",
   "schema_version": "1.0",
   "seed": 1103
 }

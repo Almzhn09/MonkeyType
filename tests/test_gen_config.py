@@ -41,14 +41,20 @@ class ConfigValidationTest(unittest.TestCase):
             {"seed": True},
             {"seed": 1, "bogus": 1},
             {"seed": 1, "timezone": "Europe/Berlin"},
+            {"seed": 1, "timezone": []},
             {"seed": 1, "base_currency": "RUB"},
+            {"seed": 1, "base_currency": {}},
             {"seed": 1, "base_currency": "KZT", "foreign_currencies": ["KZT"]},
             {"seed": 1, "foreign_currencies": ["EUR", "EUR"]},
+            {"seed": 1, "foreign_currencies": [["EUR"]]},
             {"seed": 1, "rounding_mode": "floor"},
             {"seed": 1, "size": {"invoices": 5, "background_entries": 10}},
             {"seed": 1, "size": {"invoices": 400, "background_entries": 10}},
             {"seed": 1, "size": {"invoices": 40, "background_entries": 5000}},
             {"seed": 1, "period": {"start_month": "2026-13", "months": 1}},
+            {"seed": 1, "period": {"start_month": "9999-12", "months": 1}},
+            {"seed": 1, "period": {"start_month": "0001-01", "months": 1}},
+            {"seed": 1, "period": {"start_month": "2026-03\n", "months": 1}},
             {"seed": 1, "period": {"start_month": "2026-03", "months": 0}},
             {"seed": 1, "errors": {"duplicate_invoice": 13}},
             {"seed": 1, "errors": {"not_a_type": 1}},
@@ -60,6 +66,7 @@ class ConfigValidationTest(unittest.TestCase):
              "errors": {"fx_conversion": 1}},
             {"seed": 1, "schema_version": "2.0"},
             {"seed": 1, "split": "Train Set"},
+            {"seed": 1, "split": "train\n"},
             {"seed": 1, "transform": 3},
         ]
         for cfg in bad:
@@ -70,6 +77,40 @@ class ConfigValidationTest(unittest.TestCase):
         with open(EXAMPLE, encoding="utf-8") as fh:
             cfg = resolve_config(json.load(fh))
         self.assertEqual(sum(cfg["errors"].values()), 0)
+
+    def test_incompatible_reservations_fail_during_validation(self):
+        config = {"seed": 42, "size": {"invoices": 12}, "errors": {"fx_conversion": 1},
+                  "distractors": {"repeated_amounts": 3, "split_payments": 3, "utc_boundary": 3}}
+        with self.assertRaisesRegex(ConfigError, "need at least 13 invoices"):
+            resolve_config(config)
+
+    def test_valid_dense_config_preserves_a_payment_error_and_distractors(self):
+        config = {"seed": 3112009105, "split": "audit", "size": {"invoices": 14, "background_entries": 4},
+                  "period": {"start_month": "2026-01", "months": 1}, "timezone": "America/Bogota",
+                  "base_currency": "EUR", "foreign_currencies": ["JPY", "GBP", "KWD"],
+                  "errors": {"payment_allocation": 1},
+                  "distractors": {"advances": 4, "split_payments": 1, "repeated_amounts": 3, "utc_boundary": 6}}
+        result = build_episode(config)
+        truth = json.loads(result.private["truth.json"])
+        self.assertEqual([issue["type"] for issue in truth["issues"]], ["payment_allocation"])
+        self.assertEqual(len(result.history.invoices), 14)
+        self.assertEqual(sum(item["kind"] == "advances" for item in result.history.distractors), 4)
+
+    def test_large_ledger_may_use_the_full_published_size_range(self):
+        config = {"seed": 3112008222, "split": "audit", "size": {"invoices": 95, "background_entries": 700},
+                  "period": {"start_month": "2031-12", "months": 3}, "timezone": "Asia/Tokyo",
+                  "base_currency": "JPY", "foreign_currencies": ["KZT", "KWD", "EUR"],
+                  "errors": {"duplicate_invoice": 1}, "distractors": {"advances": 10, "repeated_amounts": 1}}
+        result = build_episode(config)
+        self.assertTrue(1950 < len(result.history.rows) <= 2000)
+        self.assertEqual(sum(entry.kind == "expense" for entry in result.history.entries.values()), 700)
+
+    def test_two_dedicated_invoice_pairs_fit_exactly_at_the_issue_density_limit(self):
+        config = {"seed": 5509, "size": {"invoices": 12}, "combos": {"duplicate_plus_period": 2}}
+        result = build_episode(config)
+        types = [issue.type for issue in result.issues]
+        self.assertEqual(types.count("duplicate_invoice"), 2)
+        self.assertEqual(types.count("wrong_period"), 2)
 
 
 class DeterminismTest(unittest.TestCase):

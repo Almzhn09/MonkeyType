@@ -17,7 +17,8 @@ Candidate tiers: dedicated baseline payments (tag ``fx_combo``), then other
 near-boundary/UTC-edge receipts, then any UTC-edge receipt. With company
 offset +00:00 there is no UTC-edge document, and a UTC-date rate can equal
 the local-date rate (6-decimal quotes of small rates): then the previous/next
-day's rate is used instead (variant recorded in the cause).
+day's rate is used instead. If both adjacent quotes are unchanged, the nearest
+different published quote within a week is considered (variant recorded in the cause).
 """
 
 from __future__ import annotations
@@ -38,6 +39,7 @@ def _options(h, pay) -> list[tuple]:
     offset +00:00, or a UTC-date rate equal to the local-date rate, which
     happens for small rates quoted with 6 decimals)."""
     local = h.local_date(pay.timestamp)
+    correct = h.fx_rate(local, pay.currency)
     out = []
     if has_utc_edge(h, pay):
         out.append(("utc_date", utc_date(pay.timestamp), "UTC date"))
@@ -47,8 +49,15 @@ def _options(h, pay) -> list[tuple]:
     res = []
     for variant, d, why in out:
         rate = h.fx_rate(d, pay.currency)
-        if rate is not None and rate != h.fx_rate(local, pay.currency):
+        if rate is not None and rate != correct:
             res.append((variant, rate, d, why))
+    if not res:
+        for distance in range(2, 8):
+            for delta in (-distance, distance):
+                day = local + _dt.timedelta(days=delta)
+                rate = h.fx_rate(day, pay.currency)
+                if rate is not None and rate != correct:
+                    res.append(("nearby_day", rate, day, "nearby day"))
     return res
 
 

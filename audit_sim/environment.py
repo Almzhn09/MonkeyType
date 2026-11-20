@@ -20,6 +20,8 @@ class AuditEnv:
                  timeout=60.0, clock=monotonic):
         if mode not in ("train", "closed"):
             raise ValueError("Mode must be train or closed")
+        if tolerances is not None and not isinstance(tolerances, dict):
+            raise ValueError("Amount tolerances must be an object")
         self.loader = loader
         self.mode = mode
         self.tolerances = dict(tolerances or {})
@@ -34,7 +36,9 @@ class AuditEnv:
         self.episode = None
 
     def reset(self, seed=None, config=None):
-        self.episode = self.loader(seed, config or {})
+        if config is not None and not isinstance(config, dict):
+            raise ValueError("Episode configuration must be an object")
+        self.episode = self.loader(seed, {} if config is None else config)
         self.episode_id = self.episode.manifest["episode_id"]
         self.deadline = self.clock() + self.timeout
         self.steps = 0

@@ -28,13 +28,14 @@ DEMO_CASES = ("demo-mixed", "demo-clean")
 
 
 def dump_json(path, payload):
-    path.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    path.write_text(json.dumps(payload, ensure_ascii=False, allow_nan=False, indent=2) + "\n",
+                    encoding="utf-8", errors="backslashreplace")
 
 
 def dump_jsonl(path, rows):
-    with path.open("w", encoding="utf-8") as stream:
+    with path.open("w", encoding="utf-8", errors="backslashreplace") as stream:
         for row in rows:
-            stream.write(json.dumps(row, ensure_ascii=False, separators=(",", ":")) + "\n")
+            stream.write(json.dumps(row, ensure_ascii=False, allow_nan=False, separators=(",", ":")) + "\n")
 
 
 def dump_csv(path, rows):

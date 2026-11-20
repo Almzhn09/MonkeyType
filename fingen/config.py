@@ -31,6 +31,7 @@ Config fields (all optional except ``seed``)::
 from __future__ import annotations
 
 import copy
+from datetime import timedelta
 import hashlib
 import json
 import re
@@ -38,9 +39,11 @@ import re
 from . import SCHEMA_VERSION
 from .money import CURRENCY_EXPONENTS, ROUNDING_MODES
 from .rng import EpisodeRng
-from .timeutil import TIMEZONES, parse_month
+from .timeutil import TIMEZONES, period_bounds
 
 CONFIG_VERSION = "1"
+WINDOW_PAD_DAYS = 10
+MAX_PAYMENT_TERMS_DAYS = 60
 
 ERROR_TYPES = ("duplicate_invoice", "payment_allocation", "fx_conversion", "wrong_period")
 COMBO_TYPES = ("fx_partial_payment_boundary", "duplicate_plus_period")
@@ -49,9 +52,8 @@ DISTRACTOR_TYPES = ("split_payments", "refunds", "repeated_amounts", "utc_bounda
 MAX_ISSUES = 12
 MIN_DOCUMENTS, MAX_DOCUMENTS = 20, 200
 MIN_LEDGER_ROWS, MAX_LEDGER_ROWS = 200, 2000
-# Baseline is kept below these so that injected rows still fit the targets.
+# A small margin keeps invoices and payments visible in the smallest ledgers.
 BASELINE_MIN_ROWS = 210
-BASELINE_MAX_ROWS = 1950
 INVOICE_RANGE = (12, 95)
 BACKGROUND_RANGE = (0, 700)
 MONTHS_RANGE = (1, 3)
@@ -108,6 +110,15 @@ def _counts(value, name: str, keys: tuple[str, ...], hi: int) -> dict:
     return {k: _int(value.get(k, 0), f"{name}.{k}", 0, hi) for k in keys}
 
 
+def required_invoice_slots(distractors, combos):
+    """Invoices that distinct distractors and dedicated combinations need."""
+    return (
+        distractors["utc_boundary"] + 2 * distractors["repeated_amounts"]
+        + distractors["split_payments"] + combos["fx_partial_payment_boundary"]
+        + 2 * combos["duplicate_plus_period"]
+    )
+
+
 def resolve_config(obj: dict) -> dict:
     """Validate ``obj`` and return a fully specified, JSON-able config."""
     if not isinstance(obj, dict):
@@ -131,7 +142,7 @@ def resolve_config(obj: dict) -> dict:
     if cfg["schema_version"] != SCHEMA_VERSION:
         raise ConfigError(f"schema_version must be {SCHEMA_VERSION!r}")
     seed = _int(cfg["seed"], "seed", 0, 2**63 - 1)
-    if not isinstance(cfg["split"], str) or not _SPLIT_RE.match(cfg["split"]):
+    if not isinstance(cfg["split"], str) or not _SPLIT_RE.fullmatch(cfg["split"]):
         raise ConfigError("split must match [a-z0-9][a-z0-9_-]*")
 
     size = cfg["size"]
@@ -143,11 +154,14 @@ def resolve_config(obj: dict) -> dict:
     period = cfg["period"]
     if not isinstance(period, dict) or sorted(period) != ["months", "start_month"]:
         raise ConfigError("period must have exactly 'start_month' and 'months'")
-    try:
-        parse_month(period["start_month"])
-    except (ValueError, TypeError) as exc:
-        raise ConfigError(str(exc)) from None
     _int(period["months"], "period.months", *MONTHS_RANGE)
+    try:
+        start, end = period_bounds(period["start_month"], period["months"], "+00:00")
+        # Reserve the extract padding plus space for adjacent dates and invoice payment terms.
+        start - timedelta(days=WINDOW_PAD_DAYS + 15)
+        end + timedelta(days=WINDOW_PAD_DAYS + MAX_PAYMENT_TERMS_DAYS)
+    except (ValueError, TypeError, OverflowError):
+        raise ConfigError("period.start_month must be YYYY-MM and leave room for adjacent dates and payment terms") from None
 
     errors = _counts(cfg["errors"], "errors", ERROR_TYPES, MAX_ISSUES)
     combos = _counts(cfg["combos"], "combos", COMBO_TYPES, MAX_ISSUES // 2)
@@ -159,18 +173,20 @@ def resolve_config(obj: dict) -> dict:
         raise ConfigError(f"total issues {n_issues} exceeds {MAX_ISSUES}")
     if n_issues > n_inv // 3:
         raise ConfigError(f"too many issues ({n_issues}) for {n_inv} invoices (max invoices//3)")
-    # duplicate_plus_period needs two regular same-customer invoices per combo on top of
-    # the distractors; below 6k+1 invoices the injector can run out (measured over seeds).
-    if n_inv < 6 * combos["duplicate_plus_period"] + 1:
-        raise ConfigError(
-            f"duplicate_plus_period={combos['duplicate_plus_period']} needs at least "
-            f"{6 * combos['duplicate_plus_period'] + 1} invoices (got {n_inv})")
     if distractors["refunds"] > distractors["advances"]:
         raise ConfigError("distractors.refunds must not exceed distractors.advances")
     if distractors["split_payments"] > n_inv // 4 or distractors["repeated_amounts"] > n_inv // 4:
         raise ConfigError("split_payments / repeated_amounts must be <= invoices//4")
     if distractors["utc_boundary"] > 6:
         raise ConfigError("distractors.utc_boundary must be <= 6")
+    required = required_invoice_slots(distractors, combos)
+    if required > n_inv:
+        raise ConfigError(f"distractors and combinations need {required} distinct invoices (got {n_inv})")
+    # Leave a separate invoice or related receipt available for each standalone error.
+    standalone = sum(errors.values())
+    if required + standalone > n_inv:
+        raise ConfigError(f"distractors, combinations and standalone errors need at least "
+                          f"{required + standalone} invoices (got {n_inv})")
     # Upper bound on documents: every invoice paid once, split invoices paid
     # up to 3 times, plus standalone advances and refunds.
     docs_upper = 2 * n_inv + 2 * distractors["split_payments"] + distractors["advances"] \
@@ -189,25 +205,26 @@ def resolve_config(obj: dict) -> dict:
 
     if cfg["timezone"] is None:
         cfg["timezone"] = tz_choice
-    if cfg["timezone"] not in TIMEZONES:
+    if not isinstance(cfg["timezone"], str) or cfg["timezone"] not in TIMEZONES:
         raise ConfigError(f"timezone must be one of {sorted(TIMEZONES)}")
     if cfg["base_currency"] is None:
         cfg["base_currency"] = base_choice
     base = cfg["base_currency"]
-    if base not in CURRENCY_EXPONENTS:
+    if not isinstance(base, str) or base not in CURRENCY_EXPONENTS:
         raise ConfigError(f"base_currency must be one of {sorted(CURRENCY_EXPONENTS)}")
     if cfg["foreign_currencies"] is None:
         cfg["foreign_currencies"] = sorted([c for c in foreign_pool if c != base][:n_foreign])
     fc = cfg["foreign_currencies"]
     if not isinstance(fc, list) or len(fc) > MAX_FOREIGN:
         raise ConfigError(f"foreign_currencies must be a list of at most {MAX_FOREIGN}")
-    if len(set(fc)) != len(fc) or any(c not in CURRENCY_EXPONENTS or c == base for c in fc):
+    if any(not isinstance(c, str) or c not in CURRENCY_EXPONENTS or c == base for c in fc) \
+            or len(set(fc)) != len(fc):
         raise ConfigError("foreign_currencies must be distinct known currencies other than base")
     if (errors["fx_conversion"] or combos["fx_partial_payment_boundary"]) and not fc:
         raise ConfigError("fx_conversion errors need at least one foreign currency")
     if cfg["rounding_mode"] is None:
         cfg["rounding_mode"] = rounding_choice
-    if cfg["rounding_mode"] not in ROUNDING_MODES:
+    if not isinstance(cfg["rounding_mode"], str) or cfg["rounding_mode"] not in ROUNDING_MODES:
         raise ConfigError("rounding_mode must be 'half_up' or 'half_even'")
     if cfg["transform"] is not None and not isinstance(cfg["transform"], dict):
         raise ConfigError("transform must be null or an object")

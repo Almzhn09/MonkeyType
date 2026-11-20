@@ -69,6 +69,10 @@ def evaluation_report(env, policy, elapsed, initial):
 
 
 def _run_worker(env, policy, policy_seed, initial, trajectory):
+    if sys.platform != "linux":
+        raise WorkerProtocolError(
+            "Policy isolation requires Linux. On macOS, use Docker Desktop or open demo-report.html."
+        )
     with subprocess.Popen(
         [sys.executable, "-I", "-B", "-u", str(WORKER)],
         stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.DEVNULL,

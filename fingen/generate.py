@@ -5,10 +5,10 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 from . import inject
-from .config import load_config_file, resolve_config
+from .config import MAX_LEDGER_ROWS, load_config_file, resolve_config
 from .export import (episode_dirs, render_provenance, render_public, render_truth, sha256_hex,
                      write_files)
-from .history import History, build_history
+from .history import GenerationError, History, build_history
 from .rng import EpisodeRng
 
 
@@ -35,6 +35,8 @@ def build_episode(raw_config: dict) -> Episode:
     history = build_history(cfg, er)
     baseline_sha = {name: sha256_hex(data) for name, data in render_public(history).items()}
     issues = inject.apply(history, cfg, er)
+    if len(history.rows) > MAX_LEDGER_ROWS:
+        raise GenerationError(f"ledger rows exceed {MAX_LEDGER_ROWS} after applying errors")
     public = render_public(history)
     private = {"truth.json": render_truth(history, issues),
                "provenance.json": render_provenance(history, baseline_sha)}

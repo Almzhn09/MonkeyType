@@ -42,7 +42,8 @@ def unique_object(items):
 def parse_json(data):
     try:
         return json.loads(
-            data, parse_constant=reject_constant, parse_float=finite_float, object_pairs_hook=unique_object,
+            data.decode("utf-8") if isinstance(data, (bytes, bytearray)) else data,
+            parse_constant=reject_constant, parse_float=finite_float, object_pairs_hook=unique_object,
         )
     except (ValueError, RecursionError) as error:
         raise MessageError("Invalid JSON") from error

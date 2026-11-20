@@ -23,10 +23,11 @@ def run(args, **kw):
                           capture_output=True, **kw)
 
 
-def peak_rss_mb():
-    c = resource.getrusage(resource.RUSAGE_CHILDREN).ru_maxrss
-    s = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
-    return max(c, s) / 1024.0  # Linux: KiB
+def peak_process_rss_mib():
+    child = resource.getrusage(resource.RUSAGE_CHILDREN).ru_maxrss
+    current = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
+    units_per_mib = 1024**2 if sys.platform == "darwin" else 1024
+    return max(child, current) / units_per_mib
 
 
 def stage(name):
@@ -76,9 +77,9 @@ def st_fresh():
         for cfg in cfgs:
             out = Path(d) / cfg.stem
             p, dt = gen(cfg, out)
-            rss = peak_rss_mb()
+            rss = peak_process_rss_mib()
             lines.append(f"{cfg.name}: generate {dt:.2f}s (limit 60s), "
-                         f"peak RSS so far {rss:.0f} MB (limit 4096 MB)")
+                         f"peak per-process RSS so far {rss:.0f} MiB")
             if p.returncode != 0:
                 bad = True
                 lines.append(tail(p))
@@ -196,7 +197,7 @@ def main():
         a.output.resolve() if a.output and can_export else None,
         a.archive.resolve() if a.archive and can_export else None,
     )
-    print(f"peak RSS (self+children): {peak_rss_mb():.0f} MB")
+    print(f"peak per-process RSS: {peak_process_rss_mib():.0f} MiB")
     failed = [n for n, s in RESULTS if s == "FAIL"]
     print("RESULT: " + ("FAIL (" + ", ".join(failed) + ")" if failed else "OK"))
     return 1 if failed else 0

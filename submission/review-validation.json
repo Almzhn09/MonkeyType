@@ -1,0 +1,191 @@
+{
+  "recorded_at": "2026-11-20T13:19:06+05:00",
+  "generator_version": "fingen-0.1.1",
+  "archive": {
+    "files": 449,
+    "sha256": "19b9c49c5563c755efee0d2a088ad57808ae9798d7391755034f19990964eab9",
+    "bytes": 1871502
+  },
+  "offline_check": {
+    "train_episodes": 10,
+    "dev_episodes": 10,
+    "verified_pairs": 20,
+    "dev_runs": 40,
+    "recorded_train_steps": 222,
+    "replayed_train_steps": 222,
+    "demo_runs": 4,
+    "max_dev_episode_seconds": 1.086824,
+    "dev": {
+      "random": {
+        "episodes": 10,
+        "mean_precision": 0.0,
+        "mean_recall": 0.0,
+        "mean_f1": 0.2,
+        "mean_return": -0.6064,
+        "mean_steps": 17,
+        "mean_seconds": 0.5320143,
+        "truncated": 0,
+        "invalid_submissions": 0
+      },
+      "reconcile": {
+        "episodes": 10,
+        "mean_precision": 0.8,
+        "mean_recall": 0.8,
+        "mean_f1": 1.0,
+        "mean_return": 0.961,
+        "mean_steps": 20.5,
+        "mean_seconds": 0.6133439,
+        "truncated": 0,
+        "invalid_submissions": 0
+      },
+      "mark_all": {
+        "episodes": 10,
+        "mean_precision": 0.0,
+        "mean_recall": 0.0,
+        "mean_f1": 0.0,
+        "mean_return": -1.0,
+        "mean_steps": 4,
+        "mean_seconds": 0.5487929,
+        "truncated": 0,
+        "invalid_submissions": 0
+      },
+      "oracle": {
+        "episodes": 10,
+        "mean_precision": 0.8,
+        "mean_recall": 0.8,
+        "mean_f1": 1.0,
+        "mean_return": 1.0,
+        "mean_steps": 1,
+        "mean_seconds": 0.0005767,
+        "truncated": 0,
+        "invalid_submissions": 0
+      }
+    }
+  },
+  "archive_verification": {
+    "unit_tests": 207,
+    "build_and_verify_limits": {
+      "loopback_only": true,
+      "cpu_affinity": [
+        0,
+        1
+      ],
+      "process_address_space_bytes": 1073741824
+    },
+    "unpacked_archive_limits": {
+      "loopback_only": true,
+      "cpu_affinity": [
+        0
+      ],
+      "process_address_space_bytes": 201326592
+    },
+    "max_per_process_rss_mib": 88
+  },
+  "generator_boundaries": {
+    "proposed": 14000,
+    "generated": 12218,
+    "rejected_by_configuration_constraints": 1782,
+    "unexpected_failures": 0,
+    "proposal_seed": 723190,
+    "independent_validation": {
+      "originals_verified": 550,
+      "pairs_verified": 179,
+      "issue_counts": {
+        "1": 149,
+        "12": 45,
+        "0": 131,
+        "4": 169,
+        "6": 22,
+        "10": 9,
+        "8": 17,
+        "5": 8
+      },
+      "failures": []
+    }
+  },
+  "fresh_policy_cohorts": {
+    "profile_version": 1,
+    "seed": 73167028,
+    "start_index": 0,
+    "planned_cohorts": 6,
+    "completed_cohorts": 6,
+    "verified_originals": 120,
+    "verified_pairs": 120,
+    "policy_checks": 720,
+    "elapsed_seconds": 299.209,
+    "status": "passed",
+    "policies": {
+      "random": {
+        "runs": 120,
+        "mean_f1": 0.25,
+        "mean_reward": -0.5079999999999997,
+        "max_steps": 17,
+        "max_seconds": 1.272352
+      },
+      "reconcile": {
+        "runs": 120,
+        "mean_f1": 1.0,
+        "mean_reward": 0.9491333333333333,
+        "max_steps": 48,
+        "max_seconds": 1.113152
+      },
+      "mark_all": {
+        "runs": 120,
+        "mean_f1": 0.0008870214752567694,
+        "mean_reward": -0.9983259570494865,
+        "max_steps": 4,
+        "max_seconds": 1.242833
+      },
+      "oracle": {
+        "runs": 120,
+        "mean_f1": 1.0,
+        "mean_reward": 1.0,
+        "max_steps": 1,
+        "max_seconds": 0.228458
+      }
+    }
+  },
+  "api_action_matrix": {
+    "resets": 8663,
+    "unknown_action": 56122,
+    "unknown_id": 9933,
+    "valid_or_finished": 9715,
+    "invalid_submission": 8662,
+    "invalid_expression": 8105,
+    "unknown_table": 14754,
+    "invalid_limit": 1272,
+    "invalid_cursor": 99
+  },
+  "interactive_sessions": {
+    "sessions": 240,
+    "steps": 3744,
+    "scenarios": {
+      "closed:step_limit": 24,
+      "train:input_closed": 24,
+      "closed:submitted": 82,
+      "train:submitted": 96,
+      "closed:invalid_submission": 14
+    }
+  },
+  "offline_demo": {
+    "browser": "Chromium",
+    "viewports": [
+      [
+        1280,
+        900
+      ],
+      [
+        390,
+        844
+      ]
+    ],
+    "external_asset_requests": 0,
+    "linux_base_image_architectures": [
+      "386",
+      "amd64",
+      "arm",
+      "arm64",
+      "ppc64le"
+    ]
+  }
+}

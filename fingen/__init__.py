@@ -7,6 +7,6 @@ Standard library only; deterministic for a given config + seed.
 """
 
 SCHEMA_VERSION = "1.0"
-GENERATOR_VERSION = "fingen-0.1.0"
+GENERATOR_VERSION = "fingen-0.1.1"
 
 __all__ = ["SCHEMA_VERSION", "GENERATOR_VERSION"]
