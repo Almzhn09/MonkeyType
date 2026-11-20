@@ -1,18 +1,19 @@
 """An offline, self-contained HTML view of completed policy runs."""
 
 from base64 import b64encode
-from collections import defaultdict
+from collections import Counter, defaultdict
 from hashlib import sha256
 from html import escape
 import json
 from math import isfinite
 from pathlib import Path
-from statistics import mean
 
 from fincheck.load import fx_key
 
 from .data import load_json
+from .environment import STEP_LIMIT
 from .replay import read_trajectory, replay_key
+from .scoring import validate_submission
 
 POLICY_LABELS = {
     "reconcile": "Сверка",
@@ -36,6 +37,9 @@ ACTION_LABELS = {
     "submit": "Отправка выводов",
 }
 METRICS = ("tp", "fp", "fn", "precision", "recall", "f1", "reward", "steps", "duration_seconds")
+COMPARE_METRICS = {
+    "reward": "Награда", "f1": "F1", "precision": "Точность", "recall": "Полнота", "steps": "Число шагов",
+}
 
 
 def label(names, key):
@@ -64,48 +68,77 @@ def validate_reports(reports):
             raise ValueError("Report metric is outside its valid range")
         if not all(type(report[name]) is int and report[name] >= 0 for name in ("tp", "fp", "fn", "steps")):
             raise ValueError("Report counts must be nonnegative integers")
+        if report["steps"] > STEP_LIMIT or report["duration_seconds"] < 0:
+            raise ValueError("Report has an invalid duration or step count")
+        if key[1] != "oracle" and not validate_submission({
+            "episode_id": key[0], "findings": report.get("submitted_findings", []),
+        }, key[0]):
+            raise ValueError("Report contains malformed submitted findings")
     return keys
 
 
-def listed_records(trajectory):
+def evidence_key(value):
+    return value.strip().upper()
+
+
+def recorded_evidence(observation):
+    result = observation.get("result")
+    for record in result if isinstance(result, list) else (result,):
+        if not isinstance(record, dict):
+            continue
+        key = record.get("doc_id") or record.get("row_id")
+        fx_fields = ("date", "source_currency", "target_currency")
+        if key is None and all(isinstance(record.get(name), str) for name in fx_fields):
+            key = fx_key(*(record[name] for name in fx_fields))
+        if isinstance(key, str) and (canonical := evidence_key(key)):
+            yield canonical, record
+
+
+def trace_progress(trajectory, findings, expected_steps):
     records = {}
-    for row in trajectory:
+    cited = {evidence_key(key) for item in findings for key in item["evidence_ids"]}
+    counts = [(0, 0)]
+    for step, row in enumerate(trajectory, 1):
+        if step > expected_steps or type(row.get("step")) is not int or row["step"] != step:
+            raise ValueError("Trajectory steps must be consecutive and within the reported step count")
         observed = row.get("observation")
         if not isinstance(observed, dict):
             raise ValueError("Trajectory observation must be an object")
-        result = observed.get("result")
-        entries = result if isinstance(result, list) else [result]
-        for record in entries:
-            if not isinstance(record, dict):
-                continue
-            key = record.get("doc_id") or record.get("row_id")
-            if key is None and {"date", "source_currency", "target_currency"} <= record.keys():
-                key = fx_key(record["date"], record["source_currency"], record["target_currency"])
-            if isinstance(key, str):
-                records[key] = record
-    return records
+        for key, record in recorded_evidence(observed):
+            records[key] = record
+        counts.append((len(records), len(cited & records.keys())))
+    return records, counts, len(cited)
 
 
 def findings_html(findings, records):
     if not findings:
         return '<p class="empty">Пустой ответ</p>'
+    maxima = defaultdict(int)
+    counts = Counter(item["currency"] for item in findings)
+    for item in findings:
+        currency = item["currency"]
+        maxima[currency] = max(maxima[currency], abs(item["claimed_amount_minor"]))
     sections = []
     for item in findings:
         kind = escape(label(ISSUE_LABELS, item["type"]))
         ids = " · ".join(escape(value) for value in item["affected_ids"])
         amount = escape(f'{item["claimed_amount_minor"]:,}'.replace(",", "\u202f"))
-        currency = escape(item["currency"])
+        currency = item["currency"]
         explanation = escape(item["explanation"])
+        share = abs(item["claimed_amount_minor"]) / maxima[currency] if maxima[currency] else 0
+        bar = f'<div class="amount-track" aria-hidden="true"><span style="width:{share:.2%}"></span></div>' if counts[currency] > 1 else ""
         evidence = []
         for key in item["evidence_ids"]:
-            if key in records:
-                record = escape(json.dumps(records[key], ensure_ascii=False, indent=2))
+            observed = records.get(evidence_key(key))
+            if observed is not None:
+                record = escape(json.dumps(observed, ensure_ascii=False, indent=2))
                 evidence.append(f'<details class="evidence"><summary><code>{escape(key)}</code></summary><pre>{record}</pre></details>')
             else:
                 evidence.append(f'<span class="evidence missing"><code>{escape(key)}</code> · вне журнала</span>')
         sections.append(
             f'<article class="finding"><h4>{kind}</h4><code>{ids}</code>'
             f'<p class="amount">{amount} {currency} <small>в минимальных единицах</small></p>'
+            f'{bar}'
             f'<p class="explanation">{explanation}</p>'
             f'<div class="proof">{"".join(evidence)}</div></article>'
         )
@@ -119,8 +152,8 @@ def timeline_html(trajectory):
         event = label(ACTION_LABELS, action.get("action") if isinstance(action, dict) else None)
         subject = ""
         if isinstance(action, dict):
-            subject = next((action[key] for key in ("table", "doc_id", "expression")
-                            if isinstance(action.get(key), str)), "")
+            subject = " · ".join(action[key] for key in ("table", "id", "doc_id", "expression")
+                                 if isinstance(action.get(key), str))
         result = item["observation"].get("error")
         description = "Запрос"
         if result:
@@ -135,10 +168,35 @@ def timeline_html(trajectory):
     return f'<details class="timeline"><summary>Ход расследования · {len(rows)} шагов</summary><ol>{"".join(rows)}</ol></details>'
 
 
+def investigation_html(trajectory, counts, cited, total_steps):
+    missing = f'<p class="empty">Записано {len(trajectory)} из {total_steps} шагов.</p>' if len(trajectory) < total_steps else ""
+    if not trajectory:
+        return missing
+    points = escape(json.dumps(counts, separators=(",", ":")), quote=True)
+    records, observed = counts[-1]
+    selector = (
+        '<label class="trace-selector">Показатель<select class="trace-series">'
+        '<option value="0">Уникальные записи</option><option value="1">ID из ответа</option>'
+        '</select></label>'
+    ) if cited else ""
+    proof = f'<span>ID из ответа <strong class="trace-proof">{observed} из {cited}</strong></span>' if cited else ""
+    return (
+        f'<figure class="investigation" data-progress="{points}" data-cited="{cited}">'
+        f'<div class="trace-head"><figcaption>Динамика расследования</figcaption>{selector}</div>{missing}'
+        '<canvas class="trace-graph" aria-hidden="true"></canvas>'
+        '<div class="trace-controls">'
+        f'<label>Шаг<input class="trace-step" type="range" min="0" max="{len(trajectory)}" value="{len(trajectory)}"></label>'
+        f'<output class="trace-values" aria-live="polite"><span>Шаг <strong class="trace-number">{len(trajectory)}</strong></span>'
+        f'<span>Записи <strong class="trace-records">{records}</strong></span>{proof}</output></div>'
+        f'{timeline_html(trajectory)}</figure>'
+    )
+
+
 def session_html(report, trajectory, *, opened):
     episode_id, policy = replay_key(report)
     episode_label, policy_name = escape(episode_id), escape(label(POLICY_LABELS, policy))
-    mode = {"train": "Обучение", "closed": "Закрытая проверка"}.get(report.get("mode"), "Прогон")
+    raw_mode = report.get("mode")
+    mode = {"train": "Обучение", "closed": "Закрытая проверка"}.get(raw_mode, "Прогон") if isinstance(raw_mode, str) else "Прогон"
     metrics = (
         ("TP / FP / FN", f'{report["tp"]} / {report["fp"]} / {report["fn"]}'),
         ("Точность", display_number(report["precision"])),
@@ -146,16 +204,24 @@ def session_html(report, trajectory, *, opened):
         ("Время", f'{display_number(report["duration_seconds"])} с'),
     )
     metric_summary = "".join(f"<div><dt>{name}</dt><dd>{value}</dd></div>" for name, value in metrics)
+    submitted = [] if policy == "oracle" else report.get("submitted_findings", [])
+    records, counts, cited = trace_progress(trajectory, submitted, report["steps"])
     if policy == "oracle":
+        if trajectory:
+            raise ValueError("Oracle reports do not have public trajectory steps")
         findings = '<p class="empty">Контроль оценщика</p>'
     elif report.get("invalid_submission"):
         findings = '<p class="empty">Неверный формат ответа</p>'
     elif report.get("truncated"):
         findings = '<p class="empty">Эпизод прерван до отправки</p>'
     else:
-        findings = findings_html(report.get("submitted_findings", []), listed_records(trajectory))
+        findings = findings_html(submitted, records)
+    comparable = len({item["currency"] for item in submitted}) < len(submitted)
+    amounts_key = '<p class="chart-key">Полосы сравнивают модуль заявленных сумм в пределах одной валюты.</p>' if comparable else ""
+    investigation = "" if policy == "oracle" else investigation_html(trajectory, counts, cited, report["steps"])
+    compare_data = " ".join(f'data-{key}="{report[key]}"' for key in COMPARE_METRICS)
     return (
-        f'<details class="session" data-policy="{escape(policy)}" data-episode="{episode_label}"'
+        f'<details class="session" data-policy="{escape(policy)}" data-episode="{episode_label}" {compare_data}'
         f'{" open" if opened else ""}><summary>'
         f'<span class="run-name"><strong>{episode_label}</strong><small>{policy_name} · {mode}</small></span>'
         f'<span class="score"><small>F1</small>{display_number(report["f1"])}</span>'
@@ -163,7 +229,7 @@ def session_html(report, trajectory, *, opened):
         f'<span class="score run-steps"><small>Шаги</small>{report["steps"]}</span>'
         f'<span class="chevron" aria-hidden="true"></span></summary>'
         f'<div class="session-body"><dl>{metric_summary}</dl><h3>Выводы</h3>'
-        f'<div class="findings">{findings}</div>{timeline_html(trajectory) if trajectory else ""}</div></details>'
+        f'{amounts_key}<div class="findings">{findings}</div>{investigation}</div></details>'
     )
 
 
@@ -176,18 +242,8 @@ def render_report(reports, trajectories):
             raise ValueError("Trajectory has no matching report")
         groups[key].append(row)
     policies = sorted({key[1] for key in keys}, key=lambda key: (key != "reconcile", key))
-    cards = []
-    for policy in policies:
-        runs = [report for report in reports if report["policy"] == policy]
-        f1 = mean(report["f1"] for report in runs)
-        reward = mean(report["reward"] for report in runs)
-        cards.append(
-            f'<article class="policy"><h3>{escape(label(POLICY_LABELS, policy))}</h3>'
-            f'<div><strong>{display_number(f1)}</strong><span>Средний F1</span></div>'
-            f'<meter min="0" max="1" value="{f1}" aria-label="Средний F1"></meter>'
-            f'<p><span>Средняя награда</span><code>{display_number(reward)}</code></p></article>'
-        )
     options = "".join(f'<option value="{escape(key)}">{escape(label(POLICY_LABELS, key))}</option>' for key in policies)
+    metrics = "".join(f'<option value="{key}">{name}</option>' for key, name in COMPARE_METRICS.items())
     sessions = "".join(session_html(item, groups[replay_key(item)], opened=index == 0)
                        for index, item in enumerate(reports))
     asset = Path(__file__)
@@ -201,10 +257,14 @@ def render_report(reports, trajectories):
 <main>
 <header><div class="brand">MonkeyType <span> / </span> Genesis FinTech</div><h1>Отчёт аудита</h1>
 <p>Эпизоды {len({episode for episode, _ in keys})} · Прогоны {len(reports)} · Действия {sum(len(items) for items in groups.values())}</p></header>
-<section aria-labelledby="comparison"><h2 id="comparison">Сравнение политик</h2><div class="policies">{"".join(cards)}</div></section>
-<section aria-labelledby="runs"><div class="runs-head"><h2 id="runs">Прогоны</h2>
+<section aria-labelledby="comparison"><div class="runs-head"><h2 id="comparison">Сравнение политик</h2>
 <div class="filters"><label>Политика<select id="policy"><option value="">Все политики</option>{options}</select></label>
 <label>Поиск по ID<input id="episode" type="search" placeholder="Например EP-CHK"></label></div></div>
+<figure class="comparison"><div class="comparison-head"><figcaption>Среднее по выбранным прогонам</figcaption>
+<label class="metric-selector">Показатель<select id="metric">{metrics}</select></label></div>
+<div id="comparison-axis" class="comparison-axis" aria-hidden="true"></div><ul id="policy-chart" class="policy-chart" data-step-limit="{STEP_LIMIT}"></ul>
+<p id="comparison-empty" class="empty" hidden>Нет прогонов для выбранных фильтров.</p></figure></section>
+<section aria-labelledby="runs"><h2 id="runs">Прогоны</h2>
 <p id="visible-count" aria-live="polite">Показано {len(reports)} из {len(reports)}</p>{sessions}</section>
 </main><script>{script}</script></body></html>
 """

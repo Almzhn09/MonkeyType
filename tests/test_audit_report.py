@@ -4,7 +4,7 @@ import unittest
 
 from audit_sim.data import Episode
 from audit_sim.fixtures import dump_json, dump_jsonl
-from audit_sim.report import report_directory
+from audit_sim.report import render_report, report_directory
 from audit_sim.runner import run_policy
 from audit_sim.scoring import explain_submission, oracle_submission
 
@@ -69,6 +69,48 @@ class TestAuditReport(unittest.TestCase):
         self.assertIn("Ход расследования", html)
         self.assertIn(doc["doc_id"], html)
         self.assertNotIn("that must stay text</span>", html)
+
+    def test_progress_counts_each_record_once_and_matches_canonical_evidence(self):
+        report, trajectory = run_policy(A08, "reconcile")
+        findings = report["submitted_findings"]
+        evidence, row_id, *_ = findings[0]["evidence_ids"]
+        findings[0]["evidence_ids"] = [f" {evidence.lower()} ", row_id.lower()]
+        report["submitted_findings"] = findings[:1]
+        report["steps"] = 4
+        report["reward"] = -0.4
+        episode = Episode.load(A08)
+        observations = [episode.documents[evidence], episode.documents[evidence], episode.records["ledger"][row_id]]
+        actions = [
+            {"action": "get_document", "doc_id": evidence},
+            {"action": "get_document", "doc_id": evidence},
+            {"action": "get_record", "table": "ledger", "id": row_id},
+        ]
+        trajectory = [
+            dict(row, policy="reconcile", action=action, observation={"result": observed})
+            for row, action, observed in zip(trajectory, actions, observations)
+        ]
+        html = render_report([report], trajectory)
+        self.assertIn('data-progress="[[0,0],[1,1],[1,1],[2,2]]"', html)
+        self.assertIn('data-reward="-0.4"', html)
+        self.assertIn("Записано 3 из 4 шагов", html)
+        self.assertIn(f"ledger · {row_id}", html)
+        self.assertNotIn("evidence missing", html)
+
+    def test_report_rejects_invalid_report_details_and_step_order(self):
+        report, trajectory = run_policy(A08, "reconcile")
+        with self.assertRaisesRegex(ValueError, "invalid duration"):
+            render_report([dict(report, duration_seconds=-1)], [])
+        with self.assertRaisesRegex(ValueError, "malformed submitted findings"):
+            render_report([dict(report, submitted_findings=["not a finding"])], [])
+        with self.assertRaisesRegex(ValueError, "steps must be consecutive"):
+            render_report([report], [dict(trajectory[1], policy="reconcile")])
+
+    def test_amount_bars_compare_within_currency_only(self):
+        report, _ = run_policy(A08, "reconcile")
+        first, second = report["submitted_findings"]
+        self.assertEqual(render_report([report], []).count('class="amount-track"'), 2)
+        report["submitted_findings"] = [first, dict(second, currency="USD")]
+        self.assertNotIn('class="amount-track"', render_report([report], []))
 
 
 if __name__ == "__main__":
