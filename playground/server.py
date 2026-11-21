@@ -15,7 +15,7 @@ import secrets
 import threading
 
 from audit_sim.environment import STEP_LIMIT, AuditEnv
-from audit_sim.runner import run_policy
+from audit_sim.runner import WorkerProtocolError, run_policy
 from audit_sim.schema import ISSUE_TYPES, V1_ISSUE_TYPES
 from audit_sim.scoring import candidate_graph, canonical_ids, key, validate_submission
 from fincheck.verify import discover
@@ -133,6 +133,9 @@ class Playground:
         self.by_id = {item["id"]: item for item in self.episodes}
         self.sessions = {}
         self.lock = threading.Lock()
+        # Baselines are deterministic per episode, so compute them once and one at a time.
+        self.baseline_cache = {}
+        self.baseline_lock = threading.Lock()
 
     def start(self, episode_id):
         episode = self.by_id.get(episode_id)
@@ -171,6 +174,29 @@ class Playground:
             observation, _, terminated, truncated, _ = env.step(action)
         return {"observation": observation, "steps_used": env.steps, "finished": terminated or truncated}
 
+    def baselines(self, episode):
+        """Scores of the four reference policies on this episode; None where the host cannot run one."""
+        with self.lock:
+            cached = self.baseline_cache.get(episode["id"])
+        if cached is not None:
+            return cached
+        with self.baseline_lock:
+            with self.lock:
+                cached = self.baseline_cache.get(episode["id"])
+            if cached is not None:
+                return cached
+            scores = {}
+            for policy in BASELINES:
+                try:
+                    report, _ = run_policy(episode["_public"], policy, private_directory=episode["_private"])
+                except (WorkerProtocolError, RuntimeError, OSError, ValueError):
+                    scores[policy] = None  # e.g. the host forbids the policy sandbox
+                    continue
+                scores[policy] = {name: report[name] for name in ("tp", "fp", "fn", "f1", "reward", "steps")}
+            with self.lock:
+                self.baseline_cache[episode["id"]] = scores
+            return scores
+
     def result(self, token):
         session = self._session(token)
         with session["lock"]:
@@ -181,12 +207,7 @@ class Playground:
                 payload = session["payload"]
                 if env.truncated:
                     payload = {"episode_id": env.episode_id, "findings": []}
-                baselines = {}
-                for policy in BASELINES:
-                    report, _ = run_policy(
-                        session["episode"]["_public"], policy, private_directory=session["episode"]["_private"],
-                    )
-                    baselines[policy] = {name: report[name] for name in ("tp", "fp", "fn", "f1", "reward", "steps")}
+                baselines = self.baselines(session["episode"])
                 session["result"] = {
                     "reason": env.reason,
                     "steps": env.steps,
