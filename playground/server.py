@@ -243,6 +243,8 @@ def make_handler(app):
         def do_GET(self):
             if self.path in ("/", "/index.html"):
                 self._send(HTTPStatus.OK, (STATIC / "index.html").read_bytes(), "text/html; charset=utf-8")
+            elif self.path.split("?")[0] in ("/help", "/help/"):
+                self._send(HTTPStatus.OK, (STATIC / "help.html").read_bytes(), "text/html; charset=utf-8")
             elif self.path == "/api/episodes":
                 self._json(HTTPStatus.OK, [public_view(item) for item in app.episodes])
             else:
