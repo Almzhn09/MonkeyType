@@ -780,7 +780,7 @@ function observationSummary(row) {
 
 /* ------------------------------------------------------------------ boot */
 
-if (location.pathname.startsWith("/dashboard/")) document.getElementById("play-link").hidden = false;
+if (location.pathname.startsWith("/dashboard/")) for (const id of ["play-link", "help-link"]) document.getElementById(id).hidden = false;
 window.addEventListener("hashchange", () => render());
 document.addEventListener("click", (e) => {
   const back = e.target.closest("[data-back]");

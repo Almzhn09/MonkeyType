@@ -1,0 +1,270 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#f5f5f5" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#2d3142" media="(prefers-color-scheme: dark)">
+<title>How to Use MonkeyType</title>
+<style>
+:root {
+  --paper: #f5f5f5; --node: #ffffff; --ink: #2d3142; --soft: #5a6580; --rule: rgba(45, 49, 66, 0.12);
+  --rule-solid: #bfc0c0; --accent: #bf4520; --accent-tint: rgba(191, 69, 32, 0.08); --link: #2e5aa8;
+  --serif: "Instrument Serif", "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+  --sans: "Geist", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --mono: "Geist Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  color-scheme: light dark;
+}
+@media (prefers-color-scheme: dark) {
+  :root { --paper: #2d3142; --node: #333849; --ink: #f5f5f5; --soft: #a3acbf; --rule: rgba(245, 245, 245, 0.12);
+    --rule-solid: rgba(191, 192, 192, 0.25); --accent: #f08a59; --accent-tint: rgba(240, 138, 89, 0.10); --link: #8db3ee; }
+}
+* { box-sizing: border-box; }
+html { scroll-padding-top: 16px; }
+body { margin: 0; background: var(--paper); color: var(--ink); font: 15px/1.6 var(--sans); -webkit-font-smoothing: antialiased; }
+a { color: var(--link); text-underline-offset: 3px; }
+:focus-visible { outline: 2px solid var(--link); outline-offset: 2px; }
+header { border-bottom: 1px solid var(--rule); }
+.wrap { max-width: 1120px; margin: 0 auto; padding: 0 24px; }
+header .wrap { display: flex; align-items: baseline; gap: 12px; padding-top: 14px; padding-bottom: 14px; flex-wrap: wrap; }
+.brand { font-family: var(--serif); font-size: 1.45rem; line-height: 1; }
+.eyebrow { font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--soft); }
+header nav { margin-left: auto; display: flex; gap: 20px; }
+header nav a { color: var(--ink); font-weight: 500; font-size: 14px; text-decoration-color: var(--rule-solid); }
+.layout { display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 48px; padding-top: 40px; padding-bottom: 80px; }
+.toc { position: sticky; top: 24px; align-self: start; font-size: 13.5px; }
+.toc ol { list-style: none; margin: 8px 0 0; padding: 0; }
+.toc li { margin: 4px 0; }
+.toc a { color: var(--soft); text-decoration: none; }
+.toc a:hover { color: var(--ink); }
+.toc ol ol { padding-left: 12px; }
+article { max-width: 720px; }
+h1 { font-family: var(--serif); font-weight: 400; font-size: 2.4rem; line-height: 1.15; margin: 0 0 12px; }
+h2 { font-family: var(--serif); font-weight: 400; font-size: 1.7rem; margin: 56px 0 8px; padding-top: 16px; border-top: 1px solid var(--rule); }
+h3 { font-size: 16px; margin: 32px 0 6px; }
+p { margin: 0 0 12px; text-wrap: pretty; }
+.lede { font-family: var(--serif); font-style: italic; font-size: 1.3rem; line-height: 1.45; color: var(--ink); }
+ol.steps { counter-reset: s; list-style: none; padding: 0; margin: 12px 0 16px; }
+ol.steps > li { counter-increment: s; display: grid; grid-template-columns: 32px 1fr; padding: 8px 0; border-top: 1px solid var(--rule); }
+ol.steps > li::before { content: counter(s, decimal-leading-zero); font-family: var(--mono); font-size: 12px; color: var(--soft); padding-top: 3px; }
+ul { padding-left: 20px; margin: 0 0 12px; }
+li { margin: 3px 0; }
+.ui { font-weight: 600; white-space: nowrap; }
+code, .id { font-family: var(--mono); font-size: 13px; }
+.cost { font-family: var(--mono); font-size: 12px; color: var(--soft); }
+.note { border-left: 2px solid var(--link); padding: 6px 14px; margin: 16px 0; font-size: 14px; }
+.warn { border-left-color: var(--accent); }
+table { border-collapse: collapse; width: 100%; font-size: 14px; margin: 8px 0 16px; }
+th, td { text-align: left; vertical-align: top; padding: 8px 12px 8px 0; border-bottom: 1px solid var(--rule); }
+th { font-family: var(--mono); font-weight: 500; font-size: 10.5px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--soft); border-bottom-color: var(--rule-solid); }
+td:first-child { font-weight: 600; padding-right: 16px; }
+.costs td:first-child { font-weight: 400; }
+.costs td:last-child { width: 34%; }
+.terms td:first-child { width: 28%; }
+.table-wrap { overflow-x: auto; }
+details { border: 1px solid var(--rule-solid); border-radius: 2px; padding: 10px 14px; margin: 16px 0; }
+summary { cursor: pointer; font-weight: 600; }
+details[open] summary { margin-bottom: 8px; }
+.diagram { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 12px 0 16px; font-size: 13.5px; }
+.diagram div { border: 1px solid var(--rule-solid); border-radius: 2px; padding: 10px 12px; background: var(--node); }
+.diagram .wide { grid-column: 1 / -1; }
+.diagram b { display: block; font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--soft); font-weight: 500; margin-bottom: 2px; }
+.btn { display: inline-flex; align-items: center; gap: 10px; height: 38px; padding: 0 16px; border-radius: 2px; background: var(--ink); color: var(--paper); text-decoration: none; font-weight: 500; font-size: 14px; }
+@media (max-width: 860px) {
+  .layout { grid-template-columns: minmax(0, 1fr); gap: 24px; padding-top: 24px; }
+  .toc { position: static; border: 1px solid var(--rule); padding: 12px 16px; }
+  .wrap { padding: 0 16px; }
+  .diagram { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+<header><div class="wrap">
+  <span class="brand" translate="no">MonkeyType</span><span class="eyebrow">How to Use</span>
+  <nav aria-label="Site"><a href="../">Play the Auditor</a><a href="../dashboard/" id="dashboard-link">Reviewer Dashboard</a></nav>
+</div></header>
+
+<div class="wrap layout">
+  <nav class="toc" aria-label="Contents">
+    <span class="eyebrow">Contents</span>
+    <ol>
+      <li><a href="#start">Start Here</a></li>
+      <li><a href="#play">Play the Auditor</a>
+        <ol>
+          <li><a href="#screen">The Screen</a></li>
+          <li><a href="#steps">Steps: What Costs What</a></li>
+          <li><a href="#errors">The Four Errors</a></li>
+          <li><a href="#finding">Record a Finding</a></li>
+          <li><a href="#submit">Submit and Read Results</a></li>
+          <li><a href="#example">Worked Example</a></li>
+        </ol>
+      </li>
+      <li><a href="#dashboard">Reviewer Dashboard</a></li>
+      <li><a href="#trouble">If Something Goes Wrong</a></li>
+      <li><a href="#glossary">Glossary</a></li>
+    </ol>
+  </nav>
+
+  <article>
+    <h1>How to Use MonkeyType</h1>
+    <p class="lede">MonkeyType is an exam for AI auditors. Each fictional company has books with planted accounting errors, or none at all. Here you take the same exam yourself, or inspect how the test policies did.</p>
+    <p>All companies and numbers are made up. You don’t need an account, and nothing you do is saved after you leave the page.</p>
+
+    <h2 id="start">Start Here</h2>
+    <ol class="steps">
+      <li><span>Open the site. If nobody has used it for a while, the <strong>first load can take about a minute</strong> while the free server wakes up.</span></li>
+      <li><span>Use a laptop or desktop if you can. It works on a phone, but the tables are easier to read on a big screen.</span></li>
+      <li><span>Pick what you want to do: <a href="#play">play the auditor</a> (about 5–10 minutes) or <a href="#dashboard">look at the reviewer dashboard</a> (about 2 minutes).</span></li>
+    </ol>
+    <div class="note">Short on time? Choose <span class="ui">Talaris Apparel LLC</span> and press <span class="ui">Submit Findings</span> straight away without adding anything. That company is clean, so an empty answer is correct, and you’ll see how results work in under a minute.</div>
+
+    <h2 id="play">Play the Auditor</h2>
+    <p>Your goal: find the planted errors in one company’s books, prove each one with records, and submit. Planted errors are counted as correct; anything else counts as a false alarm.</p>
+    <ol class="steps">
+      <li><span>On the first page, choose a set with the bar above the list: <span class="ui">Dev</span> is a good default. Then press <span class="ui">Audit →</span> next to a company, or <span class="ui">Random Company →</span>.</span></li>
+      <li><span>Open the records you need and look for things that don’t add up (see <a href="#errors">the four errors</a>).</span></li>
+      <li><span>For each error, build a finding in the <span class="ui">Draft</span> pane and press <span class="ui">Add Finding →</span>.</span></li>
+      <li><span>Press <span class="ui">Submit Findings →</span> at the top. You get your score, a verdict on every finding, the answer key, and how the four test policies did on the same company.</span></li>
+    </ol>
+
+    <h3 id="screen">The Screen</h3>
+    <div class="diagram" role="img" aria-label="Layout: a top bar, records on the left, case file on the right">
+      <div class="wide"><b>Top bar</b>Company name and period · step budget (how many of your 100 steps you’ve used) · <span class="ui">Change Company</span> · <span class="ui">Submit Findings →</span></div>
+      <div><b>Records (left)</b>Tabs: <span class="ui">Ledger</span>, <span class="ui">Invoices</span>, <span class="ui">Payments</span>, <span class="ui">FX Rates</span>, <span class="ui">Rules</span>. The small numbers show how many rows you’ve loaded out of the total, e.g. <code>50/487</code>.</div>
+      <div><b>Case file (right)</b><span class="ui">Inspect</span>: the row you clicked · <span class="ui">Draft</span>: the finding you’re building · <span class="ui">Findings</span>: your finished findings · <span class="ui">Calculator</span>.</div>
+    </div>
+    <p><strong>Rules</strong> is worth reading first. It explains this company’s reporting period, which exchange rate to use, how rounding works, and which account number means what (receivables, bank, unapplied and so on).</p>
+    <p>Amounts are shown with decimals in each currency’s own format: KZT and EUR have 2 decimals, JPY none, KWD 3.</p>
+
+    <h3 id="steps">Steps: What Costs What</h3>
+    <p>Like an AI agent, you have <strong>100 steps</strong>. Each look at the books uses one, and each step also takes 0.002 off your final score, so be efficient but don’t be stingy.</p>
+    <div class="table-wrap"><table class="costs">
+      <thead><tr><th scope="col">Action</th><th scope="col">Cost</th></tr></thead>
+      <tbody>
+        <tr><td>Open a page of 50 rows (<span class="ui">Open First 50 Rows</span>, <span class="ui">Load Next 50</span>)</td><td>1 step</td></tr>
+        <tr><td><span class="ui">Load All</span> remaining rows of a table</td><td>1 step per 50 rows (the button shows the total)</td></tr>
+        <tr><td>Click a linked ID for a record you haven’t loaded yet</td><td>1 step (marked “1 step”)</td></tr>
+        <tr><td><span class="ui">Calculator</span> → <span class="ui">Calculate</span></td><td>1 step (your own calculator is free)</td></tr>
+        <tr><td>Clicking rows you’ve already loaded, filtering them, switching tabs, drafting and editing findings</td><td>Free</td></tr>
+        <tr><td><span class="ui">Submit Findings</span></td><td>Ends the game</td></tr>
+      </tbody>
+    </table></div>
+    <div class="note warn">When 10 steps are left the budget bar turns orange. If you reach the limit without submitting, the game ends with an empty answer, so <strong>submit before you run out</strong>.</div>
+
+    <h3 id="errors">The Four Errors</h3>
+    <p>Every planted error is one of these four. A company can have several, or none.</p>
+    <div class="table-wrap"><table>
+      <thead><tr><th scope="col">Error</th><th scope="col">What it looks like</th><th scope="col">Amount to enter</th></tr></thead>
+      <tbody>
+        <tr><td>Duplicate invoice</td><td>The same invoice is booked twice: two ledger rows debit receivables for the same invoice number.</td><td>The extra booking, usually the invoice total.</td></tr>
+        <tr><td>Payment not applied</td><td>A payment lists the invoices it pays, but the ledger puts some or all of it in the <em>unapplied</em> account instead.</td><td>The amount that went to unapplied, in the base currency.</td></tr>
+        <tr><td>Wrong currency conversion</td><td>A foreign-currency invoice or payment was converted at the wrong rate or date. Check it against <span class="ui">FX Rates</span> using the rule on the <span class="ui">Rules</span> tab.</td><td>Correct amount minus booked amount, in the base currency.</td></tr>
+        <tr><td>Wrong reporting period</td><td>An invoice dated inside the period is booked outside it, or the other way round. Watch time zones: the company’s local date counts.</td><td>Usually the amount that was booked.</td></tr>
+      </tbody>
+    </table></div>
+    <p>Not everything unusual is an error. Split payments, refunds and repeated round amounts can be perfectly legitimate, and they’re there to tempt you.</p>
+
+    <h3 id="finding">Record a Finding</h3>
+    <ol class="steps">
+      <li><span>Click the invoice or payment that is wrong, then press <span class="ui">Mark as Affected</span> in the <span class="ui">Inspect</span> pane. That also cites it as evidence and sets the currency to the base currency.</span></li>
+      <li><span>Click each record that proves the error, such as the ledger rows or the exchange rate, and press <span class="ui">Cite as Evidence</span>. Cited rows get a small dot in the table. You can cite up to 10 records.</span></li>
+      <li><span>Open the <span class="ui">Draft</span> pane. Choose the <span class="ui">Error type</span>, then type the <span class="ui">Amount</span> as a normal number such as <code>225.54</code>. The hint underneath shows exactly what will be sent.</span></li>
+      <li><span>Optionally write an <span class="ui">Explanation</span>. It helps you remember what you found, but it isn’t scored.</span></li>
+      <li><span>Press <span class="ui">Add Finding →</span>. It moves to the <span class="ui">Findings</span> pane, where you can <span class="ui">Edit</span> or <span class="ui">Delete</span> it until you submit. The maximum is 30 findings.</span></li>
+    </ol>
+    <p>You can also type an ID into the affected or evidence box and press Enter. These are the IDs the grader expects:</p>
+    <div class="table-wrap"><table>
+      <thead><tr><th scope="col">Record</th><th scope="col">Use this ID</th><th scope="col">Looks like</th></tr></thead>
+      <tbody>
+        <tr><td>Invoice or payment</td><td>Its <em>Document</em> ID, not the invoice or payment number</td><td><code>FILE-TTTDVMC</code></td></tr>
+        <tr><td>Ledger row</td><td>Its <em>Row</em> ID</td><td><code>TX-HT49KFD5</code></td></tr>
+        <tr><td>Exchange rate</td><td><code>FX:</code> date, from-currency, to-currency</td><td><code>FX:2026-11-14:EUR:KZT</code></td></tr>
+      </tbody>
+    </table></div>
+    <p>A finding counts as correct only if the <strong>type</strong>, the <strong>affected document</strong>, the <strong>currency</strong> and the <strong>amount</strong> all match a planted error, and your evidence includes <strong>every record needed to prove it</strong>.</p>
+
+    <h3 id="submit">Submit and Read Results</h3>
+    <p>Press <span class="ui">Submit Findings →</span> and confirm. If you think the company is clean, submit with no findings: that is the right answer for a clean company.</p>
+    <p>The results page starts with one sentence, for example <em>“You found 1 of 2 planted errors with 1 false alarm, for a reward of −0.006.”</em> Below it:</p>
+    <ul>
+      <li><strong>Reward</strong> runs from −1 to 1. It rewards correct findings, penalises false alarms and missed errors, and takes 0.002 off for every step you used. A structurally broken answer scores −1.</li>
+      <li><strong>You against the baseline policies</strong>: your reward next to four test policies on the same company. You’re highlighted in orange. <em>oracle</em> (dashed) reads the answer key, so it always scores 1. <em>reconcile</em> is the reference checker. <em>random</em> guesses, and <em>mark_all</em> accuses everything.</li>
+      <li><strong>Your Findings</strong>: each one is marked <span class="ui">Correct</span>, <span class="ui">False alarm</span> or <span class="ui">Duplicate</span>, with the reason when it’s wrong, e.g. “Right error and document, but the amount is wrong.”</li>
+      <li><strong>Answer Key</strong>: every planted error, its amount and the records that prove it, marked <span class="ui">Found</span> or <span class="ui">Missed</span>.</li>
+    </ul>
+    <p>Press <span class="ui">Play Another Company →</span> to try again.</p>
+
+    <h3 id="example">Worked Example</h3>
+    <details>
+      <summary>Show a correct finding (spoiler)</summary>
+      <p>Company <strong>Telum Industrial FZ-LLC</strong> has a currency-conversion error in one invoice:</p>
+      <ol class="steps">
+        <li><span>Open <span class="ui">Invoices</span> → <span class="ui">Open First 50 Rows</span>. Type <code>FILE-TTTDVMC</code> in the filter, click the row, then press <span class="ui">Mark as Affected</span>.</span></li>
+        <li><span>In <span class="ui">Draft</span>, choose <span class="ui">Wrong currency conversion</span> and enter <code>225.54</code> KZT.</span></li>
+        <li><span>Type <code>TX-HT49KFD5</code> in the evidence box and press Enter, then <code>FX:2026-11-14:EUR:KZT</code> and Enter.</span></li>
+        <li><span>Press <span class="ui">Add Finding →</span>, then <span class="ui">Submit Findings →</span>. This finding is marked <span class="ui">Correct</span>. The company has a second error; finding it is up to you.</span></li>
+      </ol>
+    </details>
+
+    <h2 id="dashboard">Reviewer Dashboard</h2>
+    <p>The dashboard shows how the four test policies performed and lets you check every claim against the records. It’s read-only: nothing you click changes anything. Open it with <span class="ui">Reviewer Dashboard</span> at the top of the site.</p>
+    <h3>The Bar at the Top</h3>
+    <p><span class="ui">Source</span> picks the data: the short <em>Demo</em> (a control company with two errors plus a clean one) or <em>Dev split</em> (all four policies on 10 companies). <span class="ui">Split</span> and <span class="ui">Mode</span> are fixed for these sources.</p>
+    <h3>Benchmark</h3>
+    <ul>
+      <li>The sentence at the top is the headline result. <span class="ui">Trace Its Findings →</span> takes you straight to the evidence behind it.</li>
+      <li>The bar chart shows each policy’s average reward on an axis from −1 to 1. The orange bar is the reference policy; the dashed one is the oracle.</li>
+      <li>The table adds F1, precision, recall, steps and time. Click a policy name to see its runs. <span class="ui">Metric Definitions</span> explains each number, and <span class="ui">Full Precision</span> shows the unrounded values.</li>
+    </ul>
+    <h3>Runs</h3>
+    <p>Every run is one policy on one company. Filter by episode ID, policy or status, and click a column header to sort. Click an episode ID to open that run.</p>
+    <h3>A Single Run</h3>
+    <ul>
+      <li><strong>Top</strong>: the outcome, F1, reward and steps, then TP (correct), FP (false alarms) and FN (missed). <span class="ui">Other Policies on …</span> compares every policy on the same company.</li>
+      <li><strong>Findings</strong>: click a finding to see its <strong>evidence trail</strong>, a box for the finding with a line to each record it cites. Click a record to see its fields and linked records, then use <span class="ui">← Back to Finding</span>. <span class="ui">Copy ID</span> copies the ID.</li>
+      <li><strong>Activity</strong>: every step the policy took, in order. Open <span class="ui">Structured detail</span> for the raw data. Rewards show as 0 during a run on purpose; the final score appears only at the end.</li>
+      <li><strong>Episode Records</strong>: browse the company’s full ledger, invoices, payments, FX rates and accounting rules.</li>
+    </ul>
+    <p>Your browser’s Back and Forward buttons work everywhere, and you can copy the address to share the exact view you’re looking at.</p>
+
+    <h2 id="trouble">If Something Goes Wrong</h2>
+    <div class="table-wrap"><table>
+      <thead><tr><th scope="col">You see</th><th scope="col">What to do</th></tr></thead>
+      <tbody>
+        <tr><td>The page takes a minute to load</td><td>The free server was asleep. Wait; it’s fast once awake.</td></tr>
+        <tr><td>“Unknown or expired session”</td><td>The server restarted (for example after sleeping), so the game in progress is gone. Go back to the start page and pick the company again.</td></tr>
+        <tr><td>Your progress disappeared after reloading</td><td>Games live only in the open page. Reloading or leaving starts over, and the browser warns you first.</td></tr>
+        <tr><td>“Baseline scores unavailable on this host”</td><td>The comparison couldn’t be computed on this server. Your own score is still correct.</td></tr>
+        <tr><td>A finding you’re sure about is marked “False alarm”</td><td>Read the reason under it. The most common causes are a wrong amount, a missing evidence record, or a number used instead of a Document ID.</td></tr>
+        <tr><td>The dashboard says “No Evaluation Loaded”</td><td>The server is still preparing its data after waking. Reload in a minute.</td></tr>
+      </tbody>
+    </table></div>
+
+    <h2 id="glossary">Glossary</h2>
+    <div class="table-wrap"><table>
+      <tbody>
+        <tr><td>Ledger</td><td>The company’s book of accounts: every money movement as debit and credit rows.</td></tr>
+        <tr><td>Invoice</td><td>A bill the company sent a customer.</td></tr>
+        <tr><td>Payment</td><td>Money received, with a list of the invoices it pays.</td></tr>
+        <tr><td>FX rate</td><td>The exchange rate for one currency into the base currency on one date.</td></tr>
+        <tr><td>Base currency</td><td>The currency the company reports in, shown at the top of the screen.</td></tr>
+        <tr><td>Receivables</td><td>Money customers owe the company. Each invoice should add to it exactly once.</td></tr>
+        <tr><td>Unapplied</td><td>A holding account for payment money not matched to any invoice.</td></tr>
+        <tr><td>Evidence</td><td>The records that prove a finding. The grader needs the complete set.</td></tr>
+        <tr><td>F1</td><td>One number from 0 to 1 that balances errors found against false alarms. 1 is perfect.</td></tr>
+        <tr><td>Reward</td><td>The final score from −1 to 1: based on F1, minus a small cost per step.</td></tr>
+        <tr><td>Policy</td><td>A strategy an automated agent follows. The site compares four test policies.</td></tr>
+      </tbody>
+    </table></div>
+
+    <p style="margin-top:48px"><a class="btn" href="../">Start Playing <span aria-hidden="true">→</span></a></p>
+  </article>
+</div>
+<script>
+// Locally the playground can run without the dashboard; hide that link when it is not served here.
+fetch("../dashboard/data/index.json", {method: "HEAD"}).then((r) => { if (!r.ok) document.getElementById("dashboard-link").remove(); })
+  .catch(() => document.getElementById("dashboard-link").remove());
+</script>
+</body>
+</html>
