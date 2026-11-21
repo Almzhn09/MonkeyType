@@ -35,6 +35,7 @@ class TestWebapp(unittest.TestCase):
 
     def test_routes(self):
         self.assertIn(b"Audit Playground", self.get("/")[2])
+        self.assertIn(b"How to Use MonkeyType", self.get("/help/")[2])
         self.assertTrue(json.loads(self.get("/api/episodes")[2]))
         status, headers, body = self.get("/dashboard/")
         self.assertIn(b"MonkeyType", body)
