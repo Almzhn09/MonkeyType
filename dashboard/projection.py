@@ -70,6 +70,11 @@ class PrepareError(ValueError):
     pass
 
 
+def utf8_env():
+    """Child Pythons write UTF-8 to pipes on every platform (Windows defaults to a legacy code page)."""
+    return dict(os.environ, PYTHONIOENCODING="utf-8")
+
+
 # ----------------------------------------------------------------------------- helpers
 
 def _exact(value):
@@ -421,7 +426,7 @@ def prepare_demo(out, name="demo"):
     """Run the documented demo with the existing CLI, then project it as a reviewer bundle."""
     with tempfile.TemporaryDirectory() as temp:
         result = subprocess.run([sys.executable, "-m", "audit_sim", "demo", "--output", temp],
-                                cwd=ROOT, capture_output=True, text=True)
+                                cwd=ROOT, capture_output=True, env=utf8_env(), encoding="utf-8", errors="replace")
         if result.returncode != 0:
             raise PrepareError("audit_sim demo failed:\n" + (result.stderr or result.stdout).strip())
         notes = []

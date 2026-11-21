@@ -1,4 +1,5 @@
 import json
+import os
 from pathlib import Path
 import shutil
 import subprocess
@@ -182,6 +183,17 @@ class TestDashboardProjection(unittest.TestCase):
             with self.subTest(path=path), self.assertRaises(HTTPError) as denied:
                 urlopen(base + path, timeout=10)
             self.assertEqual(denied.exception.code, 404)
+
+
+class TestLegacyConsoleEncoding(unittest.TestCase):
+    def test_demo_survives_windows_code_page(self):
+        """Windows pipes default to cp1252, which cannot encode the demo's explanations (e.g. Σ)."""
+        with tempfile.TemporaryDirectory() as temp:
+            env = dict(os.environ, PYTHONIOENCODING="cp1252")
+            result = subprocess.run([sys.executable, "-m", "audit_sim", "demo", "--output", temp], cwd=ROOT,
+                                    capture_output=True, env=env)
+            self.assertEqual(result.returncode, 0, result.stderr.decode("cp1252", "replace"))
+            self.assertIn(b"EP-CHK-A08", result.stdout)
 
 
 @unittest.skipUnless(shutil.which("node"), "Node.js is not installed")

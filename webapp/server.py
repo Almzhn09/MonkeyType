@@ -16,7 +16,7 @@ import tempfile
 from urllib.parse import unquote, urlsplit
 from http.server import ThreadingHTTPServer
 
-from dashboard.projection import ROOT, PrepareError, prepare_demo, prepare_run, write_index
+from dashboard.projection import ROOT, PrepareError, prepare_demo, prepare_run, utf8_env, write_index
 from dashboard.server import respond as dashboard_respond
 from playground.server import DEFAULT_EPISODES, Playground, make_handler as playground_handler
 
@@ -36,7 +36,8 @@ def prepare_dashboard(out, episodes=DEFAULT_EPISODES, log=print):
     results = Path(tempfile.mkdtemp(prefix="dev-run-"))
     try:
         run = subprocess.run([sys.executable, "-m", "audit_sim", "run", str(episodes), "--split", "dev",
-                              "--output", str(results)], cwd=ROOT, capture_output=True, text=True)
+                              "--output", str(results)], cwd=ROOT, capture_output=True, env=utf8_env(),
+                             encoding="utf-8", errors="replace")
         if run.returncode != 0:
             raise PrepareError((run.stderr or run.stdout).strip()[-500:])
         prepare_run(out, results, audience="reviewer", name="dev", episodes_root=episodes,

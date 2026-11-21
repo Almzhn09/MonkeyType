@@ -17,8 +17,8 @@ VERBOSE = False
 
 
 def run(args, **kw):
-    env = dict(os.environ, PYTHONDONTWRITEBYTECODE="1", PYTHONHASHSEED="0")
-    return subprocess.run([PY, *args], cwd=ROOT, env=env, text=True,
+    env = dict(os.environ, PYTHONDONTWRITEBYTECODE="1", PYTHONHASHSEED="0", PYTHONIOENCODING="utf-8")
+    return subprocess.run([PY, *args], cwd=ROOT, env=env, encoding="utf-8", errors="replace",
                           capture_output=True, **kw)
 
 
