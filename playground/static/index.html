@@ -212,7 +212,7 @@ dl.kv dd { margin: 0; overflow-wrap: anywhere; }
 </style>
 </head>
 <body>
-<header class="site"><div class="wrap"><span class="brand" translate="no">MonkeyType</span><span class="eyebrow">Audit Playground</span></div></header>
+<header class="site"><div class="wrap"><span class="brand" translate="no">MonkeyType</span><span class="eyebrow">Audit Playground</span><a class="quiet hidden" id="dashboard-link" href="dashboard/" style="margin-left:auto">Reviewer Dashboard <span aria-hidden="true">→</span></a></div></header>
 <main id="main">
 
 <!-- Picker -->
@@ -304,6 +304,7 @@ dl.kv dd { margin: 0; overflow-wrap: anywhere; }
   <p class="formula" id="r-explain"></p>
   <h2 style="margin-bottom:var(--s3)">You Against the Baseline Policies</h2>
   <figure class="chart" id="r-chart" role="img"></figure>
+  <p class="hint" id="r-missing"></p>
   <div style="overflow-x:auto"><table id="r-baselines"></table></div>
   <div class="verdicts">
     <div><h2 style="margin-bottom:var(--s3)">Your Findings</h2><div id="r-findings"></div></div>
@@ -695,7 +696,9 @@ async function showResults() {
   $("r-lede").innerHTML = lede;
   $("r-explain").textContent = `Reward = 2 × F1 − 1 − 0.002 × ${r.inspection_steps} inspection steps, kept between −1 and 1. Your F1 is ${s.f1.toFixed(2)}; on a clean company an empty answer scores F1 = 1.`;
   const rows = [["you", {tp: s.tp, fp: s.fp, fn: s.fn, f1: s.f1, reward: s.reward, steps: r.steps}, true]]
-    .concat(Object.entries(r.baselines).map(([name, b]) => [name, b, false])).sort((a, b) => b[1].reward - a[1].reward);
+    .concat(Object.entries(r.baselines).filter(([, b]) => b).map(([name, b]) => [name, b, false])).sort((a, b) => b[1].reward - a[1].reward);
+  const missing = Object.entries(r.baselines).filter(([, b]) => !b).map(([name]) => name);
+  $("r-missing").textContent = missing.length ? `Baseline scores unavailable on this host: ${missing.join(", ")}.` : "";
   $("r-chart").innerHTML = chartHtml(rows);
   $("r-chart").setAttribute("aria-label", "Reward by policy: " + rows.map(([name, b]) => `${name} ${metric(b.reward)}`).join(", "));
   $("r-baselines").innerHTML = `<thead><tr><th scope="col">Policy</th><th scope="col" class="num">Reward</th><th scope="col" class="num">F1</th><th scope="col" class="num">Found</th><th scope="col" class="num">False alarms</th><th scope="col" class="num col-opt">Steps</th></tr></thead><tbody>${
@@ -777,6 +780,7 @@ window.addEventListener("beforeunload", (e) => { if (S && !$("workspace").classL
 
 renderTypeHelp();
 loadEpisodes();
+fetch("dashboard/data/index.json", {method: "HEAD"}).then((r) => { if (r.ok) $("dashboard-link").classList.remove("hidden"); }).catch(() => {});
 </script>
 </body>
 </html>

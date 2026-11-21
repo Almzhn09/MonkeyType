@@ -23,6 +23,33 @@ DATA = re.compile(
 )
 
 
+def respond(handler, out_dir, path, frame_ancestors="'none'"):
+    """Write the response for one GET/HEAD ``path`` (already stripped of any mount prefix)."""
+    def send_file(file):
+        body = file.read_bytes()
+        handler.send_response(HTTPStatus.OK)
+        handler.send_header("Content-Type", TYPES.get(file.suffix, "application/octet-stream"))
+        handler.send_header("Content-Length", str(len(body)))
+        handler.send_header("Cache-Control", "no-store")
+        handler.send_header("X-Content-Type-Options", "nosniff")
+        handler.send_header("Content-Security-Policy",
+                            "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; "
+                            f"connect-src 'self'; frame-ancestors {frame_ancestors}; base-uri 'none'; form-action 'none'")
+        handler.send_header("Referrer-Policy", "no-referrer")
+        handler.end_headers()
+        if handler.command != "HEAD":
+            handler.wfile.write(body)
+
+    if path in ASSETS:
+        return send_file(STATIC / ASSETS[path])
+    if ".." in path or not DATA.match(path):
+        return handler.send_error(HTTPStatus.NOT_FOUND, "Not found")
+    target = (Path(out_dir).resolve() / path[len("/data/"):]).resolve()
+    if not target.is_relative_to(Path(out_dir).resolve()) or not target.is_file():
+        return handler.send_error(HTTPStatus.NOT_FOUND, "Not found")
+    return send_file(target)
+
+
 def make_handler(out_dir):
     out_dir = Path(out_dir).resolve()
 
@@ -32,34 +59,8 @@ def make_handler(out_dir):
         def log_message(self, *_):
             pass
 
-        def _file(self, path):
-            body = path.read_bytes()
-            self.send_response(HTTPStatus.OK)
-            self.send_header("Content-Type", TYPES.get(path.suffix, "application/octet-stream"))
-            self.send_header("Content-Length", str(len(body)))
-            self.send_header("Cache-Control", "no-store")
-            self.send_header("X-Content-Type-Options", "nosniff")
-            self.send_header("Content-Security-Policy",
-                             "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; "
-                             "connect-src 'self'; frame-ancestors 'none'; base-uri 'none'; form-action 'none'")
-            self.send_header("Referrer-Policy", "no-referrer")
-            self.end_headers()
-            if self.command != "HEAD":
-                self.wfile.write(body)
-
-        def _deny(self):
-            self.send_error(HTTPStatus.NOT_FOUND, "Not found")
-
         def do_GET(self):
-            path = unquote(urlsplit(self.path).path)
-            if path in ASSETS:
-                return self._file(STATIC / ASSETS[path])
-            if ".." in path or not DATA.match(path):
-                return self._deny()
-            target = (out_dir / path[len("/data/"):]).resolve()
-            if not target.is_relative_to(out_dir) or not target.is_file():
-                return self._deny()
-            return self._file(target)
+            respond(self, out_dir, unquote(urlsplit(self.path).path))
 
         do_HEAD = do_GET
 
@@ -69,7 +70,7 @@ def make_handler(out_dir):
         do_PUT = do_DELETE = do_PATCH = do_POST
 
         def list_directory(self, path):  # never browse directories
-            self._deny()
+            self.send_error(HTTPStatus.NOT_FOUND, "Not found")
 
     return Handler
 

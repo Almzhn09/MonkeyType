@@ -6,6 +6,7 @@ COPY fincheck/ fincheck/
 COPY fingen/ fingen/
 COPY playground/ playground/
 COPY dashboard/ dashboard/
+COPY webapp/ webapp/
 COPY configs/ configs/
 COPY episodes/ episodes/
 COPY tests/ tests/

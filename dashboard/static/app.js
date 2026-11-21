@@ -19,11 +19,11 @@ async function getJSON(path) {
   return response.json();
 }
 async function loadIndex() {
-  if (!S.index) S.index = await getJSON("/data/index.json");
+  if (!S.index) S.index = await getJSON("data/index.json");
   return S.index;
 }
 async function loadBundle(id) {
-  if (!S.bundles.has(id)) S.bundles.set(id, getJSON(`/data/bundles/${encodeURIComponent(id)}/bundle.json`));
+  if (!S.bundles.has(id)) S.bundles.set(id, getJSON(`data/bundles/${encodeURIComponent(id)}/bundle.json`));
   return S.bundles.get(id);
 }
 function loadEpisode(bundle, run) {
@@ -31,7 +31,7 @@ function loadEpisode(bundle, run) {
   if (!S.episodes.has(key)) {
     const meta = bundle.episodes[`${run.split}/${run.episode_id}`] || {status: "missing"};
     S.episodes.set(key, meta.status !== "ok" ? Promise.resolve({meta}) :
-      getJSON(`/data/bundles/${enc(bundle.id)}/episodes/${enc(run.split)}/${enc(run.episode_id)}.json`)
+      getJSON(`data/bundles/${enc(bundle.id)}/episodes/${enc(run.split)}/${enc(run.episode_id)}.json`)
         .then((data) => ({meta, index: indexEpisode(data)}))
         .catch(() => ({meta: {status: "missing", message: "The record file for this episode could not be loaded."}})));
   }
@@ -40,7 +40,7 @@ function loadEpisode(bundle, run) {
 function loadActivity(bundle, run) {
   const key = `${bundle.id}/${run.key}`;
   if (!S.activity.has(key)) {
-    S.activity.set(key, getJSON(`/data/bundles/${enc(bundle.id)}/activity/${enc(run.split)}/${enc(run.episode_id)}/${enc(run.policy)}__${enc(run.mode)}.json`).catch(() => null));
+    S.activity.set(key, getJSON(`data/bundles/${enc(bundle.id)}/activity/${enc(run.split)}/${enc(run.episode_id)}/${enc(run.policy)}__${enc(run.mode)}.json`).catch(() => null));
   }
   return S.activity.get(key);
 }
@@ -780,6 +780,7 @@ function observationSummary(row) {
 
 /* ------------------------------------------------------------------ boot */
 
+if (location.pathname.startsWith("/dashboard/")) document.getElementById("play-link").hidden = false;
 window.addEventListener("hashchange", () => render());
 document.addEventListener("click", (e) => {
   const back = e.target.closest("[data-back]");
