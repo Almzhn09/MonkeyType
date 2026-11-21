@@ -1,7 +1,7 @@
 # Hosting a public link
 
-The playground (play the auditor) and the reviewer dashboard can run behind one URL, so judges
-and friends can open them in a browser without installing anything. The hosted site serves:
+The playground (play the auditor) and the reviewer dashboard run behind one URL, so judges and
+friends can open them in a browser without installing anything:
 
 | Path | What |
 |---|---|
@@ -18,55 +18,49 @@ python3 -m webapp serve
 ```
 
 Open http://localhost:7860/ (playground) and http://localhost:7860/dashboard/ (dashboard).
-It takes a few seconds to start because it runs the demo and the dev split once. Stop it with Ctrl+C.
+Stop it with Ctrl+C.
 
-## Put it on Hugging Face Spaces (free)
+## Put it on Render (free)
 
-1. Create a free account at https://huggingface.co/join.
-2. Create an access token: avatar menu → **Settings** → **Access Tokens** → **Create new token**,
-   type **Write**. Copy it; you will paste it as the git password.
-3. Create the Space: avatar menu → **New Space**. Name it (for example `monkeytype-audit`),
-   choose **Docker** as the SDK and **Blank** as the template, keep **Public** and the free
-   **CPU basic** hardware, then **Create Space**.
-4. In Terminal, clone the empty Space (replace `USERNAME` and `SPACE`):
+The repository contains `render.yaml` (a Render Blueprint) and `deploy/web.Dockerfile`, so there
+is nothing to fill in by hand. The image build precomputes the dashboard data and every baseline
+score, so the small free instance starts quickly.
 
-   ```sh
-   git clone https://huggingface.co/spaces/USERNAME/SPACE ~/monkeytype-space
-   ```
+1. Make sure the code is on GitHub in the branch you want to deploy (normally `main`, after the
+   pull request is merged).
+2. Go to https://render.com and **Sign up with GitHub**.
+3. In the Render dashboard choose **New** → **Blueprint**.
+4. Connect GitHub and allow Render to see the `MonkeyType` repository. If the repository belongs
+   to a teammate's account, they may need to approve Render's access for it, or be the one who
+   connects it.
+5. Pick the repository and the branch. Render reads `render.yaml` and shows one free web service
+   called `monkeytype-audit`. Click **Apply** (or **Deploy Blueprint**).
+6. The first build takes several minutes; the **Logs** tab shows progress, including
+   `baselines: 40 episodes scored`. When it says **Live**, the address is shown at the top of the
+   service page, for example `https://monkeytype-audit.onrender.com/`. Share it, and the same
+   address with `/dashboard/` for the dashboard.
 
-   When git asks for a password, paste the token from step 2.
-5. Export the app into it from the project folder:
-
-   ```sh
-   cd ~/MonkeyType
-   python3 -m webapp export-space ~/monkeytype-space
-   ```
-
-6. Upload:
-
-   ```sh
-   cd ~/monkeytype-space
-   git add -A
-   git commit -m "Deploy MonkeyType"
-   git push
-   ```
-
-7. Open the Space page. The **Logs** tab shows the build; it takes a few minutes. When the
-   status says **Running**, the public address is `https://USERNAME-SPACE.hf.space/`.
-   Share that link, and `https://USERNAME-SPACE.hf.space/dashboard/` for the dashboard.
-
-To update the site after code changes, repeat steps 5 and 6.
+Later pushes to that branch redeploy automatically.
 
 ## Good to know
 
-- **No login.** Anyone with the link can play. Each finished game runs the four baseline policies
-  once per company (results are cached), which is light, but the site is public, so pause it when
-  you no longer need it: Space → **Settings** → **Pause** (or **Delete**).
-- **Sleeping.** Free Spaces sleep after a period without visitors; the next visitor waits about a
-  minute while it wakes and prepares the dashboard data again.
+- **No login.** Anyone with the link can play. Grading is light and baseline scores are
+  precomputed, but the site is public; suspend or delete the service when you no longer need it
+  (service → **Settings** → **Suspend** / **Delete**).
+- **Sleeping.** Free Render services sleep after about 15 minutes without visitors; the next
+  visitor waits roughly a minute while it wakes.
+- **Payment details.** Render's free plan has not required a card, but plans change. If Render asks
+  for payment to deploy, stop there.
 - **Baselines unavailable.** If the results page says baseline scores are unavailable, the host
-  blocked the policy sandbox. Playing and grading still work; only the comparison table is missing.
-- **Docker elsewhere.** The exported folder is a normal Docker build context:
-  `docker build -t monkeytype-space ~/monkeytype-space && docker run -p 7860:7860 monkeytype-space`.
-  This image build was not tested in the environment where it was written (no Docker engine there);
-  the Space build log is the first real check.
+  blocked the policy sandbox. Playing and grading still work; only the comparison is missing.
+- **Not verified end to end.** The image build and the Render deploy were not run where this was
+  written (no Docker engine there). The same commands were run outside Docker, and the Render
+  build log is the first real check.
+
+## Other hosts
+
+`deploy/web.Dockerfile` is an ordinary image (build from the repository root:
+`docker build -f deploy/web.Dockerfile -t monkeytype-web .`, run with
+`docker run -p 10000:10000 -e PORT=10000 monkeytype-web`), so any host that runs Docker images
+works. Hugging Face Docker Spaces now need a paid plan; with one,
+`python3 -m webapp export-space DIR` writes a ready-to-upload Space folder.

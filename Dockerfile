@@ -7,12 +7,13 @@ COPY fingen/ fingen/
 COPY playground/ playground/
 COPY dashboard/ dashboard/
 COPY webapp/ webapp/
+COPY deploy/ deploy/
 COPY configs/ configs/
 COPY episodes/ episodes/
 COPY tests/ tests/
 COPY scripts/ scripts/
 COPY docs/ docs/
-COPY .dockerignore .gitattributes .gitignore Dockerfile LICENSE README.md requirements.txt ./
+COPY .dockerignore .gitattributes .gitignore Dockerfile LICENSE README.md render.yaml requirements.txt ./
 RUN chmod -R a+rX /app
 USER 65532:65532
 CMD ["python", "scripts/check.py"]

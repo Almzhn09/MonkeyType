@@ -7,6 +7,7 @@ Only the playground API and the sanitized dashboard bundle directory are reachab
 """
 
 from http import HTTPStatus
+import json
 from pathlib import Path
 import shutil
 import subprocess
@@ -46,6 +47,23 @@ def prepare_dashboard(out, episodes=DEFAULT_EPISODES, log=print):
     finally:
         shutil.rmtree(results, ignore_errors=True)
     write_index(out)
+
+
+def prepare_baselines(path, episodes=DEFAULT_EPISODES, log=print):
+    """Score the four baseline policies on every playable episode once, ahead of time."""
+    app = Playground(episodes)
+    scores = {item["id"]: app.baselines(item) for item in app.episodes}
+    Path(path).write_text(json.dumps(scores, separators=(",", ":")), encoding="utf-8", newline="\n")
+    missing = sum(1 for value in scores.values() for score in value.values() if score is None)
+    log(f"baselines: {len(scores)} episodes scored" + (f", {missing} policy runs unavailable" if missing else ""))
+
+
+def load_baselines(path):
+    try:
+        data = json.loads(Path(path).read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return None
+    return data if isinstance(data, dict) else None
 
 
 def make_handler(app, dashboard_dir):

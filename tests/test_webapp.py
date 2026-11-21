@@ -53,6 +53,24 @@ class TestWebapp(unittest.TestCase):
                 urlopen(self.base + path, timeout=10)
             self.assertEqual(denied.exception.code, 404)
 
+    def test_precomputed_baselines_are_used(self):
+        fake = {"oracle": {"tp": 9, "fp": 0, "fn": 0, "f1": 1.0, "reward": 0.5, "steps": 1},
+                "reconcile": None, "random": None, "mark_all": None}
+        app = Playground(ROOT / "episodes", baselines={"EP-0CMTEHMK3Z": fake, "EP-NOT-REAL": fake})
+        self.assertNotIn("EP-NOT-REAL", app.baseline_cache)
+        token = app.start("EP-0CMTEHMK3Z")["session"]
+        app.step(token, {"action": "submit", "findings": {"episode_id": "EP-0CMTEHMK3Z", "findings": []}})
+        self.assertEqual(app.result(token)["baselines"], fake)
+
+    def test_prepare_baselines_and_load(self):
+        from webapp.server import load_baselines, prepare_baselines
+        path = self.temp / "baselines.json"
+        prepare_baselines(path, ROOT / "episodes", log=lambda *_: None)
+        data = load_baselines(path)
+        self.assertEqual(len(data), len(Playground(ROOT / "episodes").episodes))
+        self.assertEqual(data["EP-0CMTEHMK3Z"]["oracle"]["f1"], 1.0)
+        self.assertIsNone(load_baselines(self.temp / "absent.json"))
+
     def test_export_space(self):
         target = self.temp / "space"
         export_space(target)

@@ -1,0 +1,11 @@
+# Render Blueprint: one free web service running the playground and the reviewer dashboard.
+# Render sets $PORT; the server reads it. Steps: docs/HOSTING.md.
+services:
+  - type: web
+    name: monkeytype-audit
+    runtime: docker
+    plan: free
+    dockerfilePath: ./deploy/web.Dockerfile
+    dockerContext: .
+    healthCheckPath: /api/episodes
+    autoDeploy: true

@@ -54,7 +54,7 @@ python3 -m playground
 
 ## Публичная ссылка
 
-Игровой режим и панель проверяющего можно открыть по одной ссылке, без установки. Локальная проверка: `python3 -m webapp serve`, затем http://localhost:7860/ и http://localhost:7860/dashboard/. Команда `python3 -m webapp export-space DIR` готовит папку для бесплатного Docker Space на Hugging Face. [Пошаговая инструкция (англ.)](docs/HOSTING.md)
+Игровой режим и панель проверяющего можно открыть по одной ссылке, без установки. Локальная проверка: `python3 -m webapp serve`, затем http://localhost:7860/ и http://localhost:7860/dashboard/. Для бесплатного размещения на Render в репозитории есть `render.yaml` и `deploy/web.Dockerfile`: сервис подключается через New → Blueprint. [Пошаговая инструкция (англ.)](docs/HOSTING.md)
 
 ## Подключение своего ИИ-агента
 

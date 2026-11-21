@@ -5,6 +5,7 @@
 !playground/
 !dashboard/
 !webapp/
+!deploy/
 !configs/
 !tests/
 !scripts/
@@ -12,6 +13,7 @@
 !episodes/
 !LICENSE
 !README.md
+!render.yaml
 !requirements.txt
 !.dockerignore
 !.gitignore

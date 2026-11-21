@@ -126,7 +126,7 @@ def review(env, payload):
 
 
 class Playground:
-    def __init__(self, episodes_root=DEFAULT_EPISODES):
+    def __init__(self, episodes_root=DEFAULT_EPISODES, baselines=None):
         self.episodes = list_episodes(episodes_root)
         if not self.episodes:
             raise ValueError(f"No episodes found under {episodes_root}")
@@ -135,6 +135,8 @@ class Playground:
         self.lock = threading.Lock()
         # Baselines are deterministic per episode, so compute them once and one at a time.
         self.baseline_cache = {}
+        if baselines:  # precomputed {episode_id: {policy: scores | None}}
+            self.baseline_cache.update({key: value for key, value in baselines.items() if key in self.by_id})
         self.baseline_lock = threading.Lock()
 
     def start(self, episode_id):
