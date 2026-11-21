@@ -142,6 +142,10 @@ def verify():
 
 
 def main():
+    # Windows consoles and pipes default to a legacy code page; never crash on text they cannot show.
+    for stream in (sys.stdout, sys.stderr):
+        if hasattr(stream, "reconfigure"):
+            stream.reconfigure(errors="backslashreplace")
     parser = argparse.ArgumentParser(description=__doc__)
     commands = parser.add_subparsers(dest="command", required=True)
     fixtures = commands.add_parser("fixtures", help="Generate the 10 integration/dev episodes")
