@@ -3,494 +3,498 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Audit Playground</title>
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#f5f5f5" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#2d3142" media="(prefers-color-scheme: dark)">
+<title>MonkeyType · Audit Playground</title>
 <style>
+/* Same skin as the reviewer dashboard (diagram-design tokens, system fonts, offline). */
 :root {
-  --bg: #f6f7f9; --panel: #ffffff; --panel-2: #f1f3f6; --text: #1b1f24; --muted: #5d6673;
-  --border: #dde1e6; --accent: #2457d6; --accent-text: #ffffff; --accent-soft: #e6edfc;
-  --good: #1d7a46; --good-soft: #e3f4ea; --bad: #b42318; --bad-soft: #fde8e6;
-  --warn: #9a5b00; --warn-soft: #fff3dc; --shadow: 0 1px 2px rgba(16,24,40,.06);
-  --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --paper: #f5f5f5; --paper-2: #ececec; --node: #ffffff; --ink: #2d3142; --muted: #4f5d75; --soft: #5a6580;
+  --rule: rgba(45, 49, 66, 0.12); --rule-solid: #bfc0c0; --accent: #bf4520; --accent-tint: rgba(191, 69, 32, 0.08);
+  --link: #2e5aa8; --grid: rgba(45, 49, 66, 0.08); --axis: rgba(45, 49, 66, 0.25); --bar-fill: rgba(79, 93, 117, 0.15);
+  --ink-hover: #12151f;
+  --serif: "Instrument Serif", "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+  --sans: "Geist", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --mono: "Geist Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --ease: cubic-bezier(0.2, 0, 0, 1);
+  --s1: 4px; --s2: 8px; --s3: 12px; --s4: 16px; --s5: 24px; --s6: 32px;
+  color-scheme: light dark;
 }
 @media (prefers-color-scheme: dark) {
   :root {
-    --bg: #111418; --panel: #191d23; --panel-2: #20252c; --text: #e7eaee; --muted: #9aa4b1;
-    --border: #2d343d; --accent: #6e95ff; --accent-text: #0d1117; --accent-soft: #1f2a44;
-    --good: #5cc98a; --good-soft: #15291e; --bad: #ff8a80; --bad-soft: #351b1a;
-    --warn: #f0b75a; --warn-soft: #33270f; --shadow: none;
+    --paper: #2d3142; --paper-2: #393e53; --node: #333849; --ink: #f5f5f5; --muted: #bfc0c0; --soft: #a3acbf;
+    --rule: rgba(245, 245, 245, 0.12); --rule-solid: rgba(191, 192, 192, 0.25); --accent: #f08a59;
+    --accent-tint: rgba(240, 138, 89, 0.10); --link: #8db3ee; --grid: rgba(245, 245, 245, 0.08);
+    --axis: rgba(245, 245, 245, 0.20); --bar-fill: rgba(191, 192, 192, 0.15); --ink-hover: #ffffff;
   }
 }
 * { box-sizing: border-box; }
 html, body { margin: 0; }
-body { background: var(--bg); color: var(--text); font: 14px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
-button, input, select, textarea { font: inherit; color: inherit; }
-h1, h2, h3 { margin: 0; line-height: 1.25; }
-h1 { font-size: 22px; } h2 { font-size: 17px; } h3 { font-size: 14px; }
-p { margin: 0 0 10px; }
-.muted { color: var(--muted); }
+body { background: var(--paper); color: var(--ink); font: 14px/1.5 var(--sans); -webkit-font-smoothing: antialiased; }
+h1, h2, h3 { margin: 0; line-height: 1.25; text-wrap: balance; }
+h1 { font-family: var(--serif); font-weight: 400; font-size: 2rem; }
+h2 { font-size: 15px; font-weight: 600; }
+p { margin: 0 0 var(--s2); text-wrap: pretty; }
+a { color: var(--link); text-underline-offset: 3px; }
+:focus-visible { outline: 2px solid var(--link); outline-offset: 2px; }
+[tabindex="-1"]:focus { outline: none; }
+button, input, select, textarea { font: inherit; color: inherit; touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
 .mono { font-family: var(--mono); font-size: 12.5px; }
+.num { text-align: right; font-variant-numeric: tabular-nums; }
+.muted { color: var(--soft); }
+.eyebrow { font-family: var(--mono); font-size: 10.5px; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase; color: var(--soft); }
 .hidden { display: none !important; }
-.wrap { max-width: 1440px; margin: 0 auto; padding: 20px 16px 48px; }
-.panel { background: var(--panel); border: 1px solid var(--border); border-radius: 10px; box-shadow: var(--shadow); }
-.pad { padding: 16px; }
-.row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
-.spread { justify-content: space-between; }
-.stack > * + * { margin-top: 12px; }
-.btn { border: 1px solid var(--border); background: var(--panel); border-radius: 7px; padding: 6px 12px; cursor: pointer; white-space: nowrap; }
-.btn:hover:not(:disabled) { border-color: var(--accent); }
-.btn:disabled { opacity: .5; cursor: not-allowed; }
-.btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-text); font-weight: 600; }
-.btn.small { padding: 3px 8px; font-size: 12.5px; }
-.btn.link { border: none; background: none; padding: 0; color: var(--accent); }
-.cost { font-size: 11.5px; color: var(--muted); margin-left: 4px; }
-input[type=text], input[type=search], select, textarea { width: 100%; border: 1px solid var(--border); border-radius: 7px; padding: 6px 9px; background: var(--panel); }
-textarea { resize: vertical; min-height: 64px; }
-label { display: block; font-weight: 600; font-size: 12.5px; margin-bottom: 4px; }
-.hint { font-size: 12px; color: var(--muted); margin-top: 3px; }
-.badge { display: inline-block; border-radius: 999px; padding: 1px 8px; font-size: 12px; font-weight: 600; background: var(--panel-2); color: var(--muted); }
-.badge.good { background: var(--good-soft); color: var(--good); }
-.badge.bad { background: var(--bad-soft); color: var(--bad); }
-.badge.warn { background: var(--warn-soft); color: var(--warn); }
-.badge.accent { background: var(--accent-soft); color: var(--accent); }
-.chip { display: inline-flex; align-items: center; gap: 4px; background: var(--panel-2); border: 1px solid var(--border); border-radius: 6px; padding: 1px 6px; font-family: var(--mono); font-size: 12px; margin: 2px 4px 2px 0; }
-.chip button { border: none; background: none; cursor: pointer; color: var(--muted); padding: 0 2px; }
-.error { color: var(--bad); font-size: 12.5px; }
-.notice { border-radius: 8px; padding: 10px 12px; font-size: 13px; }
-.notice.warn { background: var(--warn-soft); color: var(--warn); }
-.notice.info { background: var(--accent-soft); color: var(--text); }
+.visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.wrap { max-width: 1440px; margin: 0 auto; padding: 0 var(--s5); }
 
-/* Picker */
-.hero { display: grid; grid-template-columns: 1.4fr 1fr; gap: 16px; margin-bottom: 16px; }
-.steps-list { margin: 0; padding-left: 20px; } .steps-list li { margin-bottom: 4px; }
-.cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; }
-.card { text-align: left; cursor: pointer; padding: 14px; }
-.card:hover { border-color: var(--accent); }
-.card .name { font-weight: 600; margin-bottom: 4px; }
+/* ---- Buttons: solid square primary, underlined text secondary, joined segmented tabs ---- */
+.btn { display: inline-flex; align-items: center; gap: 10px; height: 36px; padding: 0 16px; border: 0; border-radius: 2px;
+  background: var(--ink); color: var(--paper); font: 500 13px/1 var(--sans); cursor: pointer; text-decoration: none; white-space: nowrap;
+  transition: background-color 160ms var(--ease), transform 120ms var(--ease); }
+.btn:hover { background: var(--ink-hover); transition-duration: 90ms; }
+.btn:active { transform: scale(0.98); transition-duration: 60ms; }
+.btn:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
+.btn .arrow { font-family: var(--mono); }
+.btn .cost { font-family: var(--mono); font-size: 11px; opacity: 0.75; }
+.btn.small { height: 30px; padding: 0 12px; font-size: 12.5px; }
+.quiet { display: inline-flex; align-items: baseline; gap: 6px; border: 0; background: none; padding: 4px 0; cursor: pointer; color: var(--ink);
+  font: 500 13px/1.3 var(--sans); text-decoration: underline; text-decoration-color: var(--rule-solid); text-decoration-thickness: 1px; text-underline-offset: 4px;
+  transition: text-decoration-color 160ms var(--ease), color 160ms var(--ease); white-space: nowrap; }
+.quiet:hover { text-decoration-color: currentColor; transition-duration: 90ms; }
+.quiet:disabled { color: var(--soft); text-decoration-color: transparent; cursor: not-allowed; }
+.quiet .cost { font-family: var(--mono); font-size: 11px; color: var(--soft); text-decoration: none; display: inline-block; }
+.quiet.danger { color: var(--accent); }
+.segmented { display: inline-flex; border: 1px solid var(--rule-solid); border-radius: 2px; overflow: hidden; max-width: 100%; overflow-x: auto; }
+.segmented button { border: 0; border-right: 1px solid var(--rule-solid); background: transparent; color: var(--soft); padding: 7px 14px; cursor: pointer; font-size: 13px; font-weight: 500; white-space: nowrap;
+  transition: background-color 160ms var(--ease), color 160ms var(--ease); }
+.segmented button:last-child { border-right: 0; }
+.segmented button:hover { color: var(--ink); transition-duration: 90ms; }
+.segmented button[aria-pressed="true"], .segmented button[aria-selected="true"] { background: var(--ink); color: var(--paper); }
+.segmented .n { font-family: var(--mono); font-size: 11px; margin-left: 6px; opacity: 0.8; }
+
+/* Fields */
+label.field { display: block; }
+label.field > span, .field-label { display: block; font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--soft); margin-bottom: 4px; }
+input[type=text], input[type=search], select, textarea { width: 100%; border: 0; border-bottom: 1px solid var(--rule-solid); border-radius: 0; background-color: transparent; color: var(--ink); padding: 6px 0; min-height: 34px;
+  transition: border-color 160ms var(--ease); }
+select { cursor: pointer; }
+select option { background: var(--node); color: var(--ink); }
+input:hover, select:hover, textarea:hover { border-bottom-color: var(--muted); }
+input:focus-visible, select:focus-visible, textarea:focus-visible { outline: none; border-bottom: 1px solid var(--ink); box-shadow: 0 1px 0 var(--ink); }
+textarea { resize: vertical; min-height: 64px; }
+.hint { font-size: 12px; color: var(--soft); margin-top: 4px; }
+.error { color: var(--accent); font-size: 12.5px; }
+.chip { display: inline-flex; align-items: center; gap: 4px; border: 1px solid var(--rule-solid); border-radius: 2px; padding: 1px 2px 1px 7px; font-family: var(--mono); font-size: 11.5px; margin: 0 4px 4px 0; }
+.chip button { border: 0; background: none; color: var(--soft); cursor: pointer; padding: 0 5px; font-size: 13px; line-height: 1; }
+.chip button:hover { color: var(--accent); }
+
+/* Header */
+header.site { border-bottom: 1px solid var(--rule); }
+header.site .wrap { display: flex; align-items: baseline; gap: var(--s3); min-height: 52px; padding-top: var(--s3); padding-bottom: var(--s3); }
+.brand { font-family: var(--serif); font-size: 1.45rem; line-height: 1; }
+
+/* Picker: brief on the left, a ledger of companies on the right */
+.picker { display: grid; grid-template-columns: minmax(260px, 340px) minmax(0, 1fr); gap: var(--s6); padding-top: var(--s6); padding-bottom: 64px; align-items: start; }
+.brief .lede { font-family: var(--serif); font-style: italic; font-size: 1.25rem; line-height: 1.4; margin: var(--s3) 0 var(--s5); }
+.brief ol { margin: 0 0 var(--s5); padding: 0; list-style: none; counter-reset: s; }
+.brief ol li { counter-increment: s; display: grid; grid-template-columns: 28px 1fr; padding: var(--s2) 0; border-top: 1px solid var(--rule); font-size: 13.5px; }
+.brief ol li::before { content: counter(s, decimal-leading-zero); font-family: var(--mono); font-size: 11px; color: var(--soft); padding-top: 2px; }
+.brief dl { margin: 0; }
+.brief dt { font-weight: 600; font-size: 13px; margin-top: var(--s3); }
+.brief dd { margin: 2px 0 0; font-size: 13px; color: var(--soft); }
+.ledger-head { display: flex; justify-content: space-between; align-items: flex-end; gap: var(--s3); flex-wrap: wrap; margin-bottom: var(--s3); }
+table { border-collapse: collapse; width: 100%; font-size: 13px; }
+th, td { padding: 10px var(--s3); border-bottom: 1px solid var(--rule); text-align: left; white-space: nowrap; vertical-align: middle; }
+th:first-child, td:first-child { padding-left: 0; }
+th:last-child, td:last-child { padding-right: 0; }
+thead th { font-family: var(--mono); font-weight: 500; font-size: 10.5px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--soft); border-bottom-color: var(--rule-solid); }
+.companies tbody tr { transition: background-color 160ms var(--ease); }
+.companies tbody tr:hover { background: color-mix(in srgb, var(--paper-2) 60%, transparent); }
+.companies .name { font-weight: 600; }
+.companies td:last-child { text-align: right; }
 
 /* Workspace */
-.topbar { position: sticky; top: 0; z-index: 5; background: var(--panel); border-bottom: 1px solid var(--border); }
-.topbar .wrap { padding-top: 10px; padding-bottom: 10px; }
-.meter { width: 160px; height: 8px; border-radius: 4px; background: var(--panel-2); overflow: hidden; }
-.meter > div { height: 100%; background: var(--accent); transition: width .2s; }
-.meter.warn > div { background: var(--warn); }
-.layout { display: grid; grid-template-columns: minmax(0, 1fr) 380px; gap: 16px; align-items: start; }
-.side { position: sticky; top: 72px; max-height: calc(100vh - 88px); overflow: auto; }
-.tabs { display: flex; gap: 2px; border-bottom: 1px solid var(--border); padding: 0 12px; overflow-x: auto; }
-.tab { border: none; background: none; padding: 10px 12px; cursor: pointer; border-bottom: 2px solid transparent; color: var(--muted); font-weight: 600; white-space: nowrap; }
-.tab.active { color: var(--text); border-bottom-color: var(--accent); }
-.tablewrap { overflow: auto; max-height: 58vh; }
-table { border-collapse: collapse; width: 100%; font-size: 12.5px; }
-th, td { text-align: left; padding: 6px 10px; border-bottom: 1px solid var(--border); white-space: nowrap; }
-th { position: sticky; top: 0; background: var(--panel-2); font-weight: 600; z-index: 1; }
-td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
-tbody tr { cursor: pointer; }
-tbody tr:hover { background: var(--panel-2); }
-tbody tr.selected { background: var(--accent-soft); }
-tbody tr.cited td:first-child { box-shadow: inset 3px 0 0 var(--accent); }
-.empty { padding: 28px 16px; text-align: center; color: var(--muted); }
-dl.kv { display: grid; grid-template-columns: max-content 1fr; gap: 3px 12px; margin: 0; font-size: 12.5px; }
-dl.kv dt { color: var(--muted); } dl.kv dd { margin: 0; overflow-wrap: anywhere; }
-.subtable td, .subtable th { padding: 3px 6px; font-size: 12px; }
-.finding { border: 1px solid var(--border); border-radius: 8px; padding: 10px; font-size: 12.5px; }
-.rules { font-size: 13px; margin: 0; padding-left: 18px; } .rules li { margin-bottom: 3px; }
+.casebar { position: sticky; top: 0; z-index: 5; background: color-mix(in srgb, var(--paper) 94%, transparent); backdrop-filter: blur(6px); border-bottom: 1px solid var(--rule); }
+.casebar .wrap { display: grid; grid-template-columns: minmax(0, 1fr) minmax(220px, 320px) auto; gap: var(--s5); align-items: center; padding-top: var(--s3); padding-bottom: var(--s3); }
+.casebar h1 { font-size: 1.5rem; }
+.budget .line { display: flex; justify-content: space-between; font-size: 12px; color: var(--soft); margin-bottom: 6px; }
+.budget .line b { color: var(--ink); font-variant-numeric: tabular-nums; }
+.track { height: 6px; background: repeating-linear-gradient(to right, transparent 0 calc(10% - 1px), var(--rule-solid) calc(10% - 1px) 10%), var(--paper-2); position: relative; }
+.track > span { position: absolute; inset: 0 auto 0 0; background: var(--ink); transition: width 200ms var(--ease); }
+.track.low > span { background: var(--accent); }
+.case-actions { display: flex; gap: var(--s4); align-items: center; }
+.desk { display: grid; grid-template-columns: minmax(0, 1fr) 420px; gap: var(--s6); padding-top: var(--s5); padding-bottom: 64px; align-items: start; }
+.notice { border-left: 2px solid var(--accent); padding: 6px var(--s3); font-size: 13px; margin-bottom: var(--s3); }
+.records-tools { display: flex; justify-content: space-between; align-items: center; gap: var(--s3) var(--s5); flex-wrap: wrap; margin: var(--s4) 0 var(--s2); }
+.records-tools .left { display: flex; gap: var(--s4); align-items: center; flex: 1; min-width: 220px; }
+.records-tools input { max-width: 300px; }
+.records-tools .right { display: flex; gap: var(--s5); align-items: baseline; }
+.tablewrap { overflow: auto; max-height: calc(100vh - 260px); min-height: 280px; border-top: 1px solid var(--rule-solid); overscroll-behavior: contain; }
+.tablewrap thead th { position: sticky; top: 0; background: var(--paper); z-index: 1; }
+.tablewrap th:first-child, .tablewrap td:first-child { padding-left: var(--s2); }
+.tablewrap tbody tr { cursor: pointer; transition: background-color 160ms var(--ease); content-visibility: auto; contain-intrinsic-size: auto 41px; }
+.tablewrap tbody tr:hover { background: color-mix(in srgb, var(--paper-2) 60%, transparent); }
+.tablewrap tbody tr.selected { background: var(--accent-tint); }
+.tablewrap tbody tr.selected td:first-child { box-shadow: inset 2px 0 0 var(--accent); }
+.tablewrap tbody tr.cited td:first-child::after { content: "●"; color: var(--ink); font-size: 8px; margin-left: 6px; vertical-align: 2px; }
+.empty { padding: 48px var(--s4); text-align: center; color: var(--soft); }
+.empty h2 { color: var(--ink); margin-bottom: var(--s2); font-family: var(--serif); font-weight: 400; font-size: 1.35rem; }
+.empty p { margin-bottom: var(--s4); }
+.rules { margin: var(--s4) 0 0; padding: 0; list-style: none; }
+.rules li { padding: var(--s2) 0; border-bottom: 1px solid var(--rule); font-size: 13.5px; }
+
+/* Case file */
+.casefile { position: sticky; top: 92px; border-left: 1px solid var(--rule); padding-left: var(--s5); max-height: calc(100vh - 108px); overflow: auto; overscroll-behavior: contain; }
+.casefile .segmented { width: 100%; }
+.casefile .segmented button { flex: 1; padding: 8px 6px; }
+.pane { padding-top: var(--s4); }
+.pane > * + * { margin-top: var(--s4); }
+.pane > * + .hint { margin-top: 6px; }
+dl.kv { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 5px var(--s4); margin: 0; font-size: 13px; }
+dl.kv dt { color: var(--soft); }
+dl.kv dd { margin: 0; overflow-wrap: anywhere; }
+.mini th, .mini td { padding: 5px var(--s2); font-size: 12.5px; }
+.mini th:first-child, .mini td:first-child { padding-left: 0; }
+.mini th:last-child, .mini td:last-child { padding-right: 0; }
+.pane h3 { font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--soft); font-weight: 500; margin-bottom: 6px; }
+.record-title { font-family: var(--serif); font-size: 1.35rem; font-weight: 400; }
+.actions { display: flex; gap: var(--s5); align-items: center; flex-wrap: wrap; padding-top: var(--s2); border-top: 1px solid var(--rule); }
+.two { display: grid; grid-template-columns: 2fr 1fr; gap: var(--s4); }
+.finding { padding: var(--s3) 0; border-bottom: 1px solid var(--rule); font-size: 13px; }
+.finding:first-child { border-top: 1px solid var(--rule); }
+.finding .top { display: flex; justify-content: space-between; gap: var(--s3); align-items: baseline; }
+.finding .type { font-weight: 600; }
+.finding .row { margin-top: 3px; }
+.finding .ops { display: flex; gap: var(--s4); margin-top: 6px; }
 
 /* Results */
-.scoregrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; }
-.stat { padding: 14px; } .stat .v { font-size: 26px; font-weight: 700; font-variant-numeric: tabular-nums; } .stat .k { color: var(--muted); font-size: 12.5px; }
-.results-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-.you td { font-weight: 700; }
+.results { padding-top: var(--s6); padding-bottom: 64px; }
+.results .lede { font-family: var(--serif); font-style: italic; font-size: 1.5rem; line-height: 1.35; max-width: 34em; margin: var(--s3) 0 var(--s5); }
+.results .lede b { font-family: var(--sans); font-style: normal; font-weight: 600; font-size: 0.75em; font-variant-numeric: tabular-nums; }
+.formula { font-size: 13px; color: var(--soft); margin-bottom: var(--s6); }
+.chart { margin: 0 0 var(--s3); }
+.chart-row { display: grid; grid-template-columns: 160px minmax(0, 1fr); gap: var(--s3); align-items: center; height: 38px; }
+.chart-label { text-align: right; font-weight: 600; font-size: 13px; }
+.chart-label.you { color: var(--accent); }
+.plot { position: relative; height: 100%; }
+.plot .grid { position: absolute; top: 0; bottom: 0; border-left: 1px solid var(--grid); }
+.plot .grid.zero { border-left-color: var(--axis); }
+.plot .hbar { position: absolute; top: 10px; height: 18px; background: var(--bar-fill); border: 1px solid var(--muted); border-radius: 1px; transform-origin: var(--origin, left) center; }
+.plot .hbar.focal { background: var(--accent-tint); border-color: var(--accent); }
+.plot .hbar.control { background: transparent; border-style: dashed; }
+.plot .val { position: absolute; top: 11px; font-family: var(--mono); font-size: 11.5px; color: var(--soft); white-space: nowrap; }
+.plot .val.focal { color: var(--accent); }
+.chart-axis { display: grid; grid-template-columns: 160px minmax(0, 1fr); gap: var(--s3); height: 22px; }
+.chart-axis .plot { border-top: 1px solid var(--axis); }
+.chart-axis .tick { position: absolute; top: 4px; transform: translateX(-50%); font-family: var(--mono); font-size: 10.5px; color: var(--soft); }
+.chart-axis .tick.first { transform: none; } .chart-axis .tick.last { transform: translateX(-100%); }
+.verdicts { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s6); margin-top: var(--s6); }
+.mark { font-size: 12.5px; font-weight: 600; white-space: nowrap; }
+.mark::before { content: ""; display: inline-block; width: 8px; height: 8px; margin-right: 6px; vertical-align: 0; }
+.mark.ok::before { background: var(--ink); border-radius: 50%; }
+.mark.bad { color: var(--accent); } .mark.bad::before { background: var(--accent); }
+.mark.dup::before, .mark.miss::before { border: 1.5px solid var(--muted); border-radius: 50%; width: 7px; height: 7px; }
+.mark.miss { color: var(--soft); }
+.why { color: var(--accent); margin-top: 4px; font-size: 12.5px; }
 
 @media (max-width: 1000px) {
-  .layout, .hero, .results-cols { grid-template-columns: minmax(0, 1fr); }
-  .topbar .wrap > .row { width: 100%; justify-content: space-between; }
-  .side { position: static; max-height: none; }
+  .picker, .desk, .verdicts { grid-template-columns: minmax(0, 1fr); }
+  .casebar { position: static; backdrop-filter: none; }
+  .casebar .wrap { grid-template-columns: minmax(0, 1fr); gap: var(--s3); }
+  .casefile { position: static; max-height: none; border-left: 0; padding-left: 0; border-top: 1px solid var(--rule); padding-top: var(--s4); }
+  .tablewrap { max-height: 60vh; }
+  .chart-row, .chart-axis { grid-template-columns: 96px minmax(0, 1fr); }
+  .wrap { padding: 0 var(--s4); }
+  .col-opt { display: none; }
 }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition: none !important; animation: none !important; } }
 </style>
 </head>
 <body>
+<header class="site"><div class="wrap"><span class="brand" translate="no">MonkeyType</span><span class="eyebrow">Audit Playground</span></div></header>
+<main id="main">
 
-<!-- Episode picker -->
-<section id="picker">
-  <div class="wrap stack">
-    <div class="hero">
-      <div class="panel pad">
-        <h1>Audit Playground</h1>
-        <p class="muted" style="margin-top:6px">You are the auditor. Each company below is a fictional business with a ledger, invoices, payments and exchange rates. Some contain planted accounting errors; some are clean. Find the errors, back each one with evidence, and submit. The same grader that scores AI agents scores you.</p>
-        <ol class="steps-list">
-          <li>Pick a company.</li>
-          <li>Browse its records. Every page you open costs one step, as it does for an AI agent (100 steps maximum).</li>
-          <li>For each error: choose its type, the affected invoice or payment, the amount, and the records that prove it.</li>
-          <li>Submit. You see your score, the answer key, and how the baseline policies did on the same company.</li>
-        </ol>
-      </div>
-      <div class="panel pad">
-        <h2>The four kinds of error</h2>
-        <dl class="kv" style="margin-top:10px;font-size:13px" id="type-help"></dl>
-      </div>
-    </div>
-    <div class="row spread">
-      <div class="row">
-        <h2>Choose a company</h2>
-        <span class="muted" id="picker-count"></span>
-      </div>
-      <div class="row">
-        <select id="split-filter" style="width:auto"></select>
-        <button class="btn" id="random-btn">Random company</button>
+<!-- Picker -->
+<section id="picker" class="wrap picker">
+  <aside class="brief">
+    <h1 tabindex="-1">Play the Auditor</h1>
+    <p class="lede">Each company is fictional. Some books hide planted errors; some are clean. Find the errors, prove them with records, and the same grader that scores AI agents scores you.</p>
+    <ol>
+      <li><span>Choose a company from the ledger.</span></li>
+      <li><span>Open pages of its records. Each page costs one step of 100, exactly as it does for an agent.</span></li>
+      <li><span>Draft a finding: type, affected document, amount and the records that prove it.</span></li>
+      <li><span>Submit, then compare yourself with the baseline policies and read the answer key.</span></li>
+    </ol>
+    <h2 class="eyebrow">The four kinds of error</h2>
+    <dl id="type-help"></dl>
+  </aside>
+  <div>
+    <div class="ledger-head">
+      <div><p class="eyebrow" id="picker-count"></p><h2>Choose a Company</h2></div>
+      <div style="display:flex;gap:var(--s5);align-items:center;flex-wrap:wrap">
+        <div class="segmented" id="split-filter" role="group" aria-label="Episode set"></div>
+        <button class="btn" id="random-btn">Random Company <span class="arrow" aria-hidden="true">→</span></button>
       </div>
     </div>
     <div id="picker-error" class="error"></div>
-    <div class="cards" id="cards"></div>
+    <div style="overflow-x:auto"><table class="companies"><thead><tr><th scope="col">Company</th><th scope="col">Set</th><th scope="col" class="col-opt">Currency</th><th scope="col" class="col-opt">Period</th><th scope="col" class="num col-opt">Ledger Rows</th><th scope="col" class="num col-opt">Documents</th><th scope="col"><span class="visually-hidden">Action</span></th></tr></thead>
+      <tbody id="cards"></tbody></table></div>
   </div>
 </section>
 
 <!-- Workspace -->
 <section id="workspace" class="hidden">
-  <div class="topbar">
-    <div class="wrap row spread">
-      <div>
-        <div class="row"><h2 id="ws-company"></h2><span class="badge" id="ws-split"></span></div>
-        <div class="muted" id="ws-period" style="font-size:12.5px"></div>
+  <div class="casebar"><div class="wrap">
+    <div><p class="eyebrow" id="ws-meta"></p><h1 id="ws-company" tabindex="-1"></h1></div>
+    <div class="budget" aria-live="polite"><div class="line"><span id="ws-steps"></span><span>0.002 per step</span></div><div class="track" id="ws-meter"><span></span></div></div>
+    <div class="case-actions"><button class="quiet" id="quit-btn">Change Company</button><button class="btn" id="submit-btn">Submit Findings <span class="arrow" aria-hidden="true">→</span></button></div>
+  </div></div>
+  <div class="wrap desk">
+    <div>
+      <div id="step-warning" class="notice hidden" role="status"></div>
+      <div class="segmented" id="tabs" role="tablist" aria-label="Records"></div>
+      <div class="records-tools">
+        <div class="left"><input type="search" id="filter" name="filter" placeholder="Filter loaded rows…" autocomplete="off" spellcheck="false" aria-label="Filter loaded rows (free)"><span class="muted" id="table-status" style="font-size:12.5px"></span></div>
+        <div class="right"><button class="quiet" id="more-btn">Load Next 50 <span class="cost">1 step</span></button><button class="quiet" id="all-btn"></button></div>
       </div>
-      <div class="row">
-        <div>
-          <div style="font-size:12px" class="muted"><span id="ws-steps"></span></div>
-          <div class="meter" id="ws-meter"><div></div></div>
-        </div>
-        <button class="btn" id="quit-btn">Change company</button>
-        <button class="btn primary" id="submit-btn">Submit findings</button>
-      </div>
+      <div class="tablewrap" id="tablewrap"></div>
     </div>
-  </div>
-  <div class="wrap">
-    <div id="step-warning" class="notice warn hidden" style="margin-bottom:12px"></div>
-    <div class="layout">
-      <div class="stack">
-        <div class="panel">
-          <div class="tabs" id="tabs"></div>
-          <div class="pad row spread" style="padding-bottom:8px">
-            <div class="row" style="flex:1;min-width:200px">
-              <input type="search" id="filter" placeholder="Filter loaded rows (free)" style="max-width:320px">
-              <span class="muted" id="table-status" style="font-size:12.5px"></span>
-            </div>
-            <div class="row">
-              <button class="btn" id="more-btn">Load next 50<span class="cost">1 step</span></button>
-              <button class="btn" id="all-btn"></button>
-            </div>
-          </div>
-          <div class="tablewrap" id="tablewrap"></div>
-        </div>
-        <details class="panel pad">
-          <summary style="cursor:pointer;font-weight:600">Accounting rules for this company</summary>
-          <ul class="rules" id="rules" style="margin-top:10px"></ul>
-        </details>
+    <aside class="casefile" aria-label="Case file">
+      <div class="segmented" id="panes" role="tablist" aria-label="Case file">
+        <button role="tab" data-pane="inspect" id="tab-inspect">Inspect</button>
+        <button role="tab" data-pane="draft" id="tab-draft">Draft<span class="n" id="draft-n"></span></button>
+        <button role="tab" data-pane="findings" id="tab-findings">Findings<span class="n" id="findings-count">0</span></button>
+        <button role="tab" data-pane="calc" id="tab-calc">Calculator</button>
       </div>
-
-      <aside class="side stack">
-        <div class="panel pad" id="detail">
-          <h3>Selected record</h3>
-          <p class="muted" style="margin:6px 0 0">Click a row to see its details and cite it.</p>
+      <div class="pane" id="pane-inspect" role="tabpanel" aria-labelledby="tab-inspect"></div>
+      <div class="pane" id="pane-draft" role="tabpanel" aria-labelledby="tab-draft">
+        <div class="field-label" id="form-title">New Finding</div>
+        <label class="field"><span>Error type</span><select id="f-type" name="type"></select></label>
+        <div class="hint" id="f-type-hint"></div>
+        <div><span class="field-label">Affected invoice or payment</span><div id="f-affected"></div>
+          <input type="text" id="f-affected-input" name="affected" class="mono" placeholder="Type a document ID and press Enter…" autocomplete="off" spellcheck="false" aria-label="Add affected document ID"></div>
+        <div class="two">
+          <label class="field"><span>Amount</span><input type="text" id="f-amount" name="amount" inputmode="decimal" placeholder="225.54…" autocomplete="off"></label>
+          <label class="field"><span>Currency</span><select id="f-currency" name="currency"></select></label>
         </div>
-
-        <div class="panel pad stack">
-          <div class="row spread"><h3 id="form-title">New finding</h3><button class="btn link small hidden" id="cancel-edit">Cancel edit</button></div>
-          <div>
-            <label for="f-type">Error type</label>
-            <select id="f-type"></select>
-            <div class="hint" id="f-type-hint"></div>
-          </div>
-          <div>
-            <label>Affected invoice or payment</label>
-            <div id="f-affected"></div>
-            <div class="hint">Select an invoice or payment and press “Mark affected”, or type a document ID: <input type="text" id="f-affected-input" class="mono" placeholder="e.g. FILE-TTTDVMC" style="margin-top:4px"></div>
-          </div>
-          <div class="row" style="align-items:flex-start;flex-wrap:nowrap">
-            <div style="flex:2">
-              <label for="f-amount">Amount</label>
-              <input type="text" id="f-amount" inputmode="decimal" placeholder="e.g. 225.54">
-              <div class="hint" id="f-amount-hint"></div>
-            </div>
-            <div style="flex:1">
-              <label for="f-currency">Currency</label>
-              <select id="f-currency"></select>
-            </div>
-          </div>
-          <div>
-            <label>Evidence <span class="muted" style="font-weight:400">(up to 10 record IDs)</span></label>
-            <div id="f-evidence"></div>
-            <div class="hint">Select records and press “Cite as evidence”, or type an ID: <input type="text" id="f-evidence-input" class="mono" placeholder="e.g. TX-HT49KFD5" style="margin-top:4px"></div>
-          </div>
-          <div>
-            <label for="f-explanation">Explanation <span class="muted" style="font-weight:400">(optional, not scored)</span></label>
-            <textarea id="f-explanation" maxlength="1000" placeholder="What is wrong and how you worked out the amount"></textarea>
-          </div>
-          <div class="error" id="f-error"></div>
-          <button class="btn primary" id="f-save">Add finding</button>
-        </div>
-
-        <div class="panel pad stack">
-          <div class="row spread"><h3>Your findings</h3><span class="badge" id="findings-count">0 / 30</span></div>
-          <div id="findings-list"></div>
-        </div>
-
-        <div class="panel pad stack">
-          <h3>Calculator <span class="cost">1 step per calculation</span></h3>
-          <div class="row" style="flex-wrap:nowrap">
-            <input type="text" id="calc-input" class="mono" placeholder="80550 * 473.0904">
-            <button class="btn" id="calc-btn">=</button>
-          </div>
-          <div class="mono" id="calc-output"></div>
-          <div class="hint">Supports + − × ÷ and brackets with exact decimals. Your own calculator is free.</div>
-        </div>
-      </aside>
-    </div>
+        <div class="hint" id="f-amount-hint"></div>
+        <div><span class="field-label">Evidence · up to 10</span><div id="f-evidence"></div>
+          <input type="text" id="f-evidence-input" name="evidence" class="mono" placeholder="Type a record ID and press Enter…" autocomplete="off" spellcheck="false" aria-label="Add evidence ID"></div>
+        <label class="field"><span>Explanation (not scored)</span><textarea id="f-explanation" name="explanation" maxlength="1000" placeholder="What is wrong and how you worked out the amount…"></textarea></label>
+        <div class="error" id="f-error" role="alert"></div>
+        <div class="actions"><button class="btn" id="f-save">Add Finding <span class="arrow" aria-hidden="true">→</span></button><button class="quiet hidden" id="cancel-edit">Cancel Edit</button></div>
+      </div>
+      <div class="pane" id="pane-findings" role="tabpanel" aria-labelledby="tab-findings"><div id="findings-list"></div></div>
+      <div class="pane" id="pane-calc" role="tabpanel" aria-labelledby="tab-calc">
+        <label class="field"><span>Expression</span><input type="text" id="calc-input" name="expression" class="mono" placeholder="80550 * 473.0904…" autocomplete="off" spellcheck="false"></label>
+        <div class="actions"><button class="quiet" id="calc-btn">Calculate <span class="cost">1 step</span></button></div>
+        <div class="mono" id="calc-output" aria-live="polite" style="font-size:15px"></div>
+        <p class="hint">Exact decimals with + − × ÷ and brackets. A calculator of your own is free.</p>
+      </div>
+    </aside>
   </div>
 </section>
 
 <!-- Results -->
-<section id="results" class="hidden">
-  <div class="wrap stack">
-    <div class="row spread">
-      <div>
-        <h1 id="r-title"></h1>
-        <div class="muted" id="r-sub"></div>
-      </div>
-      <button class="btn primary" id="again-btn">Play another company</button>
-    </div>
-    <div class="scoregrid" id="r-stats"></div>
-    <div class="notice info" id="r-explain"></div>
-    <div class="panel pad stack">
-      <h2>You against the baseline policies</h2>
-      <p class="muted">The same company, scored by the same grader. Oracle reads the answer key; reconcile is a simple rule-based checker; random browses then submits nothing; mark_all flags 30 guesses.</p>
-      <div style="overflow:auto"><table id="r-baselines"></table></div>
-    </div>
-    <div class="results-cols">
-      <div class="panel pad stack"><h2>Your findings</h2><div id="r-findings"></div></div>
-      <div class="panel pad stack"><h2>Answer key</h2><div id="r-key"></div></div>
-    </div>
+<section id="results" class="wrap results hidden">
+  <p class="eyebrow" id="r-sub"></p>
+  <h1 id="r-title" tabindex="-1"></h1>
+  <p class="lede" id="r-lede"></p>
+  <p class="formula" id="r-explain"></p>
+  <h2 style="margin-bottom:var(--s3)">You Against the Baseline Policies</h2>
+  <figure class="chart" id="r-chart" role="img"></figure>
+  <div style="overflow-x:auto"><table id="r-baselines"></table></div>
+  <div class="verdicts">
+    <div><h2 style="margin-bottom:var(--s3)">Your Findings</h2><div id="r-findings"></div></div>
+    <div><h2 style="margin-bottom:var(--s3)">Answer Key</h2><div id="r-key"></div></div>
   </div>
+  <p style="margin-top:var(--s6)"><button class="btn" id="again-btn">Play Another Company <span class="arrow" aria-hidden="true">→</span></button></p>
 </section>
+</main>
+<div id="live" class="visually-hidden" aria-live="polite"></div>
 
 <script>
 "use strict";
 const $ = (id) => document.getElementById(id);
 const esc = (value) => String(value ?? "").replace(/[&<>"']/g, (c) => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"}[c]));
+const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+const EASE = "cubic-bezier(0.2, 0, 0, 1)";
+const enter = (el, dx = 0, dy = 6, ms = 200) => { if (el && el.animate && !reduceMotion.matches) el.animate([{opacity: 0, transform: `translate(${dx}px, ${dy}px)`}, {opacity: 1, transform: "none"}], {duration: ms, easing: EASE}); };
+const announce = (text) => { $("live").textContent = ""; setTimeout(() => { $("live").textContent = text; }, 30); };
 
 const TYPE_INFO = {
-  duplicate_invoice: ["Duplicate invoice", "The same invoice is booked in the ledger more than once.", "Usually the amount of the extra booking (the second debit to accounts receivable)."],
-  payment_allocation: ["Payment not applied correctly", "A payment says which invoices it pays, but the ledger parks some or all of it in the unapplied account instead.", "Usually the amount that went to the unapplied account, in the base currency."],
+  duplicate_invoice: ["Duplicate invoice", "The same invoice is booked in the ledger more than once.", "Usually the amount of the extra booking (the second debit to receivables)."],
+  payment_allocation: ["Payment not applied", "A payment names the invoices it pays, but the ledger parks some or all of it in the unapplied account.", "Usually the amount that went to the unapplied account, in the base currency."],
   fx_conversion: ["Wrong currency conversion", "A foreign-currency invoice or payment was converted at the wrong rate or date.", "The difference between the correct and the booked base-currency amount."],
   wrong_period: ["Wrong reporting period", "An invoice is booked in a different reporting period from the one its date belongs to.", "Usually the amount that was booked."],
   reporting_period: ["Wrong reporting period", "An invoice is booked in a different reporting period from the one its date belongs to.", "Usually the amount that was booked."],
 };
 const TABLES = {
-  ledger: { label: "Ledger", count: "ledger_rows", columns: [
-    ["row_id", "Row"], ["entry_id", "Entry"], ["timestamp", "Time"], ["account", "Account", "account"],
-    ["debit_minor", "Debit", "money"], ["credit_minor", "Credit", "money"], ["currency", "Cur"],
-    ["invoice_id", "Invoice"], ["payment_id", "Payment"], ["entity_id", "Counterparty"]] },
-  invoices: { label: "Invoices", count: "invoices", columns: [
-    ["doc_id", "Document"], ["invoice_id", "Invoice"], ["entity_id", "Counterparty"], ["issued_at", "Issued"],
-    ["due_at", "Due"], ["currency", "Cur"], ["total_minor", "Total", "money"], ["line_items", "Lines", "count"]] },
-  payments: { label: "Payments", count: "payments", columns: [
-    ["doc_id", "Document"], ["payment_id", "Payment"], ["entity_id", "Counterparty"], ["timestamp", "Time"],
-    ["currency", "Cur"], ["amount_minor", "Amount", "money"], ["invoice_refs", "Pays invoices", "refs"]] },
-  fx: { label: "Exchange rates", count: "fx_rates", columns: [
-    ["date", "Date"], ["source_currency", "From"], ["target_currency", "To"], ["rate", "Rate", "num"]] },
+  ledger: {label: "Ledger", count: "ledger_rows", columns: [["row_id", "Row"], ["entry_id", "Entry", "", true], ["timestamp", "Time"], ["account", "Account", "account"], ["debit_minor", "Debit", "money"], ["credit_minor", "Credit", "money"], ["currency", "Cur"], ["invoice_id", "Invoice", "", true], ["payment_id", "Payment", "", true]]},
+  invoices: {label: "Invoices", count: "invoices", columns: [["doc_id", "Document"], ["invoice_id", "Invoice"], ["entity_id", "Counterparty", "", true], ["issued_at", "Issued"], ["currency", "Cur"], ["total_minor", "Total", "money"], ["line_items", "Lines", "count", true]]},
+  payments: {label: "Payments", count: "payments", columns: [["doc_id", "Document"], ["payment_id", "Payment"], ["entity_id", "Counterparty", "", true], ["timestamp", "Received"], ["currency", "Cur"], ["amount_minor", "Amount", "money"], ["invoice_refs", "Pays invoices", "refs", true]]},
+  fx: {label: "FX Rates", count: "fx_rates", columns: [["date", "Date"], ["source_currency", "From"], ["target_currency", "To"], ["rate", "Rate", "num"]]},
+  rules: {label: "Rules"},
 };
 const PAGE = 50;
-
 let episodes = [];
-let S = null; // current game state
+let S = null;
+let splitFilter = "dev";
 
 async function api(path, body) {
-  const response = await fetch(path, body === undefined ? {} : {
-    method: "POST", headers: {"Content-Type": "application/json"}, body: JSON.stringify(body),
-  });
-  const data = await response.json().catch(() => ({error: "Bad response from server"}));
+  const response = await fetch(path, body === undefined ? {} : {method: "POST", headers: {"Content-Type": "application/json"}, body: JSON.stringify(body)});
+  const data = await response.json().catch(() => ({error: "The server sent an unreadable response. Restart it with python3 -m playground."}));
   if (!response.ok) throw new Error(data.error || response.statusText);
   return data;
 }
-
 function show(id) {
   for (const name of ["picker", "workspace", "results"]) $(name).classList.toggle("hidden", name !== id);
   window.scrollTo(0, 0);
+  const heading = {picker: document.querySelector("#picker h1"), workspace: $("ws-company"), results: $("r-title")}[id];
+  if (heading) heading.focus({preventScroll: true});
+  enter($(id), 0, 6, 300);
 }
 
-/* ---------- money & ids ---------- */
+/* ---- money, ids ---- */
 function exponent(currency) { return S.manifest.currency_exponents?.[currency] ?? 2; }
 function fmtMoney(minor, currency) {
   if (minor === null || minor === undefined || minor === "") return "";
-  const exp = exponent(currency);
-  const negative = minor < 0;
-  const digits = String(Math.abs(minor)).padStart(exp + 1, "0");
+  const exp = exponent(currency), text = String(minor), negative = text.startsWith("-");
+  const digits = text.replace("-", "").padStart(exp + 1, "0");
   const whole = digits.slice(0, digits.length - exp).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-  const frac = exp ? "." + digits.slice(-exp) : "";
-  return (negative ? "−" : "") + whole + frac;
+  return (negative ? "−" : "") + whole + (exp ? "." + digits.slice(-exp) : "");
 }
 function toMinor(text, currency) {
-  const clean = String(text).trim().replace(/[,\s]/g, "");
+  const clean = String(text).trim().replace(/[,\s]/g, "").replace("−", "-");
   if (!/^-?\d+(\.\d+)?$/.test(clean)) return null;
-  const exp = exponent(currency);
-  const [whole, frac = ""] = clean.replace("-", "").split(".");
+  const exp = exponent(currency), [whole, frac = ""] = clean.replace("-", "").split(".");
   if (frac.length > exp) return null;
   const value = Number(whole + frac.padEnd(exp, "0"));
   if (!Number.isSafeInteger(value)) return null;
   return clean.startsWith("-") ? -value : value;
 }
-function isV1() { return String(S.manifest.schema_version) === "1.0"; }
+const isV1 = () => String(S.manifest.schema_version) === "1.0";
 function evidenceId(table, row) {
   if (table === "ledger") return row.row_id;
   if (table === "fx") return (isV1() ? "FX:" : "") + `${row.date}:${row.source_currency}:${row.target_currency}`;
   return row.doc_id;
 }
-function rowKey(table, row) {
-  return {ledger: row.row_id, invoices: row.invoice_id, payments: row.payment_id}[table] ?? evidenceId(table, row);
-}
+const rowKey = (table, row) => ({ledger: row.row_id, invoices: row.invoice_id, payments: row.payment_id}[table] ?? evidenceId(table, row));
 function accountLabel(code) {
-  const accounts = S.policy.accounts || {};
-  for (const [role, value] of Object.entries(accounts)) {
-    if (value === code || (Array.isArray(value) && value.includes(code))) {
-      return {ar: "Receivables", bank: "Bank", revenue: "Revenue", unapplied: "Unapplied", expense: "Expense"}[role] || role;
-    }
+  for (const [role, value] of Object.entries(S.policy.accounts || {})) {
+    if (value === code || (Array.isArray(value) && value.includes(code))) return {ar: "Receivables", bank: "Bank", revenue: "Revenue", unapplied: "Unapplied", expense: "Expense"}[role] || role;
   }
   return "";
 }
+const ts = (v) => String(v ?? "").replace("T", " ");
 
-/* ---------- picker ---------- */
+/* ---- picker ---- */
 function renderTypeHelp() {
   $("type-help").innerHTML = ["duplicate_invoice", "payment_allocation", "fx_conversion", "wrong_period"]
-    .map((t) => `<dt><b>${esc(TYPE_INFO[t][0])}</b></dt><dd>${esc(TYPE_INFO[t][1])}</dd>`).join("");
+    .map((t) => `<dt>${esc(TYPE_INFO[t][0])}</dt><dd>${esc(TYPE_INFO[t][1])}</dd>`).join("");
 }
-function renderCards() {
-  const split = $("split-filter").value;
-  const list = episodes.filter((e) => !split || e.split === split);
-  $("picker-count").textContent = `${list.length} companies`;
-  $("cards").innerHTML = list.map((e) => `
-    <button class="panel card" data-id="${esc(e.id)}">
-      <div class="name">${esc(e.company)}</div>
-      <div class="row" style="margin-bottom:6px"><span class="badge accent">${esc(e.split)}</span><span class="badge">${esc(e.base_currency)}</span></div>
-      <div class="muted" style="font-size:12.5px">Period ${esc(e.period_start.slice(0, 10))} to ${esc(e.period_end.slice(0, 10))}<br>
-      ${esc(e.ledger_rows ?? "?")} ledger rows · ${esc(e.documents ?? "?")} documents</div>
-    </button>`).join("");
+function renderPicker() {
+  const splits = [...new Set(episodes.map((e) => e.split))];
+  const options = [["", "All"], ...splits.map((s) => [s, s[0].toUpperCase() + s.slice(1)])];
+  $("split-filter").innerHTML = options.map(([v, l]) => `<button type="button" data-split="${esc(v)}" aria-pressed="${v === splitFilter}">${esc(l)}</button>`).join("");
+  const list = episodes.filter((e) => !splitFilter || e.split === splitFilter);
+  $("picker-count").textContent = `${list.length} ${list.length === 1 ? "company" : "companies"}`;
+  $("cards").innerHTML = list.map((e) => `<tr>
+    <td class="name">${esc(e.company)}</td><td><span class="eyebrow">${esc(e.split)}</span></td>
+    <td class="col-opt mono">${esc(e.base_currency)}</td>
+    <td class="col-opt muted">${esc(e.period_start.slice(0, 10))} → ${esc(e.period_end.slice(0, 10))}</td>
+    <td class="num col-opt">${esc(e.ledger_rows ?? "—")}</td><td class="num col-opt">${esc(e.documents ?? "—")}</td>
+    <td><button class="quiet" data-id="${esc(e.id)}" aria-label="Audit ${esc(e.company)}">Audit <span aria-hidden="true">→</span></button></td></tr>`).join("");
 }
 async function loadEpisodes() {
-  try {
-    episodes = await api("/api/episodes");
-  } catch (error) {
-    $("picker-error").textContent = error.message;
-    return;
-  }
-  const splits = [...new Set(episodes.map((e) => e.split))];
-  $("split-filter").innerHTML = `<option value="">All sets</option>` + splits.map((s) => `<option value="${esc(s)}">${esc(s)}</option>`).join("");
-  if (splits.includes("dev")) $("split-filter").value = "dev";
-  renderCards();
+  try { episodes = await api("/api/episodes"); } catch (error) { $("picker-error").textContent = `${error.message} Check that python3 -m playground is still running.`; return; }
+  if (!episodes.some((e) => e.split === splitFilter)) splitFilter = "";
+  renderPicker();
 }
 
-/* ---------- game ---------- */
+/* ---- game ---- */
 async function startEpisode(id) {
   $("picker-error").textContent = "";
   let data;
   try { data = await api("/api/start", {episode: id}); } catch (error) { $("picker-error").textContent = error.message; return; }
   const obs = data.observation;
-  S = {
-    session: data.session, episode: data.episode, manifest: obs.manifest, policy: obs.policy,
-    issueTypes: data.issue_types, stepLimit: data.step_limit, stepsUsed: 0, busy: false,
-    tables: Object.fromEntries(Object.keys(TABLES).map((t) => [t, {rows: [], cursor: undefined, byKey: new Map()}])),
-    tab: "ledger", selected: null, findings: [], editing: null,
-    draft: {affected: [], evidence: []},
-  };
-  $("ws-company").textContent = data.episode.company;
-  $("ws-split").textContent = data.episode.split;
+  S = {session: data.session, episode: data.episode, manifest: obs.manifest, policy: obs.policy, issueTypes: data.issue_types,
+    stepLimit: data.step_limit, stepsUsed: 0, busy: false, tab: "ledger", pane: "inspect", selected: null, findings: [], editing: null,
+    tables: Object.fromEntries(Object.keys(TABLES).filter((t) => t !== "rules").map((t) => [t, {rows: [], cursor: undefined, byKey: new Map()}])),
+    draft: {affected: [], evidence: []}};
   const m = S.manifest;
-  $("ws-period").textContent = `Reporting period ${m.period_start.slice(0, 10)} to ${m.period_end.slice(0, 10)} (end excluded) · ${m.timezone} · base currency ${m.base_currency}`;
+  $("ws-company").textContent = data.episode.company;
+  $("ws-meta").textContent = `${data.episode.split} · ${m.base_currency} · ${m.period_start.slice(0, 10)} → ${m.period_end.slice(0, 10)} · ${m.timezone}`;
   $("f-type").innerHTML = S.issueTypes.map((t) => `<option value="${esc(t)}">${esc((TYPE_INFO[t] || [t])[0])}</option>`).join("");
-  $("f-currency").innerHTML = Object.keys(m.currency_exponents || {[m.base_currency]: 2})
-    .map((c) => `<option ${c === m.base_currency ? "selected" : ""}>${esc(c)}</option>`).join("");
-  $("calc-output").textContent = "";
-  $("filter").value = "";
-  renderRules(); resetForm(); renderTabs(); renderTable(); renderDetail(); renderFindings(); renderSteps();
+  $("f-currency").innerHTML = Object.keys(m.currency_exponents || {[m.base_currency]: 2}).map((c) => `<option ${c === m.base_currency ? "selected" : ""}>${esc(c)}</option>`).join("");
+  $("calc-output").textContent = ""; $("filter").value = "";
+  resetForm(); renderTabs(); renderTable(); renderInspect(); renderFindings(); renderSteps(); setPane("inspect", false);
   show("workspace");
 }
-
-function renderRules() {
-  const p = S.policy, m = S.manifest, items = [];
-  if (p.period) items.push(`Only transactions dated from ${esc(p.period.start)} up to ${p.period.end_exclusive ? "but not including" : "and including"} ${esc(p.period.end)} (${esc(p.period.timezone)}) belong to this period.`);
-  if (p.recognition) items.push(`Invoices count on the local date they were issued; payments on the local date they were received.`);
-  if (p.fx) items.push(`Foreign amounts are converted into ${esc(p.fx.target_currency || m.base_currency)} using the rate for the ${p.fx.date_rule === "event_local_date" ? "local date of the invoice or payment" : esc(p.fx.date_rule)}. A rate means 1 unit of the foreign currency = rate × ${esc(p.fx.target_currency || m.base_currency)}.`);
-  if (p.rounding) items.push(`Round each conversion to the currency's smallest unit using ${p.rounding.mode === "half_even" ? "banker's rounding (half to even)" : esc(p.rounding.mode)}.`);
-  if (p.allocation) items.push(`A payment is applied to the invoices listed in its “pays invoices” field; anything not applied goes to the unapplied account.`);
-  if (p.accounts) items.push(`Accounts: ` + Object.entries(p.accounts).map(([role, code]) => `${esc(role)} = ${esc([].concat(code).join(", "))}`).join(" · "));
-  items.push(`Amounts are in each currency's smallest unit in the data; this page shows them with decimals (${Object.entries(m.currency_exponents || {}).map(([c, e]) => `${esc(c)}: ${e} decimals`).join(", ")}).`);
-  $("rules").innerHTML = items.map((i) => `<li>${i}</li>`).join("");
+function setPane(name, animate = true) {
+  S.pane = name;
+  for (const p of ["inspect", "draft", "findings", "calc"]) {
+    $(`pane-${p}`).classList.toggle("hidden", p !== name);
+    $(`tab-${p}`).setAttribute("aria-selected", String(p === name));
+  }
+  if (animate) enter($(`pane-${name}`), 8, 0);
 }
-
 function renderSteps() {
   const left = S.stepLimit - S.stepsUsed;
-  $("ws-steps").textContent = `${S.stepsUsed} of ${S.stepLimit} steps used · each costs 0.002 of your score`;
+  $("ws-steps").innerHTML = `<b>${S.stepsUsed}</b> of ${S.stepLimit} steps used`;
   $("ws-meter").firstElementChild.style.width = `${Math.min(100, 100 * S.stepsUsed / S.stepLimit)}%`;
-  $("ws-meter").classList.toggle("warn", left <= 10);
-  const warning = $("step-warning");
-  if (left <= 1) {
-    warning.textContent = "You have no inspection steps left. Submit your findings now; one more look would end the episode with nothing submitted.";
-  } else if (left <= 10) {
-    warning.textContent = `Only ${left - 1} looks left before you must submit.`;
-  }
-  warning.classList.toggle("hidden", left > 10);
+  $("ws-meter").classList.toggle("low", left <= 10);
+  const w = $("step-warning");
+  w.textContent = left <= 1 ? "No looks left. Submit now: one more look would end the episode with nothing submitted." : `Only ${left - 1} looks left before you must submit.`;
+  w.classList.toggle("hidden", left > 10);
   renderTableButtons();
 }
-function canInspect(cost = 1) { return S.stepLimit - S.stepsUsed - cost >= 1; }
-
+const canInspect = (cost = 1) => S.stepLimit - S.stepsUsed - cost >= 1;
 async function step(action) {
   if (S.busy) return null;
   S.busy = true;
   try {
     const data = await api("/api/step", {session: S.session, action});
-    S.stepsUsed = data.steps_used;
-    renderSteps();
+    S.stepsUsed = data.steps_used; renderSteps();
     if (data.finished) { await showResults(); return null; }
     return data.observation;
-  } catch (error) {
-    alert(error.message);
-    return null;
-  } finally {
-    S.busy = false;
-  }
+  } catch (error) { alert(`${error.message} Start the company again from the list.`); return null; }
+  finally { S.busy = false; }
 }
 
-/* ---------- tables ---------- */
+/* ---- records ---- */
 function renderTabs() {
   $("tabs").innerHTML = Object.entries(TABLES).map(([name, t]) => {
-    const loaded = S.tables[name].rows.length, total = S.manifest.counts?.[t.count];
-    return `<button class="tab ${S.tab === name ? "active" : ""}" data-tab="${name}">${esc(t.label)} <span class="muted" style="font-weight:400">${loaded}${total !== undefined ? "/" + total : ""}</span></button>`;
+    const n = t.count ? `${S.tables[name].rows.length}/${S.manifest.counts?.[t.count] ?? "?"}` : "";
+    return `<button role="tab" data-tab="${name}" aria-selected="${S.tab === name}">${esc(t.label)}${n ? `<span class="n">${n}</span>` : ""}</button>`;
   }).join("");
 }
 function remainingPages(name) {
-  const state = S.tables[name], total = S.manifest.counts?.[TABLES[name].count];
-  if (state.cursor === null) return 0;
-  if (total === undefined) return state.cursor === undefined ? 1 : 1;
-  return Math.ceil((total - state.rows.length) / PAGE);
+  if (name === "rules") return 0;
+  const st = S.tables[name], total = S.manifest.counts?.[TABLES[name].count];
+  if (st.cursor === null) return 0;
+  return total === undefined ? 1 : Math.ceil((total - st.rows.length) / PAGE);
 }
 function renderTableButtons() {
   if (!S) return;
-  const pages = remainingPages(S.tab);
-  $("more-btn").disabled = pages === 0 || !canInspect();
-  $("all-btn").innerHTML = `Load all<span class="cost">${pages} step${pages === 1 ? "" : "s"}</span>`;
-  $("all-btn").disabled = pages <= 1 || !canInspect(pages);
-  $("all-btn").classList.toggle("hidden", pages <= 1);
-  $("more-btn").classList.toggle("hidden", pages === 0);
-  const state = S.tables[S.tab];
-  $("table-status").textContent = state.cursor === undefined ? "" : (state.cursor === null ? "All rows loaded" : `${state.rows.length} rows loaded`);
+  const pages = remainingPages(S.tab), started = S.tab !== "rules" && S.tables[S.tab].cursor !== undefined;
+  $("more-btn").classList.toggle("hidden", pages === 0 || !started);
+  $("more-btn").disabled = !canInspect();
+  $("all-btn").innerHTML = `Load All <span class="cost">${pages} steps</span>`;
+  $("all-btn").classList.toggle("hidden", pages <= 1 || !started);
+  $("all-btn").disabled = !canInspect(pages);
+  $("filter").parentElement.classList.toggle("hidden", S.tab === "rules");
+  $("table-status").textContent = !started ? "" : S.tables[S.tab].cursor === null ? "All rows loaded" : `${S.tables[S.tab].rows.length} rows loaded`;
 }
 async function loadPage(name) {
-  const state = S.tables[name];
-  if (state.cursor === null || !canInspect()) return false;
-  const obs = await step({action: "list_records", table: name, cursor: state.cursor ?? null, limit: PAGE});
+  const st = S.tables[name];
+  if (st.cursor === null || !canInspect()) return false;
+  const obs = await step({action: "list_records", table: name, cursor: st.cursor ?? null, limit: PAGE});
   if (!obs) return false;
-  if (obs.error) { alert(`The environment answered: ${obs.error}`); return false; }
-  for (const row of obs.result) {
-    state.rows.push(row);
-    state.byKey.set(rowKey(name, row), row);
-  }
-  state.cursor = obs.next_cursor;
+  if (obs.error) { alert(`The environment answered “${obs.error}”. Try another table.`); return false; }
+  for (const row of obs.result) { st.rows.push(row); st.byKey.set(rowKey(name, row), row); }
+  st.cursor = obs.next_cursor;
   return true;
 }
 function citedIds() {
@@ -498,287 +502,278 @@ function citedIds() {
   for (const f of S.findings) for (const id of f.evidence_ids.concat(f.affected_ids)) ids.add(id);
   return ids;
 }
-function cell(table, row, [field, , kind]) {
-  const value = row[field];
-  if (value === null || value === undefined) return `<td class="muted">—</td>`;
-  if (kind === "money") return `<td class="num">${value ? esc(fmtMoney(value, row.currency)) : `<span class="muted">0</span>`}</td>`;
-  if (kind === "num") return `<td class="num">${esc(value)}</td>`;
-  if (kind === "count") return `<td class="num">${esc(value.length)}</td>`;
-  if (kind === "refs") return `<td>${esc(value.map((r) => r.invoice_id).join(", "))}</td>`;
-  if (kind === "account") { const l = accountLabel(value); return `<td>${esc(value)}${l ? ` <span class="muted">${esc(l)}</span>` : ""}</td>`; }
-  return `<td class="${field.endsWith("_id") ? "mono" : ""}">${esc(value)}</td>`;
+function cell(row, [field, , kind, opt]) {
+  const v = row[field], cls = opt ? ' class="col-opt"' : "";
+  if (v === null || v === undefined) return `<td${opt ? ' class="col-opt muted"' : ' class="muted"'}>—</td>`;
+  if (kind === "money") return `<td class="num${opt ? " col-opt" : ""}">${v ? esc(fmtMoney(v, row.currency)) : `<span class="muted">0</span>`}</td>`;
+  if (kind === "num") return `<td class="num mono">${esc(v)}</td>`;
+  if (kind === "count") return `<td class="num col-opt">${esc(v.length)}</td>`;
+  if (kind === "refs") return `<td class="col-opt mono">${esc(v.map((r) => r.invoice_id).join(", "))}</td>`;
+  if (kind === "account") { const l = accountLabel(v); return `<td>${esc(v)}${l ? ` <span class="muted">${esc(l)}</span>` : ""}</td>`; }
+  const mono = /_id$|^(date|timestamp|issued_at)$/.test(field);
+  return `<td class="${mono ? "mono" : ""}${opt ? " col-opt" : ""}" ${mono ? 'translate="no"' : ""}>${esc(field === "timestamp" || field === "issued_at" ? ts(v) : v)}</td>`;
+}
+function renderRules() {
+  const p = S.policy, m = S.manifest, items = [];
+  if (p.period) items.push(`Only transactions from ${esc(ts(p.period.start))} up to ${p.period.end_exclusive ? "but not including" : "and including"} ${esc(ts(p.period.end))} (${esc(p.period.timezone)}) belong to this period.`);
+  if (p.recognition) items.push("Invoices count on the local date they were issued; payments on the local date they were received.");
+  if (p.fx) items.push(`Foreign amounts convert into ${esc(p.fx.target_currency || m.base_currency)} at the rate for the ${p.fx.date_rule === "event_local_date" ? "local date of the invoice or payment" : esc(p.fx.date_rule)}; 1 foreign unit = rate × ${esc(p.fx.target_currency || m.base_currency)}.`);
+  if (p.rounding) items.push(`Each conversion rounds to the smallest currency unit using ${p.rounding.mode === "half_even" ? "banker’s rounding (half to even)" : esc(p.rounding.mode)}.`);
+  if (p.allocation) items.push("A payment applies to the invoices in its “pays invoices” list; anything not applied goes to the unapplied account.");
+  if (p.accounts) items.push("Accounts: " + Object.entries(p.accounts).map(([role, code]) => `${esc(role)} <span class="mono">${esc([].concat(code).join(", "))}</span>`).join(" · "));
+  items.push("Amounts are stored in each currency’s smallest unit; this page shows them with decimals (" + Object.entries(m.currency_exponents || {}).map(([c, e]) => `${esc(c)} ${e}`).join(", ") + ").");
+  $("tablewrap").innerHTML = `<ul class="rules">${items.map((i) => `<li>${i}</li>`).join("")}</ul>`;
 }
 function renderTable() {
-  const name = S.tab, spec = TABLES[name], state = S.tables[name];
-  const query = $("filter").value.trim().toLowerCase();
-  const columns = spec.columns.filter(([field]) => state.rows.length === 0 || field in state.rows[0]);
-  if (state.cursor === undefined) {
-    $("tablewrap").innerHTML = `<div class="empty">Nothing loaded yet. Opening the first page of ${esc(spec.label.toLowerCase())} costs 1 step.<br><br><button class="btn primary" id="first-page">Load first 50 rows<span class="cost" style="color:inherit">1 step</span></button></div>`;
-    renderTableButtons(); return;
-  }
-  const rows = query ? state.rows.filter((r) => JSON.stringify(r).toLowerCase().includes(query)) : state.rows;
-  const cited = citedIds(), selectedId = S.selected && S.selected.table === name ? evidenceId(name, S.selected.row) : null;
-  $("tablewrap").innerHTML = `<table><thead><tr>${columns.map(([, label, kind]) => `<th class="${kind === "money" || kind === "num" || kind === "count" ? "num" : ""}">${esc(label)}</th>`).join("")}</tr></thead>
-    <tbody>${rows.map((row) => {
-      const id = evidenceId(name, row), i = state.rows.indexOf(row);
-      return `<tr data-i="${i}" class="${id === selectedId ? "selected" : ""} ${cited.has(id) ? "cited" : ""}">${columns.map((c) => cell(name, row, c)).join("")}</tr>`;
-    }).join("")}</tbody></table>${rows.length ? "" : `<div class="empty">No loaded rows match “${esc(query)}”.</div>`}`;
   renderTableButtons();
-}
-
-/* ---------- selected record ---------- */
-function linkButton(table, id) {
-  if (!id) return "";
-  const loaded = S.tables[table].byKey.has(id);
-  return `<button class="btn link mono" data-goto="${esc(table)}" data-key="${esc(id)}">${esc(id)}</button>${loaded ? "" : ` <span class="cost">1 step</span>`}`;
-}
-function renderDetail() {
-  const box = $("detail");
-  if (!S.selected) {
-    box.innerHTML = `<h3>Selected record</h3><p class="muted" style="margin:6px 0 0">Click a row to see its details and cite it.</p>`;
+  if (S.tab === "rules") return renderRules();
+  const name = S.tab, spec = TABLES[name], st = S.tables[name];
+  if (st.cursor === undefined) {
+    $("tablewrap").innerHTML = `<div class="empty"><h2>${esc(spec.label)} Not Opened Yet</h2><p>Opening the first page of ${esc(spec.label.toLowerCase())} costs one step.</p>
+      <button class="btn" id="first-page">Open First 50 Rows <span class="cost">1 step</span></button></div>`;
     return;
   }
-  const {table, row} = S.selected, id = evidenceId(table, row);
-  const isDoc = table === "invoices" || table === "payments";
+  const q = $("filter").value.trim().toLowerCase();
+  const rows = q ? st.rows.filter((r) => JSON.stringify(r).toLowerCase().includes(q)) : st.rows;
+  const cols = spec.columns.filter(([f]) => !st.rows.length || f in st.rows[0]);
+  const cited = citedIds(), selectedId = S.selected && S.selected.table === name ? evidenceId(name, S.selected.row) : null;
+  $("tablewrap").innerHTML = `<table><thead><tr>${cols.map(([, label, kind, opt]) => `<th scope="col" class="${["money", "num", "count"].includes(kind) ? "num" : ""}${opt ? " col-opt" : ""}">${esc(label)}</th>`).join("")}</tr></thead>
+    <tbody>${rows.map((row) => { const id = evidenceId(name, row); return `<tr data-i="${st.rows.indexOf(row)}" tabindex="0" class="${id === selectedId ? "selected" : ""} ${cited.has(id) ? "cited" : ""}">${cols.map((c) => cell(row, c)).join("")}</tr>`; }).join("")}</tbody></table>
+    ${rows.length ? "" : `<div class="empty"><p>No loaded rows match “${esc(q)}”.</p></div>`}`;
+}
+
+/* ---- inspect pane ---- */
+function linkTo(table, id) {
+  if (!id) return "";
+  const loaded = S.tables[table].byKey.has(id);
+  return `<button class="quiet mono" data-goto="${esc(table)}" data-key="${esc(id)}" translate="no">${esc(id)}${loaded ? "" : ` <span class="cost">1 step</span>`}</button>`;
+}
+function renderInspect() {
+  const box = $("pane-inspect");
+  if (!S.selected) { box.innerHTML = `<div class="empty" style="padding:32px 0"><h2>Nothing Selected</h2><p>Select a row to inspect it. Reading rows you have already loaded is free.</p></div>`; return; }
+  const {table, row} = S.selected, id = evidenceId(table, row), isDoc = table === "invoices" || table === "payments";
   const fields = [];
   for (const [field, label, kind] of TABLES[table].columns) {
     if (!(field in row) || kind === "count" || kind === "refs") continue;
-    let value = row[field];
-    if (field === "invoice_id" && table === "ledger") value = linkButton("invoices", value);
-    else if (field === "payment_id" && table === "ledger") value = linkButton("payments", value);
-    else if (kind === "money") value = `${esc(fmtMoney(value, row.currency))} ${esc(row.currency)} <span class="muted mono">(${esc(value)})</span>`;
-    else if (kind === "account") value = `${esc(value)} ${esc(accountLabel(value))}`;
-    else value = value === null ? `<span class="muted">—</span>` : esc(value);
-    fields.push(`<dt>${esc(label)}</dt><dd>${value}</dd>`);
+    let v = row[field];
+    if (field === "invoice_id" && table === "ledger") v = linkTo("invoices", v);
+    else if (field === "payment_id" && table === "ledger") v = linkTo("payments", v);
+    else if (kind === "money") v = `${esc(fmtMoney(v, row.currency))} ${esc(row.currency)} <span class="muted mono">${esc(v)}</span>`;
+    else if (kind === "account") v = `${esc(v)} ${esc(accountLabel(v))}`;
+    else v = v === null ? `<span class="muted">—</span>` : `<span class="${field.endsWith("_id") || field === "timestamp" ? "mono" : ""}">${esc(field === "timestamp" || field === "issued_at" ? ts(v) : v)}</span>`;
+    fields.push(`<dt>${esc(label)}</dt><dd>${v}</dd>`);
   }
   let extra = "";
-  if (table === "invoices" && row.line_items) {
-    extra = `<table class="subtable" style="margin-top:8px"><thead><tr><th>Line</th><th class="num">Qty</th><th class="num">Unit</th><th class="num">Amount</th></tr></thead><tbody>${
-      row.line_items.map((l) => `<tr><td>${esc(l.description)}</td><td class="num">${esc(l.quantity)}</td><td class="num">${esc(fmtMoney(l.unit_price_minor, row.currency))}</td><td class="num">${esc(fmtMoney(l.amount_minor, row.currency))}</td></tr>`).join("")
-    }</tbody></table>`;
+  if (table === "invoices") extra += `<div><h3>Line items</h3><table class="mini"><thead><tr><th>Description</th><th class="num">Qty</th><th class="num">Unit</th><th class="num">Amount</th></tr></thead><tbody>${(row.line_items || []).map((l) => `<tr><td>${esc(l.description)}</td><td class="num">${esc(l.quantity)}</td><td class="num">${esc(fmtMoney(l.unit_price_minor, row.currency))}</td><td class="num">${esc(fmtMoney(l.amount_minor, row.currency))}</td></tr>`).join("")}</tbody></table></div>`;
+  if (table === "payments") extra += `<div><h3>Pays invoices</h3>${row.invoice_refs && row.invoice_refs.length ? `<table class="mini"><tbody>${row.invoice_refs.map((r) => `<tr><td>${linkTo("invoices", r.invoice_id)}</td><td class="num">${esc(fmtMoney(r.amount_minor, row.currency))} ${esc(row.currency)}</td></tr>`).join("")}</tbody></table>` : `<p class="muted">None listed.</p>`}</div>`;
+  if (isDoc) {
+    const k = table === "invoices" ? "invoice_id" : "payment_id", rel = S.tables.ledger.rows.filter((r) => r[k] === row[k]);
+    extra += `<div><h3>Ledger rows loaded for this ${table === "invoices" ? "invoice" : "payment"}</h3>${rel.length ? `<table class="mini"><tbody>${rel.map((r) => `<tr><td>${linkTo("ledger", r.row_id)}</td><td>${esc(accountLabel(r.account) || r.account)}</td><td class="num">${r.debit_minor ? "Dr " + esc(fmtMoney(r.debit_minor, r.currency)) : "Cr " + esc(fmtMoney(r.credit_minor, r.currency))}</td></tr>`).join("")}</tbody></table>` : `<p class="muted">None yet. Load more ledger pages to see them.</p>`}</div>`;
   }
-  if (table === "payments") {
-    extra = `<div style="margin-top:8px;font-size:12.5px"><b>Pays invoices</b>${
-      row.invoice_refs && row.invoice_refs.length ? `<table class="subtable"><tbody>${row.invoice_refs.map((r) => `<tr><td>${linkButton("invoices", r.invoice_id)}</td><td class="num">${esc(fmtMoney(r.amount_minor, row.currency))} ${esc(row.currency)}</td></tr>`).join("")}</tbody></table>` : ` <span class="muted">none listed</span>`
-    }</div>`;
-  }
-  if (table === "invoices" || table === "payments") {
-    const key = table === "invoices" ? "invoice_id" : "payment_id";
-    const related = S.tables.ledger.rows.filter((r) => r[key] === row[key]);
-    extra += `<div style="margin-top:8px;font-size:12.5px"><b>Ledger rows loaded so far for this ${table === "invoices" ? "invoice" : "payment"}</b>${
-      related.length ? `<table class="subtable"><tbody>${related.map((r) => `<tr><td><button class="btn link mono" data-goto="ledger" data-key="${esc(r.row_id)}">${esc(r.row_id)}</button></td><td>${esc(r.timestamp.slice(0, 10))}</td><td>${esc(accountLabel(r.account) || r.account)}</td><td class="num">${r.debit_minor ? "Dr " + esc(fmtMoney(r.debit_minor, r.currency)) : "Cr " + esc(fmtMoney(r.credit_minor, r.currency))}</td></tr>`).join("")}</tbody></table>` : ` <span class="muted">none yet (load more ledger pages)</span>`
-    }</div>`;
-  }
-  const inEvidence = S.draft.evidence.includes(id), inAffected = S.draft.affected.includes(id);
-  box.innerHTML = `<div class="row spread"><h3>${esc(TABLES[table].label.replace(/s$/, ""))} <span class="mono">${esc(id)}</span></h3></div>
-    <dl class="kv" style="margin-top:8px">${fields.join("")}</dl>${extra}
-    <div class="row" style="margin-top:12px">
-      <button class="btn small ${inEvidence ? "" : "primary"}" id="cite-btn">${inEvidence ? "Remove from evidence" : "Cite as evidence"}</button>
-      ${isDoc ? `<button class="btn small" id="affect-btn">${inAffected ? "Unmark affected" : "Mark affected"}</button>` : ""}
+  const inEv = S.draft.evidence.includes(id), inAff = S.draft.affected.includes(id);
+  box.innerHTML = `<div><p class="eyebrow">${esc(TABLES[table].label.replace(/s$/, "").replace("FX Rate", "FX rate"))}</p><h2 class="record-title mono" translate="no">${esc(id)}</h2></div>
+    <dl class="kv">${fields.join("")}</dl>${extra}
+    <div class="actions">
+      <button class="btn small" id="cite-btn">${inEv ? "Remove From Evidence" : "Cite as Evidence"}</button>
+      ${isDoc ? `<button class="quiet" id="affect-btn">${inAff ? "Unmark Affected" : "Mark as Affected"}</button>` : ""}
     </div>`;
-  $("cite-btn").onclick = () => { toggle(S.draft.evidence, id, 10); renderDraft(); renderDetail(); renderTable(); };
+  $("cite-btn").onclick = () => { toggle(S.draft.evidence, id, 10); afterDraftChange(inEv ? `Removed ${id} from evidence` : `Cited ${id} as evidence`); };
   if (isDoc) $("affect-btn").onclick = () => {
     toggle(S.draft.affected, id, 100);
-    if (!S.draft.evidence.includes(id) && S.draft.affected.includes(id) && S.draft.evidence.length < 10) S.draft.evidence.push(id);
-    if (S.draft.affected.includes(id)) $("f-currency").value = S.manifest.base_currency;
-    renderDraft(); renderDetail(); renderTable();
+    const now = S.draft.affected.includes(id);
+    if (now && !S.draft.evidence.includes(id) && S.draft.evidence.length < 10) S.draft.evidence.push(id);
+    if (now) $("f-currency").value = S.manifest.base_currency;
+    afterDraftChange(now ? `Marked ${id} as affected and cited it` : `Unmarked ${id}`);
   };
 }
-function toggle(list, value, max) {
-  const i = list.indexOf(value);
-  if (i >= 0) list.splice(i, 1); else if (list.length < max) list.push(value);
-}
+function afterDraftChange(message) { renderDraft(); renderInspect(); renderTable(); announce(message); }
+function toggle(list, value, max) { const i = list.indexOf(value); if (i >= 0) list.splice(i, 1); else if (list.length < max) list.push(value); }
 async function gotoRecord(table, key) {
   let row = S.tables[table].byKey.get(key);
   if (!row) {
-    if (!canInspect()) return alert("No inspection steps left. Submit your findings.");
+    if (!canInspect()) return alert("No looks left. Submit your findings.");
     const obs = await step({action: "get_record", table, id: key});
     if (!obs) return;
-    if (obs.error) return alert(`The environment answered: ${obs.error}`);
+    if (obs.error) return alert(`The environment answered “${obs.error}”.`);
     row = obs.result;
   }
-  S.selected = {table, row};
-  S.tab = table;
-  $("filter").value = "";
-  renderTabs(); renderTable(); renderDetail();
-  const selectedRow = document.querySelector("tbody tr.selected");
-  if (selectedRow) selectedRow.scrollIntoView({block: "nearest"});
+  S.selected = {table, row}; S.tab = table; $("filter").value = "";
+  renderTabs(); renderTable(); renderInspect(); setPane("inspect");
+  document.querySelector("#tablewrap tr.selected")?.scrollIntoView({block: "nearest"});
 }
 
-/* ---------- finding form ---------- */
-function chips(list, name) {
-  return list.length ? list.map((id, i) => `<span class="chip">${esc(id)}<button title="Remove" data-remove="${name}" data-i="${i}">×</button></span>`).join("") : `<span class="muted" style="font-size:12.5px">None yet</span>`;
-}
+/* ---- draft pane ---- */
+const chips = (list, name) => list.length ? list.map((id, i) => `<span class="chip" translate="no">${esc(id)}<button title="Remove ${esc(id)}" aria-label="Remove ${esc(id)}" data-remove="${name}" data-i="${i}">×</button></span>`).join("") : `<p class="hint" style="margin:0 0 4px">None yet.</p>`;
 function renderDraft() {
   $("f-affected").innerHTML = chips(S.draft.affected, "affected");
   $("f-evidence").innerHTML = chips(S.draft.evidence, "evidence");
+  const n = S.draft.affected.length + S.draft.evidence.length;
+  $("draft-n").textContent = n ? String(new Set(S.draft.affected.concat(S.draft.evidence)).size) : "";
   const info = TYPE_INFO[$("f-type").value];
   $("f-type-hint").textContent = info ? `${info[1]} Amount: ${info[2]}` : "";
-  const minor = toMinor($("f-amount").value, $("f-currency").value);
-  $("f-amount-hint").textContent = $("f-amount").value.trim() === "" ? `In ${$("f-currency").value}, with up to ${exponent($("f-currency").value)} decimals.`
-    : minor === null ? `Not a valid ${$("f-currency").value} amount (max ${exponent($("f-currency").value)} decimals).` : `Submitted as ${minor} smallest units.`;
+  const cur = $("f-currency").value, minor = toMinor($("f-amount").value, cur);
+  $("f-amount-hint").textContent = $("f-amount").value.trim() === "" ? `In ${cur}, up to ${exponent(cur)} decimals.` : minor === null ? `Not a valid ${cur} amount (up to ${exponent(cur)} decimals).` : `Submitted as ${minor} smallest units.`;
 }
 function resetForm() {
-  S.draft = {affected: [], evidence: []};
-  S.editing = null;
-  $("f-amount").value = ""; $("f-explanation").value = ""; $("f-error").textContent = "";
-  $("f-affected-input").value = ""; $("f-evidence-input").value = "";
-  $("f-currency").value = S.manifest.base_currency;
-  $("form-title").textContent = "New finding"; $("f-save").textContent = "Add finding";
+  S.draft = {affected: [], evidence: []}; S.editing = null;
+  for (const id of ["f-amount", "f-explanation", "f-affected-input", "f-evidence-input"]) $(id).value = "";
+  $("f-error").textContent = ""; $("f-currency").value = S.manifest.base_currency;
+  $("form-title").textContent = "New Finding";
+  $("f-save").innerHTML = `Add Finding <span class="arrow" aria-hidden="true">→</span>`;
   $("cancel-edit").classList.add("hidden");
   renderDraft();
 }
 function saveFinding() {
-  const type = $("f-type").value, currency = $("f-currency").value;
-  const amount = toMinor($("f-amount").value, currency);
-  const errors = [];
+  const type = $("f-type").value, currency = $("f-currency").value, amount = toMinor($("f-amount").value, currency), errors = [];
   if (!S.draft.affected.length) errors.push("Mark at least one affected invoice or payment.");
   if (amount === null) errors.push("Enter a valid amount.");
   if (S.editing === null && S.findings.length >= 30) errors.push("You can submit at most 30 findings.");
-  if (errors.length) { $("f-error").textContent = errors.join(" "); return; }
-  const finding = {
-    type, affected_ids: [...S.draft.affected], claimed_amount_minor: amount, currency,
-    evidence_ids: [...S.draft.evidence], explanation: $("f-explanation").value.slice(0, 1000),
-  };
-  if (S.editing === null) S.findings.push(finding); else S.findings[S.editing] = finding;
-  resetForm(); renderFindings(); renderTable(); renderDetail();
+  if (errors.length) { $("f-error").textContent = errors.join(" "); (S.draft.affected.length ? $("f-amount") : $("f-affected-input")).focus(); return; }
+  const finding = {type, affected_ids: [...S.draft.affected], claimed_amount_minor: amount, currency, evidence_ids: [...S.draft.evidence], explanation: $("f-explanation").value.slice(0, 1000)};
+  const editing = S.editing;
+  if (editing === null) S.findings.push(finding); else S.findings[editing] = finding;
+  resetForm(); renderFindings(); renderTable(); renderInspect(); setPane("findings");
+  announce(editing === null ? `Finding ${S.findings.length} added` : `Finding ${editing + 1} updated`);
 }
 function editFinding(i) {
   const f = S.findings[i];
-  S.editing = i;
-  S.draft = {affected: [...f.affected_ids], evidence: [...f.evidence_ids]};
+  S.editing = i; S.draft = {affected: [...f.affected_ids], evidence: [...f.evidence_ids]};
   $("f-type").value = f.type; $("f-currency").value = f.currency;
   $("f-amount").value = fmtMoney(f.claimed_amount_minor, f.currency).replace(/,/g, "").replace("−", "-");
   $("f-explanation").value = f.explanation;
-  $("form-title").textContent = `Editing finding ${i + 1}`; $("f-save").textContent = "Save changes";
+  $("form-title").textContent = `Editing Finding ${i + 1}`;
+  $("f-save").innerHTML = `Save Changes <span class="arrow" aria-hidden="true">→</span>`;
   $("cancel-edit").classList.remove("hidden");
-  renderDraft(); renderDetail();
+  renderDraft(); setPane("draft"); $("f-type").focus();
 }
-function findingSummary(f) {
-  return `<div class="row spread"><b>${esc((TYPE_INFO[f.type] || [f.type])[0])}</b><span class="mono">${esc(fmtMoney(f.claimed_amount_minor, f.currency))} ${esc(f.currency)}</span></div>
-    <div style="margin-top:4px"><span class="muted">Affected:</span> ${f.affected_ids.map((id) => `<span class="chip">${esc(id)}</span>`).join("")}</div>
-    <div><span class="muted">Evidence:</span> ${f.evidence_ids.length ? f.evidence_ids.map((id) => `<span class="chip">${esc(id)}</span>`).join("") : `<span class="muted">none</span>`}</div>
-    ${f.explanation ? `<div class="muted" style="margin-top:4px">${esc(f.explanation)}</div>` : ""}`;
+function findingHtml(f, i, verdict) {
+  return `<div class="top"><span class="type">${i + 1}. ${esc((TYPE_INFO[f.type] || [f.type])[0])}</span><span class="mono">${esc(fmtMoney(f.claimed_amount_minor, f.currency))} ${esc(f.currency)}</span></div>
+    <div class="row"><span class="muted">Affected</span> ${f.affected_ids.map((id) => `<span class="chip" translate="no">${esc(id)}</span>`).join("")}</div>
+    <div class="row"><span class="muted">Evidence</span> ${f.evidence_ids.length ? f.evidence_ids.map((id) => `<span class="chip" translate="no">${esc(id)}</span>`).join("") : `<span class="muted">none</span>`}</div>
+    ${f.explanation ? `<div class="row muted">${esc(f.explanation)}</div>` : ""}${verdict || ""}`;
 }
 function renderFindings() {
-  $("findings-count").textContent = `${S.findings.length} / 30`;
-  $("findings-list").innerHTML = S.findings.length ? S.findings.map((f, i) => `
-    <div class="finding" style="margin-bottom:8px">${findingSummary(f)}
-      <div class="row" style="margin-top:6px"><button class="btn small" data-edit="${i}">Edit</button><button class="btn small" data-delete="${i}">Delete</button></div>
-    </div>`).join("") : `<p class="muted" style="margin:0">No findings yet. If you think this company is clean, submitting no findings is a valid answer.</p>`;
+  $("findings-count").textContent = String(S.findings.length);
+  $("findings-list").innerHTML = S.findings.length ? S.findings.map((f, i) => `<div class="finding">${findingHtml(f, i)}
+      <div class="ops"><button class="quiet" data-edit="${i}">Edit</button><button class="quiet danger" data-delete="${i}">Delete</button></div></div>`).join("")
+    + `<p class="hint" style="margin-top:12px">${S.findings.length} of 30 findings. Submit from the bar at the top when you are done.</p>`
+    : `<div class="empty" style="padding:32px 0"><h2>No Findings Yet</h2><p>Draft one from the records you inspect. Submitting none is the right answer for a clean company.</p></div>`;
 }
 async function submitFindings() {
   const n = S.findings.length;
-  const message = n ? `Submit ${n} finding${n === 1 ? "" : "s"}? The episode ends and you cannot change them.` : "Submit with no findings, meaning you believe this company is clean? The episode ends.";
-  if (!confirm(message)) return;
+  if (!confirm(n ? `Submit ${n} finding${n === 1 ? "" : "s"}? The episode ends and they can’t be changed.` : "Submit no findings, meaning you believe this company is clean? The episode ends.")) return;
   await step({action: "submit", findings: {episode_id: S.manifest.episode_id, findings: S.findings}});
 }
 
-/* ---------- results ---------- */
+/* ---- results ---- */
+const metric = (v) => { const t = Number(v).toFixed(3).replace("-", "−"); return t === "−0.000" ? "0.000" : t; };
+function chartHtml(rows) {
+  const ticks = [-1, -0.5, 0, 0.5, 1], pos = (v) => ((v + 1) / 2) * 100, zero = pos(0);
+  const bars = rows.map(([name, b, you], i) => {
+    const v = b.reward, end = pos(v), left = Math.min(end, zero), width = Math.abs(end - zero), positive = v >= 0, inside = positive ? end > 86 : end < 14;
+    const valPos = positive ? (inside ? `left:calc(${end}% - 6px);transform:translateX(-100%)` : `left:calc(${end}% + 6px)`) : (inside ? `left:calc(${end}% + 6px)` : `left:calc(${end}% - 6px);transform:translateX(-100%)`);
+    const cls = you ? "focal" : name === "oracle" ? "control" : "";
+    return `<div class="chart-row"><div class="chart-label ${you ? "you" : ""}" translate="no">${esc(name)}</div><div class="plot">
+      ${ticks.map((t) => `<span class="grid${t === 0 ? " zero" : ""}" style="left:${pos(t)}%"></span>`).join("")}
+      <span class="hbar ${cls}" style="left:${left}%;width:max(${width}%, 1px);--origin:${positive ? "left" : "right"}" data-i="${i}"></span>
+      <span class="val ${you ? "focal" : ""}" style="${valPos}">${metric(v)}</span></div></div>`;
+  }).join("");
+  return `<div aria-hidden="true">${bars}<div class="chart-axis"><span></span><div class="plot">${ticks.map((t, i) => `<span class="tick${i === 0 ? " first" : i === ticks.length - 1 ? " last" : ""}" style="left:${pos(t)}%">${t}</span>`).join("")}</div></div></div>
+    <figcaption class="eyebrow" style="margin-top:8px">Reward · axis −1 to 1 · accent: you · dashed: evaluator control</figcaption>`;
+}
 async function showResults() {
   let r;
   try { r = await api("/api/result", {session: S.session}); } catch (error) { alert(error.message); return; }
-  const s = r.score, issues = r.review.issues;
-  $("r-title").textContent = r.reason === "step_limit" ? "Out of steps" : "Results";
-  $("r-sub").textContent = `${S.episode.company} · ${issues.length ? `${issues.length} planted error${issues.length === 1 ? "" : "s"}` : "a clean company (no planted errors)"} · ${r.steps} steps used`;
-  const stat = (v, k, cls = "") => `<div class="panel stat"><div class="v ${cls}">${v}</div><div class="k">${k}</div></div>`;
-  $("r-stats").innerHTML = [
-    stat(s.reward.toFixed(3), "Reward (−1 to 1)"),
-    stat(s.f1.toFixed(2), "F1 score"),
-    stat(`${s.tp} / ${s.tp + s.fn}`, "Errors found"),
-    stat(s.fp, "False alarms"),
-  ].join("");
-  let explain;
-  if (r.reason === "invalid_submission") explain = "The submission was structurally invalid, which always scores −1.";
-  else if (r.reason === "step_limit") explain = "You used all 100 steps without submitting, so the episode ended with an empty submission.";
-  else explain = `Reward = 2 × F1 − 1 − 0.002 × ${r.inspection_steps} inspection steps, kept between −1 and 1. F1 balances errors found against false alarms; on a clean company an empty submission scores F1 = 1.`;
-  $("r-explain").textContent = explain;
-
-  const rows = [["You", {tp: s.tp, fp: s.fp, fn: s.fn, f1: s.f1, reward: s.reward, steps: r.steps}, true]]
-    .concat(Object.entries(r.baselines).map(([name, b]) => [name, b, false]))
-    .sort((a, b) => b[1].reward - a[1].reward);
-  $("r-baselines").innerHTML = `<thead><tr><th>Policy</th><th class="num">Reward</th><th class="num">F1</th><th class="num">Found</th><th class="num">False alarms</th><th class="num">Steps</th></tr></thead><tbody>${
-    rows.map(([name, b, you]) => `<tr class="${you ? "you" : ""}"><td>${esc(name)}${you ? ` <span class="badge accent">you</span>` : ""}</td><td class="num">${b.reward.toFixed(3)}</td><td class="num">${b.f1.toFixed(2)}</td><td class="num">${b.tp} / ${b.tp + b.fn}</td><td class="num">${b.fp}</td><td class="num">${b.steps}</td></tr>`).join("")
-  }</tbody>`;
-
+  const s = r.score, issues = r.review.issues, n = issues.length;
+  $("r-title").textContent = r.reason === "step_limit" ? "Out of Steps" : "Results";
+  $("r-sub").textContent = `${S.episode.company} · ${n ? `${n} planted error${n === 1 ? "" : "s"}` : "clean company"} · ${r.steps} steps used`;
+  let lede;
+  if (r.reason === "invalid_submission") lede = `The submission was structurally invalid, so it scores <b>−1.000</b>.`;
+  else if (r.reason === "step_limit") lede = `You used all 100 steps without submitting, so the grader scored an empty answer: reward <b>${metric(s.reward)}</b>.`;
+  else if (!n) lede = s.fp ? `This company was clean, and you raised <b>${s.fp}</b> false alarm${s.fp === 1 ? "" : "s"}: reward <b>${metric(s.reward)}</b>.` : `This company was clean and you rightly submitted nothing: reward <b>${metric(s.reward)}</b>.`;
+  else lede = `You found <b>${s.tp}</b> of <b>${n}</b> planted error${n === 1 ? "" : "s"} with <b>${s.fp}</b> false alarm${s.fp === 1 ? "" : "s"}, for a reward of <b>${metric(s.reward)}</b>.`;
+  $("r-lede").innerHTML = lede;
+  $("r-explain").textContent = `Reward = 2 × F1 − 1 − 0.002 × ${r.inspection_steps} inspection steps, kept between −1 and 1. Your F1 is ${s.f1.toFixed(2)}; on a clean company an empty answer scores F1 = 1.`;
+  const rows = [["you", {tp: s.tp, fp: s.fp, fn: s.fn, f1: s.f1, reward: s.reward, steps: r.steps}, true]]
+    .concat(Object.entries(r.baselines).map(([name, b]) => [name, b, false])).sort((a, b) => b[1].reward - a[1].reward);
+  $("r-chart").innerHTML = chartHtml(rows);
+  $("r-chart").setAttribute("aria-label", "Reward by policy: " + rows.map(([name, b]) => `${name} ${metric(b.reward)}`).join(", "));
+  $("r-baselines").innerHTML = `<thead><tr><th scope="col">Policy</th><th scope="col" class="num">Reward</th><th scope="col" class="num">F1</th><th scope="col" class="num">Found</th><th scope="col" class="num">False alarms</th><th scope="col" class="num col-opt">Steps</th></tr></thead><tbody>${
+    rows.map(([name, b, you]) => `<tr><th scope="row" ${you ? 'style="color:var(--accent)"' : ""} translate="no">${esc(name)}</th><td class="num">${metric(b.reward)}</td><td class="num">${b.f1.toFixed(2)}</td><td class="num">${b.tp} / ${b.tp + b.fn}</td><td class="num">${b.fp}</td><td class="num col-opt">${b.steps}</td></tr>`).join("")}</tbody>`;
   $("r-findings").innerHTML = r.review.findings.length ? r.review.findings.map((f, i) => {
     const v = f.verdict || {status: "wrong", detail: ""};
-    const badge = v.status === "correct" ? `<span class="badge good">Correct</span>` : v.status === "duplicate" ? `<span class="badge warn">Duplicate</span>` : `<span class="badge bad">False alarm</span>`;
-    return `<div class="finding" style="margin-bottom:8px"><div class="row spread" style="margin-bottom:4px"><span class="muted">Finding ${i + 1}</span>${badge}</div>${findingSummary(f)}${v.detail ? `<div style="margin-top:6px" class="${v.status === "correct" ? "" : "error"}">${esc(v.detail)}</div>` : ""}</div>`;
+    const mark = v.status === "correct" ? `<span class="mark ok">Correct</span>` : v.status === "duplicate" ? `<span class="mark dup">Duplicate</span>` : `<span class="mark bad">False alarm</span>`;
+    return `<div class="finding"><div style="margin-bottom:4px">${mark}</div>${findingHtml(f, i, v.detail && v.status !== "correct" ? `<div class="why">${esc(v.detail)}</div>` : "")}</div>`;
   }).join("") : `<p class="muted">You submitted no findings.</p>`;
-
-  $("r-key").innerHTML = issues.length ? issues.map((issue) => `
-    <div class="finding" style="margin-bottom:8px">
-      <div class="row spread" style="margin-bottom:4px"><b>${esc((TYPE_INFO[issue.type] || [issue.type])[0])}</b>${issue.found_by ? `<span class="badge good">Found (your finding ${issue.found_by})</span>` : `<span class="badge bad">Missed</span>`}</div>
-      <div><span class="muted">Affected:</span> ${issue.affected_ids.map((id) => `<span class="chip">${esc(id)}</span>`).join("")}</div>
-      <div><span class="muted">Amount:</span> <span class="mono">${esc(fmtMoney(issue.expected_amount_minor, issue.currency))} ${esc(issue.currency)}</span>${issue.tolerance_minor ? ` <span class="muted">(± ${esc(issue.tolerance_minor)} smallest unit)</span>` : ""}</div>
-      <div><span class="muted">Evidence that proves it${issue.evidence_sets.length > 1 ? " (any one set)" : ""}:</span>${issue.evidence_sets.map((set) => `<div>${set.map((id) => `<span class="chip">${esc(id)}</span>`).join("")}</div>`).join("")}</div>
-    </div>`).join("") : `<p>This company was clean: there were no planted errors. The best answer was to submit nothing.</p>`;
+  $("r-key").innerHTML = n ? issues.map((issue) => `<div class="finding">
+      <div style="margin-bottom:4px">${issue.found_by ? `<span class="mark ok">Found by your finding ${issue.found_by}</span>` : `<span class="mark miss">Missed</span>`}</div>
+      <div class="top"><span class="type">${esc((TYPE_INFO[issue.type] || [issue.type])[0])}</span><span class="mono">${esc(fmtMoney(issue.expected_amount_minor, issue.currency))} ${esc(issue.currency)}</span></div>
+      <div class="row"><span class="muted">Affected</span> ${issue.affected_ids.map((id) => `<span class="chip" translate="no">${esc(id)}</span>`).join("")}</div>
+      <div class="row"><span class="muted">Proof${issue.evidence_sets.length > 1 ? " (any one set)" : ""}</span>${issue.evidence_sets.map((set) => `<div>${set.map((id) => `<span class="chip" translate="no">${esc(id)}</span>`).join("")}</div>`).join("")}</div>
+    </div>`).join("") : `<p>This company was clean: there were no planted errors, so the best answer was to submit nothing.</p>`;
   show("results");
+  if (!reduceMotion.matches) document.querySelectorAll("#r-chart .hbar").forEach((bar, i) => bar.animate([{transform: "scaleX(0)"}, {transform: "scaleX(1)"}], {duration: 300, delay: 80 + i * 40, easing: EASE, fill: "backwards"}));
 }
 
-/* ---------- events ---------- */
-$("split-filter").onchange = renderCards;
-$("cards").onclick = (e) => { const card = e.target.closest("[data-id]"); if (card) startEpisode(card.dataset.id); };
-$("random-btn").onclick = () => {
-  const split = $("split-filter").value, list = episodes.filter((e) => !split || e.split === split);
-  if (list.length) startEpisode(list[Math.floor(Math.random() * list.length)].id);
-};
+/* ---- events ---- */
+$("split-filter").onclick = (e) => { const b = e.target.closest("[data-split]"); if (!b) return; splitFilter = b.dataset.split; renderPicker(); };
+$("cards").onclick = (e) => { const b = e.target.closest("[data-id]"); if (b) startEpisode(b.dataset.id); };
+$("random-btn").onclick = () => { const list = episodes.filter((e) => !splitFilter || e.split === splitFilter); if (list.length) startEpisode(list[Math.floor(Math.random() * list.length)].id); };
 $("tabs").onclick = (e) => { const t = e.target.closest("[data-tab]"); if (!t) return; S.tab = t.dataset.tab; $("filter").value = ""; renderTabs(); renderTable(); };
+$("panes").onclick = (e) => { const t = e.target.closest("[data-pane]"); if (t) setPane(t.dataset.pane); };
 $("filter").oninput = renderTable;
-$("more-btn").onclick = async () => { if (await loadPage(S.tab)) { renderTabs(); renderTable(); renderDetail(); } };
+$("more-btn").onclick = async () => { if (await loadPage(S.tab)) { renderTabs(); renderTable(); renderInspect(); } };
 $("all-btn").onclick = async () => {
   const pages = remainingPages(S.tab);
   if (!confirm(`Load all remaining ${TABLES[S.tab].label.toLowerCase()}? This uses ${pages} steps.`)) return;
   for (let i = 0; i < pages; i++) if (!(await loadPage(S.tab))) break;
-  renderTabs(); renderTable(); renderDetail();
+  renderTabs(); renderTable(); renderInspect();
 };
-$("tablewrap").onclick = async (e) => {
-  if (e.target.id === "first-page") { if (await loadPage(S.tab)) { renderTabs(); renderTable(); } return; }
-  const tr = e.target.closest("tr[data-i]");
-  if (!tr) return;
+function selectRow(tr) {
   S.selected = {table: S.tab, row: S.tables[S.tab].rows[Number(tr.dataset.i)]};
-  renderTable(); renderDetail();
+  renderTable(); renderInspect(); setPane("inspect");
+}
+$("tablewrap").onclick = async (e) => {
+  if (e.target.closest("#first-page")) { if (await loadPage(S.tab)) { renderTabs(); renderTable(); } return; }
+  const tr = e.target.closest("tr[data-i]"); if (tr) selectRow(tr);
 };
-$("detail").addEventListener("click", (e) => { const b = e.target.closest("[data-goto]"); if (b) gotoRecord(b.dataset.goto, b.dataset.key); });
+$("tablewrap").onkeydown = (e) => { const tr = e.target.closest("tr[data-i]"); if (tr && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); selectRow(tr); } };
+$("pane-inspect").addEventListener("click", (e) => { const b = e.target.closest("[data-goto]"); if (b) gotoRecord(b.dataset.goto, b.dataset.key); });
 for (const name of ["affected", "evidence"]) {
-  $(`f-${name}`).onclick = (e) => {
-    const b = e.target.closest("[data-remove]"); if (!b) return;
-    S.draft[name].splice(Number(b.dataset.i), 1); renderDraft(); renderDetail(); renderTable();
-  };
+  $(`f-${name}`).onclick = (e) => { const b = e.target.closest("[data-remove]"); if (!b) return; S.draft[name].splice(Number(b.dataset.i), 1); afterDraftChange("Removed"); };
   $(`f-${name}-input`).onkeydown = (e) => {
     if (e.key !== "Enter") return;
     e.preventDefault();
-    const value = e.target.value.trim();
-    if (value && !S.draft[name].includes(value) && S.draft[name].length < (name === "evidence" ? 10 : 100)) S.draft[name].push(value);
+    const v = e.target.value.trim();
+    if (v && !S.draft[name].includes(v) && S.draft[name].length < (name === "evidence" ? 10 : 100)) S.draft[name].push(v);
     e.target.value = ""; renderDraft(); renderTable();
   };
 }
 for (const id of ["f-type", "f-currency"]) $(id).onchange = renderDraft;
 $("f-amount").oninput = renderDraft;
 $("f-save").onclick = saveFinding;
-$("cancel-edit").onclick = () => { resetForm(); renderDetail(); };
+$("cancel-edit").onclick = () => { resetForm(); setPane("findings"); };
 $("findings-list").onclick = (e) => {
-  const edit = e.target.closest("[data-edit]"), del = e.target.closest("[data-delete]");
-  if (edit) editFinding(Number(edit.dataset.edit));
+  const ed = e.target.closest("[data-edit]"), del = e.target.closest("[data-delete]");
+  if (ed) editFinding(Number(ed.dataset.edit));
   if (del && confirm("Delete this finding?")) {
-    const i = Number(del.dataset.delete);
-    S.findings.splice(i, 1);
+    const i = Number(del.dataset.delete); S.findings.splice(i, 1);
     if (S.editing === i) resetForm(); else if (S.editing !== null && S.editing > i) S.editing -= 1;
-    renderFindings(); renderTable();
+    renderFindings(); renderTable(); announce(`Finding ${i + 1} deleted`);
   }
 };
 $("calc-btn").onclick = async () => {
   const expression = $("calc-input").value.trim();
   if (!expression) return;
-  if (!canInspect()) return alert("No inspection steps left. Submit your findings.");
+  if (!canInspect()) return alert("No looks left. Submit your findings.");
   const obs = await step({action: "calculator", expression: expression.replace(/×/g, "*").replace(/÷/g, "/").replace(/−/g, "-")});
-  if (obs) $("calc-output").textContent = obs.error ? "Invalid expression" : `= ${obs.result}`;
+  if (obs) $("calc-output").textContent = obs.error ? "Invalid expression. Use numbers, + − × ÷ and brackets." : `= ${obs.result}`;
 };
 $("calc-input").onkeydown = (e) => { if (e.key === "Enter") $("calc-btn").click(); };
 $("submit-btn").onclick = submitFindings;
-$("quit-btn").onclick = () => { if (confirm("Leave this company? Your progress is lost and nothing is scored.")) show("picker"); };
+$("quit-btn").onclick = () => { if (confirm("Leave this company? Your progress is lost and nothing is scored.")) { show("picker"); } };
 $("again-btn").onclick = () => show("picker");
+window.addEventListener("beforeunload", (e) => { if (S && !$("workspace").classList.contains("hidden") && (S.findings.length || S.stepsUsed)) e.preventDefault(); });
 
 renderTypeHelp();
 loadEpisodes();

@@ -633,7 +633,7 @@ function recordPanel(id, ep, linkFor, backHref, backLabel) {
   }
   return `<div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:8px">
       <h3 id="record-title" tabindex="-1" style="margin:0;color:var(--ink);font-size:13px">${esc(kind)} <span class="mono" translate="no">${esc(id)}</span></h3>
-      <span>${copyBtn(id)} ${back}</span></div>
+      <span style="display:inline-flex;gap:20px;align-items:baseline">${copyBtn(id)}${back}</span></div>
     ${fields}${extra}
     <details class="raw" style="margin-top:12px"><summary>Raw Record JSON</summary><pre>${esc(JSON.stringify(r, null, 2))}</pre></details>`;
 }
