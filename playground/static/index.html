@@ -1,0 +1,786 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#f5f5f5" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#2d3142" media="(prefers-color-scheme: dark)">
+<title>MonkeyType · Audit Playground</title>
+<style>
+/* Same skin as the reviewer dashboard (diagram-design tokens, system fonts, offline). */
+:root {
+  --paper: #f5f5f5; --paper-2: #ececec; --node: #ffffff; --ink: #2d3142; --muted: #4f5d75; --soft: #5a6580;
+  --rule: rgba(45, 49, 66, 0.12); --rule-solid: #bfc0c0; --accent: #bf4520; --accent-tint: rgba(191, 69, 32, 0.08);
+  --link: #2e5aa8; --grid: rgba(45, 49, 66, 0.08); --axis: rgba(45, 49, 66, 0.25); --bar-fill: rgba(79, 93, 117, 0.15);
+  --ink-hover: #12151f;
+  --serif: "Instrument Serif", "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+  --sans: "Geist", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --mono: "Geist Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --ease: cubic-bezier(0.2, 0, 0, 1);
+  --s1: 4px; --s2: 8px; --s3: 12px; --s4: 16px; --s5: 24px; --s6: 32px;
+  color-scheme: light dark;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --paper: #2d3142; --paper-2: #393e53; --node: #333849; --ink: #f5f5f5; --muted: #bfc0c0; --soft: #a3acbf;
+    --rule: rgba(245, 245, 245, 0.12); --rule-solid: rgba(191, 192, 192, 0.25); --accent: #f08a59;
+    --accent-tint: rgba(240, 138, 89, 0.10); --link: #8db3ee; --grid: rgba(245, 245, 245, 0.08);
+    --axis: rgba(245, 245, 245, 0.20); --bar-fill: rgba(191, 192, 192, 0.15); --ink-hover: #ffffff;
+  }
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body { background: var(--paper); color: var(--ink); font: 14px/1.5 var(--sans); -webkit-font-smoothing: antialiased; }
+h1, h2, h3 { margin: 0; line-height: 1.25; text-wrap: balance; }
+h1 { font-family: var(--serif); font-weight: 400; font-size: 2rem; }
+h2 { font-size: 15px; font-weight: 600; }
+p { margin: 0 0 var(--s2); text-wrap: pretty; }
+a { color: var(--link); text-underline-offset: 3px; }
+:focus-visible { outline: 2px solid var(--link); outline-offset: 2px; }
+[tabindex="-1"]:focus { outline: none; }
+button, input, select, textarea { font: inherit; color: inherit; touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
+.mono { font-family: var(--mono); font-size: 12.5px; }
+.num { text-align: right; font-variant-numeric: tabular-nums; }
+.muted { color: var(--soft); }
+.eyebrow { font-family: var(--mono); font-size: 10.5px; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase; color: var(--soft); }
+.hidden { display: none !important; }
+.visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.wrap { max-width: 1440px; margin: 0 auto; padding: 0 var(--s5); }
+
+/* ---- Buttons: solid square primary, underlined text secondary, joined segmented tabs ---- */
+.btn { display: inline-flex; align-items: center; gap: 10px; height: 36px; padding: 0 16px; border: 0; border-radius: 2px;
+  background: var(--ink); color: var(--paper); font: 500 13px/1 var(--sans); cursor: pointer; text-decoration: none; white-space: nowrap;
+  transition: background-color 160ms var(--ease), transform 120ms var(--ease); }
+.btn:hover { background: var(--ink-hover); transition-duration: 90ms; }
+.btn:active { transform: scale(0.98); transition-duration: 60ms; }
+.btn:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
+.btn .arrow { font-family: var(--mono); }
+.btn .cost { font-family: var(--mono); font-size: 11px; opacity: 0.75; }
+.btn.small { height: 30px; padding: 0 12px; font-size: 12.5px; }
+.quiet { display: inline-flex; align-items: baseline; gap: 6px; border: 0; background: none; padding: 4px 0; cursor: pointer; color: var(--ink);
+  font: 500 13px/1.3 var(--sans); text-decoration: underline; text-decoration-color: var(--rule-solid); text-decoration-thickness: 1px; text-underline-offset: 4px;
+  transition: text-decoration-color 160ms var(--ease), color 160ms var(--ease); white-space: nowrap; }
+.quiet:hover { text-decoration-color: currentColor; transition-duration: 90ms; }
+.quiet:disabled { color: var(--soft); text-decoration-color: transparent; cursor: not-allowed; }
+.quiet .cost { font-family: var(--mono); font-size: 11px; color: var(--soft); text-decoration: none; display: inline-block; }
+.quiet.danger { color: var(--accent); }
+.segmented { display: inline-flex; border: 1px solid var(--rule-solid); border-radius: 2px; overflow: hidden; max-width: 100%; overflow-x: auto; }
+.segmented button { border: 0; border-right: 1px solid var(--rule-solid); background: transparent; color: var(--soft); padding: 7px 14px; cursor: pointer; font-size: 13px; font-weight: 500; white-space: nowrap;
+  transition: background-color 160ms var(--ease), color 160ms var(--ease); }
+.segmented button:last-child { border-right: 0; }
+.segmented button:hover { color: var(--ink); transition-duration: 90ms; }
+.segmented button[aria-pressed="true"], .segmented button[aria-selected="true"] { background: var(--ink); color: var(--paper); }
+.segmented .n { font-family: var(--mono); font-size: 11px; margin-left: 6px; opacity: 0.8; }
+
+/* Fields */
+label.field { display: block; }
+label.field > span, .field-label { display: block; font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--soft); margin-bottom: 4px; }
+input[type=text], input[type=search], select, textarea { width: 100%; border: 0; border-bottom: 1px solid var(--rule-solid); border-radius: 0; background-color: transparent; color: var(--ink); padding: 6px 0; min-height: 34px;
+  transition: border-color 160ms var(--ease); }
+select { cursor: pointer; }
+select option { background: var(--node); color: var(--ink); }
+input:hover, select:hover, textarea:hover { border-bottom-color: var(--muted); }
+input:focus-visible, select:focus-visible, textarea:focus-visible { outline: none; border-bottom: 1px solid var(--ink); box-shadow: 0 1px 0 var(--ink); }
+textarea { resize: vertical; min-height: 64px; }
+.hint { font-size: 12px; color: var(--soft); margin-top: 4px; }
+.error { color: var(--accent); font-size: 12.5px; }
+.chip { display: inline-flex; align-items: center; gap: 4px; border: 1px solid var(--rule-solid); border-radius: 2px; padding: 1px 2px 1px 7px; font-family: var(--mono); font-size: 11.5px; margin: 0 4px 4px 0; }
+.chip button { border: 0; background: none; color: var(--soft); cursor: pointer; padding: 0 5px; font-size: 13px; line-height: 1; }
+.chip button:hover { color: var(--accent); }
+
+/* Header */
+header.site { border-bottom: 1px solid var(--rule); }
+header.site .wrap { display: flex; align-items: baseline; gap: var(--s3); min-height: 52px; padding-top: var(--s3); padding-bottom: var(--s3); }
+.brand { font-family: var(--serif); font-size: 1.45rem; line-height: 1; }
+
+/* Picker: brief on the left, a ledger of companies on the right */
+.picker { display: grid; grid-template-columns: minmax(260px, 340px) minmax(0, 1fr); gap: var(--s6); padding-top: var(--s6); padding-bottom: 64px; align-items: start; }
+.brief .lede { font-family: var(--serif); font-style: italic; font-size: 1.25rem; line-height: 1.4; margin: var(--s3) 0 var(--s5); }
+.brief ol { margin: 0 0 var(--s5); padding: 0; list-style: none; counter-reset: s; }
+.brief ol li { counter-increment: s; display: grid; grid-template-columns: 28px 1fr; padding: var(--s2) 0; border-top: 1px solid var(--rule); font-size: 13.5px; }
+.brief ol li::before { content: counter(s, decimal-leading-zero); font-family: var(--mono); font-size: 11px; color: var(--soft); padding-top: 2px; }
+.brief dl { margin: 0; }
+.brief dt { font-weight: 600; font-size: 13px; margin-top: var(--s3); }
+.brief dd { margin: 2px 0 0; font-size: 13px; color: var(--soft); }
+.ledger-head { display: flex; justify-content: space-between; align-items: flex-end; gap: var(--s3); flex-wrap: wrap; margin-bottom: var(--s3); }
+table { border-collapse: collapse; width: 100%; font-size: 13px; }
+th, td { padding: 10px var(--s3); border-bottom: 1px solid var(--rule); text-align: left; white-space: nowrap; vertical-align: middle; }
+th:first-child, td:first-child { padding-left: 0; }
+th:last-child, td:last-child { padding-right: 0; }
+thead th { font-family: var(--mono); font-weight: 500; font-size: 10.5px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--soft); border-bottom-color: var(--rule-solid); }
+.companies tbody tr { transition: background-color 160ms var(--ease); }
+.companies tbody tr:hover { background: color-mix(in srgb, var(--paper-2) 60%, transparent); }
+.companies .name { font-weight: 600; }
+.companies td:last-child { text-align: right; }
+
+/* Workspace */
+.casebar { position: sticky; top: 0; z-index: 5; background: color-mix(in srgb, var(--paper) 94%, transparent); backdrop-filter: blur(6px); border-bottom: 1px solid var(--rule); }
+.casebar .wrap { display: grid; grid-template-columns: minmax(0, 1fr) minmax(220px, 320px) auto; gap: var(--s5); align-items: center; padding-top: var(--s3); padding-bottom: var(--s3); }
+.casebar h1 { font-size: 1.5rem; }
+.budget .line { display: flex; justify-content: space-between; font-size: 12px; color: var(--soft); margin-bottom: 6px; }
+.budget .line b { color: var(--ink); font-variant-numeric: tabular-nums; }
+.track { height: 6px; background: repeating-linear-gradient(to right, transparent 0 calc(10% - 1px), var(--rule-solid) calc(10% - 1px) 10%), var(--paper-2); position: relative; }
+.track > span { position: absolute; inset: 0 auto 0 0; background: var(--ink); transition: width 200ms var(--ease); }
+.track.low > span { background: var(--accent); }
+.case-actions { display: flex; gap: var(--s4); align-items: center; }
+.desk { display: grid; grid-template-columns: minmax(0, 1fr) 420px; gap: var(--s6); padding-top: var(--s5); padding-bottom: 64px; align-items: start; }
+.notice { border-left: 2px solid var(--accent); padding: 6px var(--s3); font-size: 13px; margin-bottom: var(--s3); }
+.records-tools { display: flex; justify-content: space-between; align-items: center; gap: var(--s3) var(--s5); flex-wrap: wrap; margin: var(--s4) 0 var(--s2); }
+.records-tools .left { display: flex; gap: var(--s4); align-items: center; flex: 1; min-width: 220px; }
+.records-tools input { max-width: 300px; }
+.records-tools .right { display: flex; gap: var(--s5); align-items: baseline; }
+.tablewrap { overflow: auto; max-height: calc(100vh - 260px); min-height: 280px; border-top: 1px solid var(--rule-solid); overscroll-behavior: contain; }
+.tablewrap thead th { position: sticky; top: 0; background: var(--paper); z-index: 1; }
+.tablewrap th:first-child, .tablewrap td:first-child { padding-left: var(--s2); }
+.tablewrap tbody tr { cursor: pointer; transition: background-color 160ms var(--ease); content-visibility: auto; contain-intrinsic-size: auto 41px; }
+.tablewrap tbody tr:hover { background: color-mix(in srgb, var(--paper-2) 60%, transparent); }
+.tablewrap tbody tr.selected { background: var(--accent-tint); }
+.tablewrap tbody tr.selected td:first-child { box-shadow: inset 2px 0 0 var(--accent); }
+.tablewrap tbody tr.cited td:first-child::after { content: "●"; color: var(--ink); font-size: 8px; margin-left: 6px; vertical-align: 2px; }
+.empty { padding: 48px var(--s4); text-align: center; color: var(--soft); }
+.empty h2 { color: var(--ink); margin-bottom: var(--s2); font-family: var(--serif); font-weight: 400; font-size: 1.35rem; }
+.empty p { margin-bottom: var(--s4); }
+.rules { margin: var(--s4) 0 0; padding: 0; list-style: none; }
+.rules li { padding: var(--s2) 0; border-bottom: 1px solid var(--rule); font-size: 13.5px; }
+
+/* Case file */
+.casefile { position: sticky; top: 92px; border-left: 1px solid var(--rule); padding-left: var(--s5); max-height: calc(100vh - 108px); overflow: auto; overscroll-behavior: contain; }
+.casefile .segmented { width: 100%; }
+.casefile .segmented button { flex: 1; padding: 8px 6px; }
+.pane { padding-top: var(--s4); }
+.pane > * + * { margin-top: var(--s4); }
+.pane > * + .hint { margin-top: 6px; }
+dl.kv { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 5px var(--s4); margin: 0; font-size: 13px; }
+dl.kv dt { color: var(--soft); }
+dl.kv dd { margin: 0; overflow-wrap: anywhere; }
+.mini th, .mini td { padding: 5px var(--s2); font-size: 12.5px; }
+.mini th:first-child, .mini td:first-child { padding-left: 0; }
+.mini th:last-child, .mini td:last-child { padding-right: 0; }
+.pane h3 { font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--soft); font-weight: 500; margin-bottom: 6px; }
+.record-title { font-family: var(--serif); font-size: 1.35rem; font-weight: 400; }
+.actions { display: flex; gap: var(--s5); align-items: center; flex-wrap: wrap; padding-top: var(--s2); border-top: 1px solid var(--rule); }
+.two { display: grid; grid-template-columns: 2fr 1fr; gap: var(--s4); }
+.finding { padding: var(--s3) 0; border-bottom: 1px solid var(--rule); font-size: 13px; }
+.finding:first-child { border-top: 1px solid var(--rule); }
+.finding .top { display: flex; justify-content: space-between; gap: var(--s3); align-items: baseline; }
+.finding .type { font-weight: 600; }
+.finding .row { margin-top: 3px; }
+.finding .ops { display: flex; gap: var(--s4); margin-top: 6px; }
+
+/* Results */
+.results { padding-top: var(--s6); padding-bottom: 64px; }
+.results .lede { font-family: var(--serif); font-style: italic; font-size: 1.5rem; line-height: 1.35; max-width: 34em; margin: var(--s3) 0 var(--s5); }
+.results .lede b { font-family: var(--sans); font-style: normal; font-weight: 600; font-size: 0.75em; font-variant-numeric: tabular-nums; }
+.formula { font-size: 13px; color: var(--soft); margin-bottom: var(--s6); }
+.chart { margin: 0 0 var(--s3); }
+.chart-row { display: grid; grid-template-columns: 160px minmax(0, 1fr); gap: var(--s3); align-items: center; height: 38px; }
+.chart-label { text-align: right; font-weight: 600; font-size: 13px; }
+.chart-label.you { color: var(--accent); }
+.plot { position: relative; height: 100%; }
+.plot .grid { position: absolute; top: 0; bottom: 0; border-left: 1px solid var(--grid); }
+.plot .grid.zero { border-left-color: var(--axis); }
+.plot .hbar { position: absolute; top: 10px; height: 18px; background: var(--bar-fill); border: 1px solid var(--muted); border-radius: 1px; transform-origin: var(--origin, left) center; }
+.plot .hbar.focal { background: var(--accent-tint); border-color: var(--accent); }
+.plot .hbar.control { background: transparent; border-style: dashed; }
+.plot .val { position: absolute; top: 11px; font-family: var(--mono); font-size: 11.5px; color: var(--soft); white-space: nowrap; }
+.plot .val.focal { color: var(--accent); }
+.chart-axis { display: grid; grid-template-columns: 160px minmax(0, 1fr); gap: var(--s3); height: 22px; }
+.chart-axis .plot { border-top: 1px solid var(--axis); }
+.chart-axis .tick { position: absolute; top: 4px; transform: translateX(-50%); font-family: var(--mono); font-size: 10.5px; color: var(--soft); }
+.chart-axis .tick.first { transform: none; } .chart-axis .tick.last { transform: translateX(-100%); }
+.verdicts { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s6); margin-top: var(--s6); }
+.mark { font-size: 12.5px; font-weight: 600; white-space: nowrap; }
+.mark::before { content: ""; display: inline-block; width: 8px; height: 8px; margin-right: 6px; vertical-align: 0; }
+.mark.ok::before { background: var(--ink); border-radius: 50%; }
+.mark.bad { color: var(--accent); } .mark.bad::before { background: var(--accent); }
+.mark.dup::before, .mark.miss::before { border: 1.5px solid var(--muted); border-radius: 50%; width: 7px; height: 7px; }
+.mark.miss { color: var(--soft); }
+.why { color: var(--accent); margin-top: 4px; font-size: 12.5px; }
+
+@media (max-width: 1000px) {
+  .picker, .desk, .verdicts { grid-template-columns: minmax(0, 1fr); }
+  .casebar { position: static; backdrop-filter: none; }
+  .casebar .wrap { grid-template-columns: minmax(0, 1fr); gap: var(--s3); }
+  .casefile { position: static; max-height: none; border-left: 0; padding-left: 0; border-top: 1px solid var(--rule); padding-top: var(--s4); }
+  .tablewrap { max-height: 60vh; }
+  .chart-row, .chart-axis { grid-template-columns: 96px minmax(0, 1fr); }
+  .wrap { padding: 0 var(--s4); }
+  .col-opt { display: none; }
+}
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition: none !important; animation: none !important; } }
+</style>
+</head>
+<body>
+<header class="site"><div class="wrap"><span class="brand" translate="no">MonkeyType</span><span class="eyebrow">Audit Playground</span><a class="quiet hidden" id="dashboard-link" href="dashboard/" style="margin-left:auto">Reviewer Dashboard <span aria-hidden="true">→</span></a></div></header>
+<main id="main">
+
+<!-- Picker -->
+<section id="picker" class="wrap picker">
+  <aside class="brief">
+    <h1 tabindex="-1">Play the Auditor</h1>
+    <p class="lede">Each company is fictional. Some books hide planted errors; some are clean. Find the errors, prove them with records, and the same grader that scores AI agents scores you.</p>
+    <ol>
+      <li><span>Choose a company from the ledger.</span></li>
+      <li><span>Open pages of its records. Each page costs one step of 100, exactly as it does for an agent.</span></li>
+      <li><span>Draft a finding: type, affected document, amount and the records that prove it.</span></li>
+      <li><span>Submit, then compare yourself with the baseline policies and read the answer key.</span></li>
+    </ol>
+    <h2 class="eyebrow">The four kinds of error</h2>
+    <dl id="type-help"></dl>
+  </aside>
+  <div>
+    <div class="ledger-head">
+      <div><p class="eyebrow" id="picker-count"></p><h2>Choose a Company</h2></div>
+      <div style="display:flex;gap:var(--s5);align-items:center;flex-wrap:wrap">
+        <div class="segmented" id="split-filter" role="group" aria-label="Episode set"></div>
+        <button class="btn" id="random-btn">Random Company <span class="arrow" aria-hidden="true">→</span></button>
+      </div>
+    </div>
+    <div id="picker-error" class="error"></div>
+    <div style="overflow-x:auto"><table class="companies"><thead><tr><th scope="col">Company</th><th scope="col">Set</th><th scope="col" class="col-opt">Currency</th><th scope="col" class="col-opt">Period</th><th scope="col" class="num col-opt">Ledger Rows</th><th scope="col" class="num col-opt">Documents</th><th scope="col"><span class="visually-hidden">Action</span></th></tr></thead>
+      <tbody id="cards"></tbody></table></div>
+  </div>
+</section>
+
+<!-- Workspace -->
+<section id="workspace" class="hidden">
+  <div class="casebar"><div class="wrap">
+    <div><p class="eyebrow" id="ws-meta"></p><h1 id="ws-company" tabindex="-1"></h1></div>
+    <div class="budget" aria-live="polite"><div class="line"><span id="ws-steps"></span><span>0.002 per step</span></div><div class="track" id="ws-meter"><span></span></div></div>
+    <div class="case-actions"><button class="quiet" id="quit-btn">Change Company</button><button class="btn" id="submit-btn">Submit Findings <span class="arrow" aria-hidden="true">→</span></button></div>
+  </div></div>
+  <div class="wrap desk">
+    <div>
+      <div id="step-warning" class="notice hidden" role="status"></div>
+      <div class="segmented" id="tabs" role="tablist" aria-label="Records"></div>
+      <div class="records-tools">
+        <div class="left"><input type="search" id="filter" name="filter" placeholder="Filter loaded rows…" autocomplete="off" spellcheck="false" aria-label="Filter loaded rows (free)"><span class="muted" id="table-status" style="font-size:12.5px"></span></div>
+        <div class="right"><button class="quiet" id="more-btn">Load Next 50 <span class="cost">1 step</span></button><button class="quiet" id="all-btn"></button></div>
+      </div>
+      <div class="tablewrap" id="tablewrap"></div>
+    </div>
+    <aside class="casefile" aria-label="Case file">
+      <div class="segmented" id="panes" role="tablist" aria-label="Case file">
+        <button role="tab" data-pane="inspect" id="tab-inspect">Inspect</button>
+        <button role="tab" data-pane="draft" id="tab-draft">Draft<span class="n" id="draft-n"></span></button>
+        <button role="tab" data-pane="findings" id="tab-findings">Findings<span class="n" id="findings-count">0</span></button>
+        <button role="tab" data-pane="calc" id="tab-calc">Calculator</button>
+      </div>
+      <div class="pane" id="pane-inspect" role="tabpanel" aria-labelledby="tab-inspect"></div>
+      <div class="pane" id="pane-draft" role="tabpanel" aria-labelledby="tab-draft">
+        <div class="field-label" id="form-title">New Finding</div>
+        <label class="field"><span>Error type</span><select id="f-type" name="type"></select></label>
+        <div class="hint" id="f-type-hint"></div>
+        <div><span class="field-label">Affected invoice or payment</span><div id="f-affected"></div>
+          <input type="text" id="f-affected-input" name="affected" class="mono" placeholder="Type a document ID and press Enter…" autocomplete="off" spellcheck="false" aria-label="Add affected document ID"></div>
+        <div class="two">
+          <label class="field"><span>Amount</span><input type="text" id="f-amount" name="amount" inputmode="decimal" placeholder="225.54…" autocomplete="off"></label>
+          <label class="field"><span>Currency</span><select id="f-currency" name="currency"></select></label>
+        </div>
+        <div class="hint" id="f-amount-hint"></div>
+        <div><span class="field-label">Evidence · up to 10</span><div id="f-evidence"></div>
+          <input type="text" id="f-evidence-input" name="evidence" class="mono" placeholder="Type a record ID and press Enter…" autocomplete="off" spellcheck="false" aria-label="Add evidence ID"></div>
+        <label class="field"><span>Explanation (not scored)</span><textarea id="f-explanation" name="explanation" maxlength="1000" placeholder="What is wrong and how you worked out the amount…"></textarea></label>
+        <div class="error" id="f-error" role="alert"></div>
+        <div class="actions"><button class="btn" id="f-save">Add Finding <span class="arrow" aria-hidden="true">→</span></button><button class="quiet hidden" id="cancel-edit">Cancel Edit</button></div>
+      </div>
+      <div class="pane" id="pane-findings" role="tabpanel" aria-labelledby="tab-findings"><div id="findings-list"></div></div>
+      <div class="pane" id="pane-calc" role="tabpanel" aria-labelledby="tab-calc">
+        <label class="field"><span>Expression</span><input type="text" id="calc-input" name="expression" class="mono" placeholder="80550 * 473.0904…" autocomplete="off" spellcheck="false"></label>
+        <div class="actions"><button class="quiet" id="calc-btn">Calculate <span class="cost">1 step</span></button></div>
+        <div class="mono" id="calc-output" aria-live="polite" style="font-size:15px"></div>
+        <p class="hint">Exact decimals with + − × ÷ and brackets. A calculator of your own is free.</p>
+      </div>
+    </aside>
+  </div>
+</section>
+
+<!-- Results -->
+<section id="results" class="wrap results hidden">
+  <p class="eyebrow" id="r-sub"></p>
+  <h1 id="r-title" tabindex="-1"></h1>
+  <p class="lede" id="r-lede"></p>
+  <p class="formula" id="r-explain"></p>
+  <h2 style="margin-bottom:var(--s3)">You Against the Baseline Policies</h2>
+  <figure class="chart" id="r-chart" role="img"></figure>
+  <p class="hint" id="r-missing"></p>
+  <div style="overflow-x:auto"><table id="r-baselines"></table></div>
+  <div class="verdicts">
+    <div><h2 style="margin-bottom:var(--s3)">Your Findings</h2><div id="r-findings"></div></div>
+    <div><h2 style="margin-bottom:var(--s3)">Answer Key</h2><div id="r-key"></div></div>
+  </div>
+  <p style="margin-top:var(--s6)"><button class="btn" id="again-btn">Play Another Company <span class="arrow" aria-hidden="true">→</span></button></p>
+</section>
+</main>
+<div id="live" class="visually-hidden" aria-live="polite"></div>
+
+<script>
+"use strict";
+const $ = (id) => document.getElementById(id);
+const esc = (value) => String(value ?? "").replace(/[&<>"']/g, (c) => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"}[c]));
+const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+const EASE = "cubic-bezier(0.2, 0, 0, 1)";
+const enter = (el, dx = 0, dy = 6, ms = 200) => { if (el && el.animate && !reduceMotion.matches) el.animate([{opacity: 0, transform: `translate(${dx}px, ${dy}px)`}, {opacity: 1, transform: "none"}], {duration: ms, easing: EASE}); };
+const announce = (text) => { $("live").textContent = ""; setTimeout(() => { $("live").textContent = text; }, 30); };
+
+const TYPE_INFO = {
+  duplicate_invoice: ["Duplicate invoice", "The same invoice is booked in the ledger more than once.", "Usually the amount of the extra booking (the second debit to receivables)."],
+  payment_allocation: ["Payment not applied", "A payment names the invoices it pays, but the ledger parks some or all of it in the unapplied account.", "Usually the amount that went to the unapplied account, in the base currency."],
+  fx_conversion: ["Wrong currency conversion", "A foreign-currency invoice or payment was converted at the wrong rate or date.", "The difference between the correct and the booked base-currency amount."],
+  wrong_period: ["Wrong reporting period", "An invoice is booked in a different reporting period from the one its date belongs to.", "Usually the amount that was booked."],
+  reporting_period: ["Wrong reporting period", "An invoice is booked in a different reporting period from the one its date belongs to.", "Usually the amount that was booked."],
+};
+const TABLES = {
+  ledger: {label: "Ledger", count: "ledger_rows", columns: [["row_id", "Row"], ["entry_id", "Entry", "", true], ["timestamp", "Time"], ["account", "Account", "account"], ["debit_minor", "Debit", "money"], ["credit_minor", "Credit", "money"], ["currency", "Cur"], ["invoice_id", "Invoice", "", true], ["payment_id", "Payment", "", true]]},
+  invoices: {label: "Invoices", count: "invoices", columns: [["doc_id", "Document"], ["invoice_id", "Invoice"], ["entity_id", "Counterparty", "", true], ["issued_at", "Issued"], ["currency", "Cur"], ["total_minor", "Total", "money"], ["line_items", "Lines", "count", true]]},
+  payments: {label: "Payments", count: "payments", columns: [["doc_id", "Document"], ["payment_id", "Payment"], ["entity_id", "Counterparty", "", true], ["timestamp", "Received"], ["currency", "Cur"], ["amount_minor", "Amount", "money"], ["invoice_refs", "Pays invoices", "refs", true]]},
+  fx: {label: "FX Rates", count: "fx_rates", columns: [["date", "Date"], ["source_currency", "From"], ["target_currency", "To"], ["rate", "Rate", "num"]]},
+  rules: {label: "Rules"},
+};
+const PAGE = 50;
+let episodes = [];
+let S = null;
+let splitFilter = "dev";
+
+async function api(path, body) {
+  const response = await fetch(path, body === undefined ? {} : {method: "POST", headers: {"Content-Type": "application/json"}, body: JSON.stringify(body)});
+  const data = await response.json().catch(() => ({error: "The server sent an unreadable response. Restart it with python3 -m playground."}));
+  if (!response.ok) throw new Error(data.error || response.statusText);
+  return data;
+}
+function show(id) {
+  for (const name of ["picker", "workspace", "results"]) $(name).classList.toggle("hidden", name !== id);
+  window.scrollTo(0, 0);
+  const heading = {picker: document.querySelector("#picker h1"), workspace: $("ws-company"), results: $("r-title")}[id];
+  if (heading) heading.focus({preventScroll: true});
+  enter($(id), 0, 6, 300);
+}
+
+/* ---- money, ids ---- */
+function exponent(currency) { return S.manifest.currency_exponents?.[currency] ?? 2; }
+function fmtMoney(minor, currency) {
+  if (minor === null || minor === undefined || minor === "") return "";
+  const exp = exponent(currency), text = String(minor), negative = text.startsWith("-");
+  const digits = text.replace("-", "").padStart(exp + 1, "0");
+  const whole = digits.slice(0, digits.length - exp).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  return (negative ? "−" : "") + whole + (exp ? "." + digits.slice(-exp) : "");
+}
+function toMinor(text, currency) {
+  const clean = String(text).trim().replace(/[,\s]/g, "").replace("−", "-");
+  if (!/^-?\d+(\.\d+)?$/.test(clean)) return null;
+  const exp = exponent(currency), [whole, frac = ""] = clean.replace("-", "").split(".");
+  if (frac.length > exp) return null;
+  const value = Number(whole + frac.padEnd(exp, "0"));
+  if (!Number.isSafeInteger(value)) return null;
+  return clean.startsWith("-") ? -value : value;
+}
+const isV1 = () => String(S.manifest.schema_version) === "1.0";
+function evidenceId(table, row) {
+  if (table === "ledger") return row.row_id;
+  if (table === "fx") return (isV1() ? "FX:" : "") + `${row.date}:${row.source_currency}:${row.target_currency}`;
+  return row.doc_id;
+}
+const rowKey = (table, row) => ({ledger: row.row_id, invoices: row.invoice_id, payments: row.payment_id}[table] ?? evidenceId(table, row));
+function accountLabel(code) {
+  for (const [role, value] of Object.entries(S.policy.accounts || {})) {
+    if (value === code || (Array.isArray(value) && value.includes(code))) return {ar: "Receivables", bank: "Bank", revenue: "Revenue", unapplied: "Unapplied", expense: "Expense"}[role] || role;
+  }
+  return "";
+}
+const ts = (v) => String(v ?? "").replace("T", " ");
+
+/* ---- picker ---- */
+function renderTypeHelp() {
+  $("type-help").innerHTML = ["duplicate_invoice", "payment_allocation", "fx_conversion", "wrong_period"]
+    .map((t) => `<dt>${esc(TYPE_INFO[t][0])}</dt><dd>${esc(TYPE_INFO[t][1])}</dd>`).join("");
+}
+function renderPicker() {
+  const splits = [...new Set(episodes.map((e) => e.split))];
+  const options = [["", "All"], ...splits.map((s) => [s, s[0].toUpperCase() + s.slice(1)])];
+  $("split-filter").innerHTML = options.map(([v, l]) => `<button type="button" data-split="${esc(v)}" aria-pressed="${v === splitFilter}">${esc(l)}</button>`).join("");
+  const list = episodes.filter((e) => !splitFilter || e.split === splitFilter);
+  $("picker-count").textContent = `${list.length} ${list.length === 1 ? "company" : "companies"}`;
+  $("cards").innerHTML = list.map((e) => `<tr>
+    <td class="name">${esc(e.company)}</td><td><span class="eyebrow">${esc(e.split)}</span></td>
+    <td class="col-opt mono">${esc(e.base_currency)}</td>
+    <td class="col-opt muted">${esc(e.period_start.slice(0, 10))} → ${esc(e.period_end.slice(0, 10))}</td>
+    <td class="num col-opt">${esc(e.ledger_rows ?? "—")}</td><td class="num col-opt">${esc(e.documents ?? "—")}</td>
+    <td><button class="quiet" data-id="${esc(e.id)}" aria-label="Audit ${esc(e.company)}">Audit <span aria-hidden="true">→</span></button></td></tr>`).join("");
+}
+async function loadEpisodes() {
+  try { episodes = await api("/api/episodes"); } catch (error) { $("picker-error").textContent = `${error.message} Check that python3 -m playground is still running.`; return; }
+  if (!episodes.some((e) => e.split === splitFilter)) splitFilter = "";
+  renderPicker();
+}
+
+/* ---- game ---- */
+async function startEpisode(id) {
+  $("picker-error").textContent = "";
+  let data;
+  try { data = await api("/api/start", {episode: id}); } catch (error) { $("picker-error").textContent = error.message; return; }
+  const obs = data.observation;
+  S = {session: data.session, episode: data.episode, manifest: obs.manifest, policy: obs.policy, issueTypes: data.issue_types,
+    stepLimit: data.step_limit, stepsUsed: 0, busy: false, tab: "ledger", pane: "inspect", selected: null, findings: [], editing: null,
+    tables: Object.fromEntries(Object.keys(TABLES).filter((t) => t !== "rules").map((t) => [t, {rows: [], cursor: undefined, byKey: new Map()}])),
+    draft: {affected: [], evidence: []}};
+  const m = S.manifest;
+  $("ws-company").textContent = data.episode.company;
+  $("ws-meta").textContent = `${data.episode.split} · ${m.base_currency} · ${m.period_start.slice(0, 10)} → ${m.period_end.slice(0, 10)} · ${m.timezone}`;
+  $("f-type").innerHTML = S.issueTypes.map((t) => `<option value="${esc(t)}">${esc((TYPE_INFO[t] || [t])[0])}</option>`).join("");
+  $("f-currency").innerHTML = Object.keys(m.currency_exponents || {[m.base_currency]: 2}).map((c) => `<option ${c === m.base_currency ? "selected" : ""}>${esc(c)}</option>`).join("");
+  $("calc-output").textContent = ""; $("filter").value = "";
+  resetForm(); renderTabs(); renderTable(); renderInspect(); renderFindings(); renderSteps(); setPane("inspect", false);
+  show("workspace");
+}
+function setPane(name, animate = true) {
+  S.pane = name;
+  for (const p of ["inspect", "draft", "findings", "calc"]) {
+    $(`pane-${p}`).classList.toggle("hidden", p !== name);
+    $(`tab-${p}`).setAttribute("aria-selected", String(p === name));
+  }
+  if (animate) enter($(`pane-${name}`), 8, 0);
+}
+function renderSteps() {
+  const left = S.stepLimit - S.stepsUsed;
+  $("ws-steps").innerHTML = `<b>${S.stepsUsed}</b> of ${S.stepLimit} steps used`;
+  $("ws-meter").firstElementChild.style.width = `${Math.min(100, 100 * S.stepsUsed / S.stepLimit)}%`;
+  $("ws-meter").classList.toggle("low", left <= 10);
+  const w = $("step-warning");
+  w.textContent = left <= 1 ? "No looks left. Submit now: one more look would end the episode with nothing submitted." : `Only ${left - 1} looks left before you must submit.`;
+  w.classList.toggle("hidden", left > 10);
+  renderTableButtons();
+}
+const canInspect = (cost = 1) => S.stepLimit - S.stepsUsed - cost >= 1;
+async function step(action) {
+  if (S.busy) return null;
+  S.busy = true;
+  try {
+    const data = await api("/api/step", {session: S.session, action});
+    S.stepsUsed = data.steps_used; renderSteps();
+    if (data.finished) { await showResults(); return null; }
+    return data.observation;
+  } catch (error) { alert(`${error.message} Start the company again from the list.`); return null; }
+  finally { S.busy = false; }
+}
+
+/* ---- records ---- */
+function renderTabs() {
+  $("tabs").innerHTML = Object.entries(TABLES).map(([name, t]) => {
+    const n = t.count ? `${S.tables[name].rows.length}/${S.manifest.counts?.[t.count] ?? "?"}` : "";
+    return `<button role="tab" data-tab="${name}" aria-selected="${S.tab === name}">${esc(t.label)}${n ? `<span class="n">${n}</span>` : ""}</button>`;
+  }).join("");
+}
+function remainingPages(name) {
+  if (name === "rules") return 0;
+  const st = S.tables[name], total = S.manifest.counts?.[TABLES[name].count];
+  if (st.cursor === null) return 0;
+  return total === undefined ? 1 : Math.ceil((total - st.rows.length) / PAGE);
+}
+function renderTableButtons() {
+  if (!S) return;
+  const pages = remainingPages(S.tab), started = S.tab !== "rules" && S.tables[S.tab].cursor !== undefined;
+  $("more-btn").classList.toggle("hidden", pages === 0 || !started);
+  $("more-btn").disabled = !canInspect();
+  $("all-btn").innerHTML = `Load All <span class="cost">${pages} steps</span>`;
+  $("all-btn").classList.toggle("hidden", pages <= 1 || !started);
+  $("all-btn").disabled = !canInspect(pages);
+  $("filter").parentElement.classList.toggle("hidden", S.tab === "rules");
+  $("table-status").textContent = !started ? "" : S.tables[S.tab].cursor === null ? "All rows loaded" : `${S.tables[S.tab].rows.length} rows loaded`;
+}
+async function loadPage(name) {
+  const st = S.tables[name];
+  if (st.cursor === null || !canInspect()) return false;
+  const obs = await step({action: "list_records", table: name, cursor: st.cursor ?? null, limit: PAGE});
+  if (!obs) return false;
+  if (obs.error) { alert(`The environment answered “${obs.error}”. Try another table.`); return false; }
+  for (const row of obs.result) { st.rows.push(row); st.byKey.set(rowKey(name, row), row); }
+  st.cursor = obs.next_cursor;
+  return true;
+}
+function citedIds() {
+  const ids = new Set(S.draft.evidence.concat(S.draft.affected));
+  for (const f of S.findings) for (const id of f.evidence_ids.concat(f.affected_ids)) ids.add(id);
+  return ids;
+}
+function cell(row, [field, , kind, opt]) {
+  const v = row[field], cls = opt ? ' class="col-opt"' : "";
+  if (v === null || v === undefined) return `<td${opt ? ' class="col-opt muted"' : ' class="muted"'}>—</td>`;
+  if (kind === "money") return `<td class="num${opt ? " col-opt" : ""}">${v ? esc(fmtMoney(v, row.currency)) : `<span class="muted">0</span>`}</td>`;
+  if (kind === "num") return `<td class="num mono">${esc(v)}</td>`;
+  if (kind === "count") return `<td class="num col-opt">${esc(v.length)}</td>`;
+  if (kind === "refs") return `<td class="col-opt mono">${esc(v.map((r) => r.invoice_id).join(", "))}</td>`;
+  if (kind === "account") { const l = accountLabel(v); return `<td>${esc(v)}${l ? ` <span class="muted">${esc(l)}</span>` : ""}</td>`; }
+  const mono = /_id$|^(date|timestamp|issued_at)$/.test(field);
+  return `<td class="${mono ? "mono" : ""}${opt ? " col-opt" : ""}" ${mono ? 'translate="no"' : ""}>${esc(field === "timestamp" || field === "issued_at" ? ts(v) : v)}</td>`;
+}
+function renderRules() {
+  const p = S.policy, m = S.manifest, items = [];
+  if (p.period) items.push(`Only transactions from ${esc(ts(p.period.start))} up to ${p.period.end_exclusive ? "but not including" : "and including"} ${esc(ts(p.period.end))} (${esc(p.period.timezone)}) belong to this period.`);
+  if (p.recognition) items.push("Invoices count on the local date they were issued; payments on the local date they were received.");
+  if (p.fx) items.push(`Foreign amounts convert into ${esc(p.fx.target_currency || m.base_currency)} at the rate for the ${p.fx.date_rule === "event_local_date" ? "local date of the invoice or payment" : esc(p.fx.date_rule)}; 1 foreign unit = rate × ${esc(p.fx.target_currency || m.base_currency)}.`);
+  if (p.rounding) items.push(`Each conversion rounds to the smallest currency unit using ${p.rounding.mode === "half_even" ? "banker’s rounding (half to even)" : esc(p.rounding.mode)}.`);
+  if (p.allocation) items.push("A payment applies to the invoices in its “pays invoices” list; anything not applied goes to the unapplied account.");
+  if (p.accounts) items.push("Accounts: " + Object.entries(p.accounts).map(([role, code]) => `${esc(role)} <span class="mono">${esc([].concat(code).join(", "))}</span>`).join(" · "));
+  items.push("Amounts are stored in each currency’s smallest unit; this page shows them with decimals (" + Object.entries(m.currency_exponents || {}).map(([c, e]) => `${esc(c)} ${e}`).join(", ") + ").");
+  $("tablewrap").innerHTML = `<ul class="rules">${items.map((i) => `<li>${i}</li>`).join("")}</ul>`;
+}
+function renderTable() {
+  renderTableButtons();
+  if (S.tab === "rules") return renderRules();
+  const name = S.tab, spec = TABLES[name], st = S.tables[name];
+  if (st.cursor === undefined) {
+    $("tablewrap").innerHTML = `<div class="empty"><h2>${esc(spec.label)} Not Opened Yet</h2><p>Opening the first page of ${esc(spec.label.toLowerCase())} costs one step.</p>
+      <button class="btn" id="first-page">Open First 50 Rows <span class="cost">1 step</span></button></div>`;
+    return;
+  }
+  const q = $("filter").value.trim().toLowerCase();
+  const rows = q ? st.rows.filter((r) => JSON.stringify(r).toLowerCase().includes(q)) : st.rows;
+  const cols = spec.columns.filter(([f]) => !st.rows.length || f in st.rows[0]);
+  const cited = citedIds(), selectedId = S.selected && S.selected.table === name ? evidenceId(name, S.selected.row) : null;
+  $("tablewrap").innerHTML = `<table><thead><tr>${cols.map(([, label, kind, opt]) => `<th scope="col" class="${["money", "num", "count"].includes(kind) ? "num" : ""}${opt ? " col-opt" : ""}">${esc(label)}</th>`).join("")}</tr></thead>
+    <tbody>${rows.map((row) => { const id = evidenceId(name, row); return `<tr data-i="${st.rows.indexOf(row)}" tabindex="0" class="${id === selectedId ? "selected" : ""} ${cited.has(id) ? "cited" : ""}">${cols.map((c) => cell(row, c)).join("")}</tr>`; }).join("")}</tbody></table>
+    ${rows.length ? "" : `<div class="empty"><p>No loaded rows match “${esc(q)}”.</p></div>`}`;
+}
+
+/* ---- inspect pane ---- */
+function linkTo(table, id) {
+  if (!id) return "";
+  const loaded = S.tables[table].byKey.has(id);
+  return `<button class="quiet mono" data-goto="${esc(table)}" data-key="${esc(id)}" translate="no">${esc(id)}${loaded ? "" : ` <span class="cost">1 step</span>`}</button>`;
+}
+function renderInspect() {
+  const box = $("pane-inspect");
+  if (!S.selected) { box.innerHTML = `<div class="empty" style="padding:32px 0"><h2>Nothing Selected</h2><p>Select a row to inspect it. Reading rows you have already loaded is free.</p></div>`; return; }
+  const {table, row} = S.selected, id = evidenceId(table, row), isDoc = table === "invoices" || table === "payments";
+  const fields = [];
+  for (const [field, label, kind] of TABLES[table].columns) {
+    if (!(field in row) || kind === "count" || kind === "refs") continue;
+    let v = row[field];
+    if (field === "invoice_id" && table === "ledger") v = linkTo("invoices", v);
+    else if (field === "payment_id" && table === "ledger") v = linkTo("payments", v);
+    else if (kind === "money") v = `${esc(fmtMoney(v, row.currency))} ${esc(row.currency)} <span class="muted mono">${esc(v)}</span>`;
+    else if (kind === "account") v = `${esc(v)} ${esc(accountLabel(v))}`;
+    else v = v === null ? `<span class="muted">—</span>` : `<span class="${field.endsWith("_id") || field === "timestamp" ? "mono" : ""}">${esc(field === "timestamp" || field === "issued_at" ? ts(v) : v)}</span>`;
+    fields.push(`<dt>${esc(label)}</dt><dd>${v}</dd>`);
+  }
+  let extra = "";
+  if (table === "invoices") extra += `<div><h3>Line items</h3><table class="mini"><thead><tr><th>Description</th><th class="num">Qty</th><th class="num">Unit</th><th class="num">Amount</th></tr></thead><tbody>${(row.line_items || []).map((l) => `<tr><td>${esc(l.description)}</td><td class="num">${esc(l.quantity)}</td><td class="num">${esc(fmtMoney(l.unit_price_minor, row.currency))}</td><td class="num">${esc(fmtMoney(l.amount_minor, row.currency))}</td></tr>`).join("")}</tbody></table></div>`;
+  if (table === "payments") extra += `<div><h3>Pays invoices</h3>${row.invoice_refs && row.invoice_refs.length ? `<table class="mini"><tbody>${row.invoice_refs.map((r) => `<tr><td>${linkTo("invoices", r.invoice_id)}</td><td class="num">${esc(fmtMoney(r.amount_minor, row.currency))} ${esc(row.currency)}</td></tr>`).join("")}</tbody></table>` : `<p class="muted">None listed.</p>`}</div>`;
+  if (isDoc) {
+    const k = table === "invoices" ? "invoice_id" : "payment_id", rel = S.tables.ledger.rows.filter((r) => r[k] === row[k]);
+    extra += `<div><h3>Ledger rows loaded for this ${table === "invoices" ? "invoice" : "payment"}</h3>${rel.length ? `<table class="mini"><tbody>${rel.map((r) => `<tr><td>${linkTo("ledger", r.row_id)}</td><td>${esc(accountLabel(r.account) || r.account)}</td><td class="num">${r.debit_minor ? "Dr " + esc(fmtMoney(r.debit_minor, r.currency)) : "Cr " + esc(fmtMoney(r.credit_minor, r.currency))}</td></tr>`).join("")}</tbody></table>` : `<p class="muted">None yet. Load more ledger pages to see them.</p>`}</div>`;
+  }
+  const inEv = S.draft.evidence.includes(id), inAff = S.draft.affected.includes(id);
+  box.innerHTML = `<div><p class="eyebrow">${esc(TABLES[table].label.replace(/s$/, "").replace("FX Rate", "FX rate"))}</p><h2 class="record-title mono" translate="no">${esc(id)}</h2></div>
+    <dl class="kv">${fields.join("")}</dl>${extra}
+    <div class="actions">
+      <button class="btn small" id="cite-btn">${inEv ? "Remove From Evidence" : "Cite as Evidence"}</button>
+      ${isDoc ? `<button class="quiet" id="affect-btn">${inAff ? "Unmark Affected" : "Mark as Affected"}</button>` : ""}
+    </div>`;
+  $("cite-btn").onclick = () => { toggle(S.draft.evidence, id, 10); afterDraftChange(inEv ? `Removed ${id} from evidence` : `Cited ${id} as evidence`); };
+  if (isDoc) $("affect-btn").onclick = () => {
+    toggle(S.draft.affected, id, 100);
+    const now = S.draft.affected.includes(id);
+    if (now && !S.draft.evidence.includes(id) && S.draft.evidence.length < 10) S.draft.evidence.push(id);
+    if (now) $("f-currency").value = S.manifest.base_currency;
+    afterDraftChange(now ? `Marked ${id} as affected and cited it` : `Unmarked ${id}`);
+  };
+}
+function afterDraftChange(message) { renderDraft(); renderInspect(); renderTable(); announce(message); }
+function toggle(list, value, max) { const i = list.indexOf(value); if (i >= 0) list.splice(i, 1); else if (list.length < max) list.push(value); }
+async function gotoRecord(table, key) {
+  let row = S.tables[table].byKey.get(key);
+  if (!row) {
+    if (!canInspect()) return alert("No looks left. Submit your findings.");
+    const obs = await step({action: "get_record", table, id: key});
+    if (!obs) return;
+    if (obs.error) return alert(`The environment answered “${obs.error}”.`);
+    row = obs.result;
+  }
+  S.selected = {table, row}; S.tab = table; $("filter").value = "";
+  renderTabs(); renderTable(); renderInspect(); setPane("inspect");
+  document.querySelector("#tablewrap tr.selected")?.scrollIntoView({block: "nearest"});
+}
+
+/* ---- draft pane ---- */
+const chips = (list, name) => list.length ? list.map((id, i) => `<span class="chip" translate="no">${esc(id)}<button title="Remove ${esc(id)}" aria-label="Remove ${esc(id)}" data-remove="${name}" data-i="${i}">×</button></span>`).join("") : `<p class="hint" style="margin:0 0 4px">None yet.</p>`;
+function renderDraft() {
+  $("f-affected").innerHTML = chips(S.draft.affected, "affected");
+  $("f-evidence").innerHTML = chips(S.draft.evidence, "evidence");
+  const n = S.draft.affected.length + S.draft.evidence.length;
+  $("draft-n").textContent = n ? String(new Set(S.draft.affected.concat(S.draft.evidence)).size) : "";
+  const info = TYPE_INFO[$("f-type").value];
+  $("f-type-hint").textContent = info ? `${info[1]} Amount: ${info[2]}` : "";
+  const cur = $("f-currency").value, minor = toMinor($("f-amount").value, cur);
+  $("f-amount-hint").textContent = $("f-amount").value.trim() === "" ? `In ${cur}, up to ${exponent(cur)} decimals.` : minor === null ? `Not a valid ${cur} amount (up to ${exponent(cur)} decimals).` : `Submitted as ${minor} smallest units.`;
+}
+function resetForm() {
+  S.draft = {affected: [], evidence: []}; S.editing = null;
+  for (const id of ["f-amount", "f-explanation", "f-affected-input", "f-evidence-input"]) $(id).value = "";
+  $("f-error").textContent = ""; $("f-currency").value = S.manifest.base_currency;
+  $("form-title").textContent = "New Finding";
+  $("f-save").innerHTML = `Add Finding <span class="arrow" aria-hidden="true">→</span>`;
+  $("cancel-edit").classList.add("hidden");
+  renderDraft();
+}
+function saveFinding() {
+  const type = $("f-type").value, currency = $("f-currency").value, amount = toMinor($("f-amount").value, currency), errors = [];
+  if (!S.draft.affected.length) errors.push("Mark at least one affected invoice or payment.");
+  if (amount === null) errors.push("Enter a valid amount.");
+  if (S.editing === null && S.findings.length >= 30) errors.push("You can submit at most 30 findings.");
+  if (errors.length) { $("f-error").textContent = errors.join(" "); (S.draft.affected.length ? $("f-amount") : $("f-affected-input")).focus(); return; }
+  const finding = {type, affected_ids: [...S.draft.affected], claimed_amount_minor: amount, currency, evidence_ids: [...S.draft.evidence], explanation: $("f-explanation").value.slice(0, 1000)};
+  const editing = S.editing;
+  if (editing === null) S.findings.push(finding); else S.findings[editing] = finding;
+  resetForm(); renderFindings(); renderTable(); renderInspect(); setPane("findings");
+  announce(editing === null ? `Finding ${S.findings.length} added` : `Finding ${editing + 1} updated`);
+}
+function editFinding(i) {
+  const f = S.findings[i];
+  S.editing = i; S.draft = {affected: [...f.affected_ids], evidence: [...f.evidence_ids]};
+  $("f-type").value = f.type; $("f-currency").value = f.currency;
+  $("f-amount").value = fmtMoney(f.claimed_amount_minor, f.currency).replace(/,/g, "").replace("−", "-");
+  $("f-explanation").value = f.explanation;
+  $("form-title").textContent = `Editing Finding ${i + 1}`;
+  $("f-save").innerHTML = `Save Changes <span class="arrow" aria-hidden="true">→</span>`;
+  $("cancel-edit").classList.remove("hidden");
+  renderDraft(); setPane("draft"); $("f-type").focus();
+}
+function findingHtml(f, i, verdict) {
+  return `<div class="top"><span class="type">${i + 1}. ${esc((TYPE_INFO[f.type] || [f.type])[0])}</span><span class="mono">${esc(fmtMoney(f.claimed_amount_minor, f.currency))} ${esc(f.currency)}</span></div>
+    <div class="row"><span class="muted">Affected</span> ${f.affected_ids.map((id) => `<span class="chip" translate="no">${esc(id)}</span>`).join("")}</div>
+    <div class="row"><span class="muted">Evidence</span> ${f.evidence_ids.length ? f.evidence_ids.map((id) => `<span class="chip" translate="no">${esc(id)}</span>`).join("") : `<span class="muted">none</span>`}</div>
+    ${f.explanation ? `<div class="row muted">${esc(f.explanation)}</div>` : ""}${verdict || ""}`;
+}
+function renderFindings() {
+  $("findings-count").textContent = String(S.findings.length);
+  $("findings-list").innerHTML = S.findings.length ? S.findings.map((f, i) => `<div class="finding">${findingHtml(f, i)}
+      <div class="ops"><button class="quiet" data-edit="${i}">Edit</button><button class="quiet danger" data-delete="${i}">Delete</button></div></div>`).join("")
+    + `<p class="hint" style="margin-top:12px">${S.findings.length} of 30 findings. Submit from the bar at the top when you are done.</p>`
+    : `<div class="empty" style="padding:32px 0"><h2>No Findings Yet</h2><p>Draft one from the records you inspect. Submitting none is the right answer for a clean company.</p></div>`;
+}
+async function submitFindings() {
+  const n = S.findings.length;
+  if (!confirm(n ? `Submit ${n} finding${n === 1 ? "" : "s"}? The episode ends and they can’t be changed.` : "Submit no findings, meaning you believe this company is clean? The episode ends.")) return;
+  await step({action: "submit", findings: {episode_id: S.manifest.episode_id, findings: S.findings}});
+}
+
+/* ---- results ---- */
+const metric = (v) => { const t = Number(v).toFixed(3).replace("-", "−"); return t === "−0.000" ? "0.000" : t; };
+function chartHtml(rows) {
+  const ticks = [-1, -0.5, 0, 0.5, 1], pos = (v) => ((v + 1) / 2) * 100, zero = pos(0);
+  const bars = rows.map(([name, b, you], i) => {
+    const v = b.reward, end = pos(v), left = Math.min(end, zero), width = Math.abs(end - zero), positive = v >= 0, inside = positive ? end > 86 : end < 14;
+    const valPos = positive ? (inside ? `left:calc(${end}% - 6px);transform:translateX(-100%)` : `left:calc(${end}% + 6px)`) : (inside ? `left:calc(${end}% + 6px)` : `left:calc(${end}% - 6px);transform:translateX(-100%)`);
+    const cls = you ? "focal" : name === "oracle" ? "control" : "";
+    return `<div class="chart-row"><div class="chart-label ${you ? "you" : ""}" translate="no">${esc(name)}</div><div class="plot">
+      ${ticks.map((t) => `<span class="grid${t === 0 ? " zero" : ""}" style="left:${pos(t)}%"></span>`).join("")}
+      <span class="hbar ${cls}" style="left:${left}%;width:max(${width}%, 1px);--origin:${positive ? "left" : "right"}" data-i="${i}"></span>
+      <span class="val ${you ? "focal" : ""}" style="${valPos}">${metric(v)}</span></div></div>`;
+  }).join("");
+  return `<div aria-hidden="true">${bars}<div class="chart-axis"><span></span><div class="plot">${ticks.map((t, i) => `<span class="tick${i === 0 ? " first" : i === ticks.length - 1 ? " last" : ""}" style="left:${pos(t)}%">${t}</span>`).join("")}</div></div></div>
+    <figcaption class="eyebrow" style="margin-top:8px">Reward · axis −1 to 1 · accent: you · dashed: evaluator control</figcaption>`;
+}
+async function showResults() {
+  let r;
+  try { r = await api("/api/result", {session: S.session}); } catch (error) { alert(error.message); return; }
+  const s = r.score, issues = r.review.issues, n = issues.length;
+  $("r-title").textContent = r.reason === "step_limit" ? "Out of Steps" : "Results";
+  $("r-sub").textContent = `${S.episode.company} · ${n ? `${n} planted error${n === 1 ? "" : "s"}` : "clean company"} · ${r.steps} steps used`;
+  let lede;
+  if (r.reason === "invalid_submission") lede = `The submission was structurally invalid, so it scores <b>−1.000</b>.`;
+  else if (r.reason === "step_limit") lede = `You used all 100 steps without submitting, so the grader scored an empty answer: reward <b>${metric(s.reward)}</b>.`;
+  else if (!n) lede = s.fp ? `This company was clean, and you raised <b>${s.fp}</b> false alarm${s.fp === 1 ? "" : "s"}: reward <b>${metric(s.reward)}</b>.` : `This company was clean and you rightly submitted nothing: reward <b>${metric(s.reward)}</b>.`;
+  else lede = `You found <b>${s.tp}</b> of <b>${n}</b> planted error${n === 1 ? "" : "s"} with <b>${s.fp}</b> false alarm${s.fp === 1 ? "" : "s"}, for a reward of <b>${metric(s.reward)}</b>.`;
+  $("r-lede").innerHTML = lede;
+  $("r-explain").textContent = `Reward = 2 × F1 − 1 − 0.002 × ${r.inspection_steps} inspection steps, kept between −1 and 1. Your F1 is ${s.f1.toFixed(2)}; on a clean company an empty answer scores F1 = 1.`;
+  const rows = [["you", {tp: s.tp, fp: s.fp, fn: s.fn, f1: s.f1, reward: s.reward, steps: r.steps}, true]]
+    .concat(Object.entries(r.baselines).filter(([, b]) => b).map(([name, b]) => [name, b, false])).sort((a, b) => b[1].reward - a[1].reward);
+  const missing = Object.entries(r.baselines).filter(([, b]) => !b).map(([name]) => name);
+  $("r-missing").textContent = missing.length ? `Baseline scores unavailable on this host: ${missing.join(", ")}.` : "";
+  $("r-chart").innerHTML = chartHtml(rows);
+  $("r-chart").setAttribute("aria-label", "Reward by policy: " + rows.map(([name, b]) => `${name} ${metric(b.reward)}`).join(", "));
+  $("r-baselines").innerHTML = `<thead><tr><th scope="col">Policy</th><th scope="col" class="num">Reward</th><th scope="col" class="num">F1</th><th scope="col" class="num">Found</th><th scope="col" class="num">False alarms</th><th scope="col" class="num col-opt">Steps</th></tr></thead><tbody>${
+    rows.map(([name, b, you]) => `<tr><th scope="row" ${you ? 'style="color:var(--accent)"' : ""} translate="no">${esc(name)}</th><td class="num">${metric(b.reward)}</td><td class="num">${b.f1.toFixed(2)}</td><td class="num">${b.tp} / ${b.tp + b.fn}</td><td class="num">${b.fp}</td><td class="num col-opt">${b.steps}</td></tr>`).join("")}</tbody>`;
+  $("r-findings").innerHTML = r.review.findings.length ? r.review.findings.map((f, i) => {
+    const v = f.verdict || {status: "wrong", detail: ""};
+    const mark = v.status === "correct" ? `<span class="mark ok">Correct</span>` : v.status === "duplicate" ? `<span class="mark dup">Duplicate</span>` : `<span class="mark bad">False alarm</span>`;
+    return `<div class="finding"><div style="margin-bottom:4px">${mark}</div>${findingHtml(f, i, v.detail && v.status !== "correct" ? `<div class="why">${esc(v.detail)}</div>` : "")}</div>`;
+  }).join("") : `<p class="muted">You submitted no findings.</p>`;
+  $("r-key").innerHTML = n ? issues.map((issue) => `<div class="finding">
+      <div style="margin-bottom:4px">${issue.found_by ? `<span class="mark ok">Found by your finding ${issue.found_by}</span>` : `<span class="mark miss">Missed</span>`}</div>
+      <div class="top"><span class="type">${esc((TYPE_INFO[issue.type] || [issue.type])[0])}</span><span class="mono">${esc(fmtMoney(issue.expected_amount_minor, issue.currency))} ${esc(issue.currency)}</span></div>
+      <div class="row"><span class="muted">Affected</span> ${issue.affected_ids.map((id) => `<span class="chip" translate="no">${esc(id)}</span>`).join("")}</div>
+      <div class="row"><span class="muted">Proof${issue.evidence_sets.length > 1 ? " (any one set)" : ""}</span>${issue.evidence_sets.map((set) => `<div>${set.map((id) => `<span class="chip" translate="no">${esc(id)}</span>`).join("")}</div>`).join("")}</div>
+    </div>`).join("") : `<p>This company was clean: there were no planted errors, so the best answer was to submit nothing.</p>`;
+  show("results");
+  if (!reduceMotion.matches) document.querySelectorAll("#r-chart .hbar").forEach((bar, i) => bar.animate([{transform: "scaleX(0)"}, {transform: "scaleX(1)"}], {duration: 300, delay: 80 + i * 40, easing: EASE, fill: "backwards"}));
+}
+
+/* ---- events ---- */
+$("split-filter").onclick = (e) => { const b = e.target.closest("[data-split]"); if (!b) return; splitFilter = b.dataset.split; renderPicker(); };
+$("cards").onclick = (e) => { const b = e.target.closest("[data-id]"); if (b) startEpisode(b.dataset.id); };
+$("random-btn").onclick = () => { const list = episodes.filter((e) => !splitFilter || e.split === splitFilter); if (list.length) startEpisode(list[Math.floor(Math.random() * list.length)].id); };
+$("tabs").onclick = (e) => { const t = e.target.closest("[data-tab]"); if (!t) return; S.tab = t.dataset.tab; $("filter").value = ""; renderTabs(); renderTable(); };
+$("panes").onclick = (e) => { const t = e.target.closest("[data-pane]"); if (t) setPane(t.dataset.pane); };
+$("filter").oninput = renderTable;
+$("more-btn").onclick = async () => { if (await loadPage(S.tab)) { renderTabs(); renderTable(); renderInspect(); } };
+$("all-btn").onclick = async () => {
+  const pages = remainingPages(S.tab);
+  if (!confirm(`Load all remaining ${TABLES[S.tab].label.toLowerCase()}? This uses ${pages} steps.`)) return;
+  for (let i = 0; i < pages; i++) if (!(await loadPage(S.tab))) break;
+  renderTabs(); renderTable(); renderInspect();
+};
+function selectRow(tr) {
+  S.selected = {table: S.tab, row: S.tables[S.tab].rows[Number(tr.dataset.i)]};
+  renderTable(); renderInspect(); setPane("inspect");
+}
+$("tablewrap").onclick = async (e) => {
+  if (e.target.closest("#first-page")) { if (await loadPage(S.tab)) { renderTabs(); renderTable(); } return; }
+  const tr = e.target.closest("tr[data-i]"); if (tr) selectRow(tr);
+};
+$("tablewrap").onkeydown = (e) => { const tr = e.target.closest("tr[data-i]"); if (tr && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); selectRow(tr); } };
+$("pane-inspect").addEventListener("click", (e) => { const b = e.target.closest("[data-goto]"); if (b) gotoRecord(b.dataset.goto, b.dataset.key); });
+for (const name of ["affected", "evidence"]) {
+  $(`f-${name}`).onclick = (e) => { const b = e.target.closest("[data-remove]"); if (!b) return; S.draft[name].splice(Number(b.dataset.i), 1); afterDraftChange("Removed"); };
+  $(`f-${name}-input`).onkeydown = (e) => {
+    if (e.key !== "Enter") return;
+    e.preventDefault();
+    const v = e.target.value.trim();
+    if (v && !S.draft[name].includes(v) && S.draft[name].length < (name === "evidence" ? 10 : 100)) S.draft[name].push(v);
+    e.target.value = ""; renderDraft(); renderTable();
+  };
+}
+for (const id of ["f-type", "f-currency"]) $(id).onchange = renderDraft;
+$("f-amount").oninput = renderDraft;
+$("f-save").onclick = saveFinding;
+$("cancel-edit").onclick = () => { resetForm(); setPane("findings"); };
+$("findings-list").onclick = (e) => {
+  const ed = e.target.closest("[data-edit]"), del = e.target.closest("[data-delete]");
+  if (ed) editFinding(Number(ed.dataset.edit));
+  if (del && confirm("Delete this finding?")) {
+    const i = Number(del.dataset.delete); S.findings.splice(i, 1);
+    if (S.editing === i) resetForm(); else if (S.editing !== null && S.editing > i) S.editing -= 1;
+    renderFindings(); renderTable(); announce(`Finding ${i + 1} deleted`);
+  }
+};
+$("calc-btn").onclick = async () => {
+  const expression = $("calc-input").value.trim();
+  if (!expression) return;
+  if (!canInspect()) return alert("No looks left. Submit your findings.");
+  const obs = await step({action: "calculator", expression: expression.replace(/×/g, "*").replace(/÷/g, "/").replace(/−/g, "-")});
+  if (obs) $("calc-output").textContent = obs.error ? "Invalid expression. Use numbers, + − × ÷ and brackets." : `= ${obs.result}`;
+};
+$("calc-input").onkeydown = (e) => { if (e.key === "Enter") $("calc-btn").click(); };
+$("submit-btn").onclick = submitFindings;
+$("quit-btn").onclick = () => { if (confirm("Leave this company? Your progress is lost and nothing is scored.")) { show("picker"); } };
+$("again-btn").onclick = () => show("picker");
+window.addEventListener("beforeunload", (e) => { if (S && !$("workspace").classList.contains("hidden") && (S.findings.length || S.stepsUsed)) e.preventDefault(); });
+
+renderTypeHelp();
+loadEpisodes();
+fetch("dashboard/data/index.json", {method: "HEAD"}).then((r) => { if (r.ok) $("dashboard-link").classList.remove("hidden"); }).catch(() => {});
+</script>
+</body>
+</html>

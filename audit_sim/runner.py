@@ -4,9 +4,10 @@ from dataclasses import asdict
 import json
 import os
 from pathlib import Path
-import selectors
+import queue
 import subprocess
 import sys
+import threading
 from time import monotonic
 
 from .environment import AuditEnv
@@ -21,44 +22,84 @@ class WorkerProtocolError(RuntimeError):
     pass
 
 
-def read_message(fd, deadline):
-    with selectors.DefaultSelector() as selector:
-        selector.register(fd, selectors.EVENT_READ)
+class _LineReader:
+    """Reads newline-terminated messages from a pipe on a background thread.
+
+    Pipes cannot be polled with select() on Windows, so a thread with a queue gives the
+    same deadline semantics on every platform.
+    """
+
+    def __init__(self, stream):
+        self._stream = stream
+        self._queue = queue.Queue()
+        threading.Thread(target=self._run, daemon=True).start()
+
+    def _run(self):
         data = bytearray()
-        while b"\n" not in data:
-            remaining = deadline - monotonic()
-            if remaining <= 0 or not selector.select(remaining):
-                raise TimeoutError("Policy exceeded its deadline")
-            chunk = os.read(fd, 8192)
-            if not chunk:
-                raise WorkerProtocolError("Policy closed its output")
-            data.extend(chunk)
-            if len(data) > MAX_MESSAGE:
-                raise WorkerProtocolError("Policy message exceeded its size limit")
-    line, tail = data.split(b"\n", 1)
-    if tail:
-        raise WorkerProtocolError("Policy sent unsolicited output")
-    try:
-        return json.loads(line)
-    except (ValueError, RecursionError) as error:
-        raise WorkerProtocolError("Invalid policy JSON") from error
+        try:
+            while True:
+                chunk = self._stream.read1(8192)
+                if not chunk:
+                    self._queue.put(WorkerProtocolError("Policy closed its output"))
+                    return
+                data.extend(chunk)
+                if len(data) > MAX_MESSAGE:
+                    self._queue.put(WorkerProtocolError("Policy message exceeded its size limit"))
+                    return
+                if b"\n" in data:
+                    line, tail = bytes(data).split(b"\n", 1)
+                    if tail:
+                        self._queue.put(WorkerProtocolError("Policy sent unsolicited output"))
+                        return
+                    self._queue.put(line)
+                    data.clear()
+        except (OSError, ValueError):
+            self._queue.put(WorkerProtocolError("Policy closed its output"))
+
+    def read(self, deadline):
+        try:
+            item = self._queue.get(timeout=max(0.0, deadline - monotonic()))
+        except queue.Empty:
+            raise TimeoutError("Policy exceeded its deadline") from None
+        if isinstance(item, Exception):
+            raise item
+        try:
+            return json.loads(item)
+        except (ValueError, RecursionError) as error:
+            raise WorkerProtocolError("Invalid policy JSON") from error
 
 
-def send_message(fd, payload, deadline):
-    data = memoryview((json.dumps(payload, ensure_ascii=True, allow_nan=False) + "\n").encode())
+def send_message(stream, payload, deadline):
+    data = (json.dumps(payload, ensure_ascii=True, allow_nan=False) + "\n").encode()
     if len(data) > MAX_MESSAGE:
         raise WorkerProtocolError("Public message exceeded its size limit")
-    with selectors.DefaultSelector() as selector:
-        selector.register(fd, selectors.EVENT_WRITE)
-        while data:
-            remaining = deadline - monotonic()
-            if remaining <= 0 or not selector.select(remaining):
-                raise TimeoutError("Policy exceeded its deadline")
-            try:
-                count = os.write(fd, data)
-            except BlockingIOError:
-                continue
-            data = data[count:]
+    failure = []
+
+    def write():
+        try:
+            stream.write(data)
+            stream.flush()
+        except (OSError, ValueError) as error:
+            failure.append(error)
+
+    writer = threading.Thread(target=write, daemon=True)
+    writer.start()
+    writer.join(max(0.0, deadline - monotonic()))
+    if writer.is_alive():
+        # The caller kills the worker, which unblocks and ends the writer thread.
+        raise TimeoutError("Policy exceeded its deadline")
+    if failure:
+        if isinstance(failure[0], OSError):
+            raise BrokenPipeError("Policy closed its input") from failure[0]
+        raise WorkerProtocolError("Policy closed its input") from failure[0]
+
+
+def _worker_environment():
+    env = {"LC_ALL": "C"}
+    if sys.platform == "win32" and "SYSTEMROOT" in os.environ:
+        # Windows needs SYSTEMROOT to start an interpreter reliably.
+        env["SYSTEMROOT"] = os.environ["SYSTEMROOT"]
+    return env
 
 
 def run_policy(directory, policy, *, private_directory=None, mode="closed", seed=None, policy_seed=0,
@@ -96,18 +137,17 @@ def _run_worker(env, policy, policy_seed, initial, trajectory):
     with subprocess.Popen(
         [sys.executable, "-I", "-B", "-u", str(WORKER)],
         stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.DEVNULL,
-        cwd="/", env={"LC_ALL": "C"}, close_fds=True,
+        cwd=WORKER.anchor, env=_worker_environment(), close_fds=True,
     ) as process:
-        input_fd, output_fd = process.stdin.fileno(), process.stdout.fileno()
-        os.set_blocking(input_fd, False)
+        reader = _LineReader(process.stdout)
         try:
-            if read_message(output_fd, env.deadline) != {"ready": True}:
+            if reader.read(env.deadline) != {"ready": True}:
                 raise WorkerProtocolError("Unexpected policy handshake")
-            send_message(input_fd, {
+            send_message(process.stdin, {
                 "policy": policy, "policy_seed": policy_seed, "observation": initial,
             }, env.deadline)
             while not (env.terminated or env.truncated):
-                action = read_message(output_fd, env.deadline)
+                action = reader.read(env.deadline)
                 previous_steps = env.steps
                 observation, reward, terminated, truncated, _ = env.step(action)
                 if env.steps > previous_steps:
@@ -121,13 +161,13 @@ def _run_worker(env, policy, policy_seed, initial, trajectory):
                         "truncated": truncated,
                     })
                 if not (terminated or truncated):
-                    send_message(input_fd, observation, env.deadline)
+                    send_message(process.stdin, observation, env.deadline)
         except TimeoutError:
             env.truncate("timeout")
         except (WorkerProtocolError, BrokenPipeError) as error:
             # Infrastructure failures must reach the verification command, not score as silence.
             raise WorkerProtocolError(
-                f"{policy}: {error}. Verify the Linux policy sandbox and worker."
+                f"{policy}: {error}. Verify the policy sandbox and worker."
             ) from error
         finally:
             if process.poll() is None:
