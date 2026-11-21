@@ -33,7 +33,7 @@ class VerifyCase(unittest.TestCase):
         with open(path, encoding="utf-8") as fh:
             text = fh.read()
         assert old in text, old
-        with open(path, "w", encoding="utf-8") as fh:
+        with open(path, "w", encoding="utf-8", newline="\n") as fh:
             fh.write(text.replace(old, new, count))
 
     @staticmethod
@@ -42,7 +42,7 @@ class VerifyCase(unittest.TestCase):
         with open(p, encoding="utf-8") as fh:
             t = json.load(fh)
         fn(t)
-        with open(p, "w", encoding="utf-8") as fh:
+        with open(p, "w", encoding="utf-8", newline="\n") as fh:
             fh.write(json.dumps(t, sort_keys=True, indent=2) + "\n")
 
 
@@ -147,7 +147,7 @@ class TestBrokenEpisodes(VerifyCase):
         with open(p, encoding="utf-8") as fh:
             prov = json.load(fh)
         prov["changes"][3]["after"]["credit_minor"] = 1  # mismatch with published row
-        with open(p, "w", encoding="utf-8") as fh:
+        with open(p, "w", encoding="utf-8", newline="\n") as fh:
             fh.write(json.dumps(prov, sort_keys=True))
         self.assertFails(verify_episode(pub, prv), "does not equal `after`")
 

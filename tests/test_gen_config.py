@@ -109,7 +109,7 @@ class DeterminismTest(unittest.TestCase):
                  "list.json": [base, dict(base, seed=32)],
                  "episodes.json": {"episodes": [base, dict(base, seed=32), dict(base, seed=33)]}}
         for fname, content in forms.items():
-            with open(os.path.join(d, fname), "w", encoding="utf-8") as fh:
+            with open(os.path.join(d, fname), "w", encoding="utf-8", newline="\n") as fh:
                 json.dump(content, fh)
         out = tmpdir()
         with contextlib.redirect_stdout(io.StringIO()) as buf:

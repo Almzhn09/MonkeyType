@@ -4,7 +4,6 @@ Stdlib only. A failed stage returns a nonzero exit code."""
 import argparse
 import json
 import os
-import resource
 import subprocess
 import sys
 import tempfile
@@ -18,15 +17,30 @@ VERBOSE = False
 
 
 def run(args, **kw):
-    env = dict(os.environ, PYTHONDONTWRITEBYTECODE="1", PYTHONHASHSEED="0")
-    return subprocess.run([PY, *args], cwd=ROOT, env=env, text=True,
+    env = dict(os.environ, PYTHONDONTWRITEBYTECODE="1", PYTHONHASHSEED="0", PYTHONIOENCODING="utf-8")
+    return subprocess.run([PY, *args], cwd=ROOT, env=env, encoding="utf-8", errors="replace",
                           capture_output=True, **kw)
 
 
+try:
+    import resource
+except ImportError:  # Windows
+    resource = None
+
+
 def peak_rss_mb():
+    """Peak resident memory of this process and its children, or None where unavailable."""
+    if resource is None:
+        return None
     c = resource.getrusage(resource.RUSAGE_CHILDREN).ru_maxrss
     s = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
-    return max(c, s) / 1024.0  # Linux: KiB
+    unit = 1024.0 * 1024.0 if sys.platform == "darwin" else 1024.0  # macOS: bytes, Linux: KiB
+    return max(c, s) / unit
+
+
+def format_rss():
+    rss = peak_rss_mb()
+    return "n/a" if rss is None else f"{rss:.0f} MB"
 
 
 def stage(name):
@@ -76,9 +90,8 @@ def st_fresh():
         for cfg in cfgs:
             out = Path(d) / cfg.stem
             p, dt = gen(cfg, out)
-            rss = peak_rss_mb()
             lines.append(f"{cfg.name}: generate {dt:.2f}s (limit 60s), "
-                         f"peak RSS so far {rss:.0f} MB (limit 4096 MB)")
+                         f"peak RSS so far {format_rss()} (limit 4096 MB)")
             if p.returncode != 0:
                 bad = True
                 lines.append(tail(p))
@@ -110,7 +123,7 @@ def st_fresh_seed():
            "transform": None}
     used = set()
     for sp in ("train", "dev"):
-        for c in json.loads((ROOT / f"configs/{sp}.json").read_text())["episodes"]:
+        for c in json.loads((ROOT / "configs" / f"{sp}.json").read_text(encoding="utf-8"))["episodes"]:
             used.add(c["seed"])
             if (c["errors"], c["combos"]) == (cfg["errors"], cfg["combos"]):
                 return "FAIL", "combination already present in train/dev"
@@ -118,7 +131,7 @@ def st_fresh_seed():
         return "FAIL", "seed already used in train/dev"
     with tempfile.TemporaryDirectory() as d:
         path = Path(d) / "fresh.json"
-        path.write_text(json.dumps(cfg))
+        path.write_text(json.dumps(cfg), encoding="utf-8")
         out = Path(d) / "out"
         p, dt = gen(path, out)
         if p.returncode != 0:
@@ -164,7 +177,7 @@ def main():
         st_fresh()
     can_export = all(status == "PASS" for _, status in RESULTS)
     st_release(a.output.resolve() if a.output and can_export else None)
-    print(f"peak RSS (self+children): {peak_rss_mb():.0f} MB")
+    print(f"peak RSS (self+children): {format_rss()}")
     failed = [n for n, s in RESULTS if s == "FAIL"]
     print("RESULT: " + ("FAIL (" + ", ".join(failed) + ")" if failed else "OK"))
     return 1 if failed else 0

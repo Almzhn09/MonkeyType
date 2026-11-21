@@ -439,7 +439,7 @@ def write_episode(spec, public_dir, private_dir):
             "seed": 0, "baseline_sha256": baseline_sha, "changes": changes,
             "distractors": spec["distractors"]}
     for name, obj in (("truth.json", truth), ("provenance.json", prov)):
-        with open(os.path.join(private_dir, name), "w", encoding="utf-8") as fh:
+        with open(os.path.join(private_dir, name), "w", encoding="utf-8", newline="\n") as fh:
             fh.write(json.dumps(obj, sort_keys=True, indent=2, ensure_ascii=False) + "\n")
     assert set(LEDGER_COLUMNS) == set(ledger[0])
     return public_dir, private_dir
@@ -465,7 +465,7 @@ def rehash_manifest(public_dir):
     c["ledger_rows"], c["entries"] = len(led), len({r.get("entry_id") for r in led})
     c["invoices"], c["payments"] = len(lines("invoices.jsonl")), len(lines("payments.jsonl"))
     c["documents"], c["fx_rates"] = c["invoices"] + c["payments"], len(lines("fx.csv")) - 1
-    with open(mp, "w", encoding="utf-8") as fh:
+    with open(mp, "w", encoding="utf-8", newline="\n") as fh:
         fh.write(json.dumps(m, sort_keys=True, indent=2, ensure_ascii=False) + "\n")
 
 
@@ -479,7 +479,7 @@ def build(root, spec, split="train"):
 def write_a08(dest=None):
     dest = dest or os.path.join(os.path.dirname(os.path.abspath(__file__)), "a08")
     write_episode(a08_spec(), os.path.join(dest, "public"), os.path.join(dest, "private"))
-    with open(os.path.join(dest, "control_submission.json"), "w", encoding="utf-8") as fh:
+    with open(os.path.join(dest, "control_submission.json"), "w", encoding="utf-8", newline="\n") as fh:
         fh.write(json.dumps(a08_control_submission(), sort_keys=True, indent=2,
                             ensure_ascii=False) + "\n")
     return dest

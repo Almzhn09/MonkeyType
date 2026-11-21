@@ -368,12 +368,12 @@ class TestCli(unittest.TestCase):
     def test_tree_diff_detects_difference(self):
         a, b = tmpdir(), tmpdir()
         for d in (a, b):
-            with open(os.path.join(d, "x.txt"), "w") as fh:
+            with open(os.path.join(d, "x.txt"), "w", encoding="utf-8", newline="\n") as fh:
                 fh.write("same")
         self.assertEqual(tree_diff(a, b), [])
-        with open(os.path.join(b, "x.txt"), "w") as fh:
+        with open(os.path.join(b, "x.txt"), "w", encoding="utf-8", newline="\n") as fh:
             fh.write("diff")
-        with open(os.path.join(b, "y.txt"), "w") as fh:
+        with open(os.path.join(b, "y.txt"), "w", encoding="utf-8", newline="\n") as fh:
             fh.write("extra")
         self.assertEqual(tree_diff(a, b), ["only in second: y.txt", "differs: x.txt"])
 
