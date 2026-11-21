@@ -1,5 +1,7 @@
 # Hosting a public link
 
+The team's deployment: https://monkeytype-audit.onrender.com/ (dashboard at `/dashboard/`).
+
 The playground (play the auditor) and the reviewer dashboard run behind one URL, so judges and
 friends can open them in a browser without installing anything:
 
