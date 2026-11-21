@@ -86,6 +86,8 @@ class TestPlayground(unittest.TestCase):
 
         with urlopen(base + "/", timeout=10) as response:
             self.assertIn(b"Audit Playground", response.read())
+        with urlopen(base + "/help/", timeout=10) as response:
+            self.assertIn(b"How to Use MonkeyType", response.read())
         with urlopen(base + "/api/episodes", timeout=10) as response:
             self.assertEqual(len(json.loads(response.read())), len(self.app.episodes))
         token = post("/api/start", {"episode": self.dev[0]["id"]})["session"]
