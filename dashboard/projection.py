@@ -34,8 +34,9 @@ MAX_SAFE_INT = 2**53 - 1
 # Splits whose data is synthetic and may carry evaluator metrics in a reviewer export.
 REVIEWER_SPLITS = ("demo", "train", "dev", "pairs")
 POLICY_ROLES = {
-    "reconcile": "Reference policy",
-    "random": "Baseline",
+    "reconcile": "Reference reconciler",
+    "simple": "Simple baseline",
+    "random": "Random baseline",
     "mark_all": "Negative control",
     "oracle": "Evaluator control",
 }
@@ -264,7 +265,7 @@ def build_bundle(*, bundle_id, label, kind, audience, reports, episode_dirs, tra
         for row in trajectories:
             policy, episode = row.get("policy"), row.get("episode_id")
             if isinstance(policy, str) and isinstance(episode, str):
-                grouped.setdefault((episode, policy), []).append(row)
+                grouped.setdefault((episode, policy, row.get("mode")), []).append(row)
 
     runs, activity_files = [], {}
     for (split, episode, policy, mode), items in sorted(keys.items()):
@@ -303,7 +304,7 @@ def build_bundle(*, bundle_id, label, kind, audience, reports, episode_dirs, tra
         elif trajectories is None:
             run["activity_state"] = trajectory_note or "missing"
         else:
-            rows = _activity_rows(grouped.get((episode, policy), []), reviewer)
+            rows = _activity_rows(grouped.get((episode, policy, mode)) or grouped.get((episode, policy, None), []), reviewer)
             steps = [row["step"] for row in rows]
             complete = (steps == list(range(1, len(steps) + 1)) and rows
                         and (rows[-1]["terminated"] or rows[-1]["truncated"])
@@ -464,6 +465,26 @@ def prepare_run(out, results, *, audience, name, episodes_root=None, split=None,
         notes.append("No episode root was supplied; record evidence is unavailable.")
     bundle = build_bundle(
         bundle_id=name, label=label or f"CLI run: {results.name}", kind="run", audience=audience,
+        reports=resolved, episode_dirs=dirs, trajectories=trajectories, notes=notes,
+    )
+    return write_bundle(out, *bundle)
+
+
+def prepare_runs(out, results_dirs, *, audience, name, episodes_root, label):
+    """Merge several `audit_sim run --output` folders (e.g. per split and mode) into one bundle."""
+    notes, resolved, dirs, trajectories = [], [], {}, []
+    for results in map(Path, results_dirs):
+        reports = _load_reports(results / "reports.json", f"{results.name}/reports.json", notes)
+        modes = {row["mode"] for row in reports}
+        rows = _read_jsonl(results / "trajectories.jsonl", f"{results.name}/trajectories.jsonl", notes) or []
+        mode = modes.pop() if len(modes) == 1 else None
+        trajectories.extend(dict(row, mode=mode) if mode else row for row in rows)
+        for row in reports:
+            row_split, public = _split_for(row["episode_id"], episodes_root, None)
+            resolved.append((row, row_split))
+            dirs[(row_split, row["episode_id"])] = public
+    bundle = build_bundle(
+        bundle_id=name, label=label, kind="run", audience=audience,
         reports=resolved, episode_dirs=dirs, trajectories=trajectories, notes=notes,
     )
     return write_bundle(out, *bundle)

@@ -88,10 +88,14 @@ function renderContext(index, bundle, ctx, view) {
   if (!bundle) { el.innerHTML = ""; return; }
   const option = (value, label, selected) => `<option value="${esc(value)}" ${selected ? "selected" : ""}>${esc(label)}</option>`;
   const demoLine = bundle.kind === "demo" ? `<span class="tag">Synthetic two-episode demo</span>` : bundle.synthetic ? `<span class="tag">Synthetic data</span>` : "";
+  // A dropdown only where there is a real choice; a single value is shown as text.
+  const field = (label, id, items, current) => items.length > 1
+    ? `<label>${label} <select id="${id}">${items.map(([value, text]) => option(value, text, value === current)).join("")}</select></label>`
+    : `<span>${label} <b>${esc((items[0] || ["", "—"])[1])}</b></span>`;
   el.innerHTML = `
-    <label>Source <select id="ctx-source">${index.bundles.map((b) => option(b.id, b.label, b.id === bundle.id)).join("")}</select></label>
-    <label>Split <select id="ctx-split" ${bundle.splits.length < 2 ? "disabled" : ""}>${bundle.splits.map((s) => option(s, splitLabel(s), s === ctx.s)).join("")}</select></label>
-    <label>Mode <select id="ctx-mode" ${ctx.modes.length < 2 ? "disabled" : ""}>${ctx.modes.map((m) => option(m, m, m === ctx.m)).join("")}</select></label>
+    ${field("Source", "ctx-source", index.bundles.map((b) => [b.id, b.label]), bundle.id)}
+    ${field("Split", "ctx-split", bundle.splits.map((s) => [s, splitLabel(s)]), ctx.s)}
+    ${field("Mode", "ctx-mode", ctx.modes.map((m) => [m, m]), ctx.m)}
     <span class="tag">${bundle.audience === "reviewer" ? "Reviewer export" : "Public view: evaluator metrics withheld"}</span>
     ${demoLine}`;
   const change = (patch) => {
@@ -100,9 +104,10 @@ function renderContext(index, bundle, ctx, view) {
     if (view === "run") S.notice = "The source changed, so the run view returned to the run list.";
     go(destination === "start" ? "benchmark" : destination, params);
   };
-  el.querySelector("#ctx-source").onchange = (e) => change({b: e.target.value, s: undefined, m: undefined});
-  el.querySelector("#ctx-split").onchange = (e) => change({s: e.target.value, m: undefined});
-  el.querySelector("#ctx-mode").onchange = (e) => change({m: e.target.value});
+  const on = (id, handler) => { const control = el.querySelector(id); if (control) control.onchange = handler; };
+  on("#ctx-source", (e) => change({b: e.target.value, s: undefined, m: undefined}));
+  on("#ctx-split", (e) => change({s: e.target.value}));
+  on("#ctx-mode", (e) => change({m: e.target.value}));
 }
 
 function setNav(view) {
@@ -244,7 +249,8 @@ function renderBenchmark(bundle, ctx, params) {
       ${rows.length ? benchmarkChart(rows, reviewer, focal, full) : ""}
       ${table}
       <div class="panel-body note">${cohortNote}${reviewer ? "" : " Evaluator metrics (F1, reward, TP/FP/FN) are withheld in this public view."}
-        Oracle is an evaluator control that reads the answer key, not an agent.</div>
+        Oracle is an evaluator control that reads the answer key, not an agent.
+        ${ctx.modes.length > 1 ? "Closed and train mode score identically: they differ only in the Activity log, which records the reward in train mode and withholds it in closed mode." : ""}</div>
     </section>
     ${definitions()}
     ${bundle.validation ? validationPanel(bundle.validation, full) : ""}
@@ -263,10 +269,12 @@ function keyResult(bundle, ctx, rows, runs, focal) {
   const f = rows.find((r) => r.policy === focal);
   if (!f || f.reward === null) return "";
   const control = rows.find((r) => r.policy === "mark_all");
+  const naive = rows.find((r) => r.policy === "simple");
   const traced = runs.filter((r) => r.policy === focal && r.findings && r.findings.length)
     .sort((a, b) => b.findings.length - a.findings.length || a.episode_id.localeCompare(b.episode_id))[0];
   const role = (f.role || "agent policy").toLowerCase();
   const sentence = `<span translate="no">${esc(focal)}</span>, the ${esc(role)}, averages reward <b>${metric(f.reward, ctx.full)}</b> and F1 <b>${metric(f.f1, ctx.full)}</b> over ${f.episodes} episode${f.episodes === 1 ? "" : "s"}`
+    + (naive && naive.policy !== focal ? `; the <span translate="no">simple</span> baseline, which skips the accounting rules, averages <b>${metric(naive.reward, ctx.full)}</b> with F1 <b>${metric(naive.f1, ctx.full)}</b>` : "")
     + (control && control.policy !== focal ? `; the negative control <span translate="no">mark_all</span> averages <b>${metric(control.reward, ctx.full)}</b>.` : ".");
   const link = traced
     ? `<a class="lede-link" href="${href("run", {...ctxParams(ctx), r: traced.key, f: 1})}">Trace Its Findings on <span class="mono" translate="no">${esc(traced.episode_id)}</span> →</a>`
