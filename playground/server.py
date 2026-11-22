@@ -22,7 +22,7 @@ from fincheck.verify import discover
 
 STATIC = Path(__file__).with_name("static")
 DEFAULT_EPISODES = Path(__file__).resolve().parents[1] / "episodes"
-BASELINES = ("oracle", "reconcile", "random", "mark_all")
+BASELINES = ("oracle", "reconcile", "simple", "random", "mark_all")
 MAX_BODY = 1024 * 1024
 MAX_SESSIONS = 200
 
@@ -177,7 +177,7 @@ class Playground:
         return {"observation": observation, "steps_used": env.steps, "finished": terminated or truncated}
 
     def baselines(self, episode):
-        """Scores of the four reference policies on this episode; None where the host cannot run one."""
+        """Scores of the baseline policies on this episode; None where the host cannot run one."""
         with self.lock:
             cached = self.baseline_cache.get(episode["id"])
         if cached is not None:
@@ -245,6 +245,8 @@ def make_handler(app):
                 self._send(HTTPStatus.OK, (STATIC / "index.html").read_bytes(), "text/html; charset=utf-8")
             elif self.path.split("?")[0] in ("/help", "/help/"):
                 self._send(HTTPStatus.OK, (STATIC / "help.html").read_bytes(), "text/html; charset=utf-8")
+            elif self.path == "/api/features":
+                self._json(HTTPStatus.OK, {"dashboard": False})
             elif self.path == "/api/episodes":
                 self._json(HTTPStatus.OK, [public_view(item) for item in app.episodes])
             else:

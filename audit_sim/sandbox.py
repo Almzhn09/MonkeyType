@@ -33,10 +33,13 @@ def isolation_kind():
 
 
 def enter_worker_sandbox():
-    if isolation_kind() == "seccomp":
+    """Enter the isolation for this platform and return its name for the run report."""
+    kind = isolation_kind()
+    if kind == "seccomp":
         _enter_seccomp()
     else:
         _enter_audit_hook()
+    return kind
 
 
 def _set_rlimits():

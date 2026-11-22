@@ -8,7 +8,7 @@ friends can open them in a browser without installing anything:
 | Path | What |
 |---|---|
 | `/` | Playground: pick a company, inspect records, submit findings, see the grader's result |
-| `/dashboard/` | Reviewer dashboard: the demo and a full dev-split run of all four policies |
+| `/dashboard/` | Reviewer dashboard: the demo, and all five policies on the train and dev companies in closed and train mode |
 
 The grader and answer keys stay on the server. The browser only receives public records and,
 after a player submits, that player's own results.

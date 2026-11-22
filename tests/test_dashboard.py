@@ -10,7 +10,8 @@ import unittest
 from urllib.error import HTTPError
 from urllib.request import urlopen
 
-from dashboard.projection import PrepareError, prepare_release, prepare_run, project_episode
+from audit_sim.policies import POLICIES
+from dashboard.projection import PrepareError, prepare_release, prepare_run, prepare_runs, project_episode, scan_observations
 from dashboard.server import make_server
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -63,19 +64,26 @@ class TestDashboardProjection(unittest.TestCase):
         out = self.out("reviewer")
         prepare_run(out, self.results, audience="reviewer", name="dev", episodes_root=ROOT / "episodes")
         bundle = self.bundle(out, "dev")
-        self.assertEqual(len(bundle["runs"]), 40)
+        self.assertEqual(len(bundle["runs"]), 10 * len(POLICIES))
         self.assertEqual(bundle["splits"], ["dev"])
         by_key = {run["key"]: run for run in bundle["runs"]}
         for report in self.reports:
             run = by_key[f"dev~{report['episode_id']}~{report['policy']}~closed"]
             self.assertEqual(run["metrics"]["reward"], report["reward"])
             self.assertEqual(run["metrics"]["f1"], report["f1"])
+            self.assertEqual(run["isolation"], report["isolation"])
             if report["policy"] == "oracle":
                 self.assertNotIn("findings", run)
                 self.assertEqual(run["activity_state"], "oracle")
+                self.assertEqual(run["isolation"], "evaluator")
             else:
                 self.assertEqual(len(run["findings"]), len(report["submitted_findings"]))
                 self.assertEqual(run["activity_state"], "available")
+                self.assertIn(run["isolation"], ("seccomp", "audit-hook"))
+                check = run["observation_check"]
+                self.assertEqual((check["answer_key_hits"], check["closed_rewards_nonzero"]), (0, 0))
+                self.assertEqual(check["observations"], report["steps"])
+                self.assertEqual(check["known_issues_checked"], report["tp"] + report["fn"])
                 rows = json.loads((out / "bundles" / "dev" / "activity" / "dev" / report["episode_id"]
                                    / f"{report['policy']}__closed.json").read_text(encoding="utf-8"))
                 self.assertEqual([row["step"] for row in rows], list(range(1, report["steps"] + 1)))
@@ -92,10 +100,10 @@ class TestDashboardProjection(unittest.TestCase):
         out = self.out("public")
         prepare_run(out, self.results, audience="public", name="dev-public", episodes_root=ROOT / "episodes")
         bundle = self.bundle(out, "dev-public")
-        self.assertEqual(len(bundle["runs"]), 30)
+        self.assertEqual(len(bundle["runs"]), 10 * (len(POLICIES) - 1))
         self.assertFalse(any(run["policy"] == "oracle" for run in bundle["runs"]))
         text = "".join(path.read_text(encoding="utf-8") for path in files(out))
-        for word in ('"metrics"', '"reward"', '"tp"', '"f1"', "clean_established", "oracle"):
+        for word in ('"metrics"', '"reward"', '"tp"', '"f1"', "clean_established", "oracle", "known_issues_checked"):
             self.assertNotIn(word, text)
         self.assert_no_leaks(out)
 
@@ -112,9 +120,9 @@ class TestDashboardProjection(unittest.TestCase):
         bundle = self.bundle(out, "edge")
         notes = " ".join(bundle["notes"])
         self.assertIn("more than once", notes)
-        self.assertIn("row 42 skipped", notes)
+        self.assertIn(f"row {len(self.reports) + 2} skipped", notes)
         self.assertIn("line", notes)
-        self.assertEqual(len(bundle["runs"]), 39)
+        self.assertEqual(len(bundle["runs"]), len(self.reports) - 1)
         partial = next(run for run in bundle["runs"] if run["episode_id"] == first["episode_id"] and run["policy"] == first["policy"])
         self.assertEqual(partial["activity_state"], "partial")
 
@@ -140,6 +148,47 @@ class TestDashboardProjection(unittest.TestCase):
         prepare_run(wrong, self.results, audience="public", name="wrong", episodes_root=ROOT / "episodes", split="train")
         self.assertEqual(self.bundle(wrong, "wrong")["splits"], ["unspecified"])
 
+    def test_simple_baseline_is_weaker_than_reference(self):
+        by_policy = {}
+        for report in self.reports:
+            by_policy.setdefault(report["policy"], []).append(report)
+        mean = lambda policy: sum(r["f1"] for r in by_policy[policy]) / len(by_policy[policy])
+        self.assertLess(mean("simple"), mean("reconcile"))
+        self.assertGreater(mean("simple"), mean("mark_all"))
+        kinds = {f["type"] for r in by_policy["simple"] for f in r["submitted_findings"]}
+        self.assertTrue(kinds <= {"duplicate_invoice", "payment_allocation"}, kinds)
+
+    def test_merged_modes_keep_their_own_activity(self):
+        train_mode = self.temp / "results-train-mode"
+        if not train_mode.exists():
+            subprocess.run([sys.executable, "-m", "audit_sim", "run", str(ROOT / "episodes"), "--split", "dev",
+                            "--mode", "train", "--policy", "reconcile", "--output", str(train_mode)],
+                           cwd=ROOT, check=True, capture_output=True)
+        out = self.out("modes")
+        prepare_runs(out, [self.results, train_mode], audience="reviewer", name="modes",
+                     episodes_root=ROOT / "episodes", label="Modes")
+        bundle = self.bundle(out, "modes")
+        self.assertEqual(bundle["modes"], ["closed", "train"])
+        episode = self.reports[0]["episode_id"]
+        logs = {}
+        for mode in ("closed", "train"):
+            run = next(r for r in bundle["runs"] if r["key"] == f"dev~{episode}~reconcile~{mode}")
+            self.assertEqual(run["activity_state"], "available")
+            logs[mode] = json.loads((out / "bundles" / "modes" / "activity" / "dev" / episode
+                                     / f"reconcile__{mode}.json").read_text(encoding="utf-8"))
+        self.assertEqual(logs["closed"][-1]["reward"], 0)
+        self.assertNotEqual(logs["train"][-1]["reward"], 0)
+
+    def test_observation_scan_detects_answer_key_content(self):
+        clean = [{"observation": {"result": [{"row_id": "R1"}]}, "reward": 0}]
+        self.assertEqual(scan_observations(clean, "closed", {"ISS-1"})["answer_key_hits"], 0)
+        self.assertNotIn("issue_id", json.dumps(scan_observations(clean, "closed", {"ISS-1"})))
+        leaked = [{"observation": {"result": [{"issue_id": "X"}]}, "reward": 0},
+                  {"observation": {"result": "ISS-1"}, "reward": 0.5}]
+        found = scan_observations(leaked, "closed", {"ISS-1"})
+        self.assertEqual(found["answer_key_hits"], 2)
+        self.assertEqual(found["closed_rewards_nonzero"], 1)
+
     def test_record_status_unsupported_and_invalid(self):
         source = ROOT / "episodes" / "public" / "dev" / "EP-0CMTEHMK3Z"
         old = self.temp / "old-episode"
@@ -164,9 +213,10 @@ class TestDashboardProjection(unittest.TestCase):
         out = self.out("release-out")
         prepare_release(out, release, audience="reviewer", name="release")
         bundle = self.bundle(out, "release")
-        self.assertEqual(len(bundle["runs"]), 40)
+        self.assertEqual(len(bundle["runs"]), 10 * len(POLICIES))
         self.assertEqual(bundle["splits"], ["dev"])
-        self.assertEqual(bundle["validation"]["dev_runs"], 40)
+        self.assertEqual(bundle["validation"]["dev_runs"], 10 * len(POLICIES))
+        self.assertEqual(bundle["validation"]["paired_policy_checks"], {"oracle": 20, "reconcile": 20, "simple": 20})
         self.assertTrue(all(run["activity_state"] in ("release_dev", "oracle") for run in bundle["runs"]))
         self.assertFalse((out / "bundles" / "release" / "activity").exists())
         self.assert_no_leaks(out)

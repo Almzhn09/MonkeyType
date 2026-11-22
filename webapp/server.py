@@ -16,16 +16,18 @@ import tempfile
 from urllib.parse import unquote, urlsplit
 from http.server import ThreadingHTTPServer
 
-from dashboard.projection import ROOT, PrepareError, prepare_demo, prepare_run, utf8_env, write_index
+from dashboard.projection import ROOT, PrepareError, prepare_demo, prepare_runs, utf8_env, write_index
 from dashboard.server import respond as dashboard_respond
 from playground.server import DEFAULT_EPISODES, Playground, make_handler as playground_handler
 
+# Verification record written by `python3 scripts/check.py --output` and committed with the code.
+VALIDATION = ROOT / "submission" / "validation.json"
 # Spaces show the app inside an iframe on huggingface.co, so allow exactly that embedding.
 FRAME_ANCESTORS = "https://huggingface.co https://*.hf.space"
 
 
 def prepare_dashboard(out, episodes=DEFAULT_EPISODES, log=print):
-    """Demo bundle plus a full dev-split run with activity logs. Failures are logged, not fatal."""
+    """Demo bundle plus every policy on the train, dev and pairs splits in closed and train mode."""
     out = Path(out)
     out.mkdir(parents=True, exist_ok=True)
     try:
@@ -33,25 +35,30 @@ def prepare_dashboard(out, episodes=DEFAULT_EPISODES, log=print):
         log("dashboard: demo bundle ready")
     except PrepareError as error:
         log(f"dashboard: demo bundle unavailable: {error}")
-    results = Path(tempfile.mkdtemp(prefix="dev-run-"))
+    results = Path(tempfile.mkdtemp(prefix="runs-"))
     try:
-        run = subprocess.run([sys.executable, "-m", "audit_sim", "run", str(episodes), "--split", "dev",
-                              "--output", str(results)], cwd=ROOT, capture_output=True, env=utf8_env(),
-                             encoding="utf-8", errors="replace")
-        if run.returncode != 0:
-            raise PrepareError((run.stderr or run.stdout).strip()[-500:])
-        prepare_run(out, results, audience="reviewer", name="dev", episodes_root=episodes,
-                    label="Dev split: all four policies on 10 episodes")
-        log("dashboard: dev bundle ready")
+        folders = []
+        for split in ("train", "dev", "pairs"):
+            for mode in ("closed", "train"):
+                folder = results / f"{split}-{mode}"
+                run = subprocess.run([sys.executable, "-m", "audit_sim", "run", str(episodes), "--split", split,
+                                      "--mode", mode, "--output", str(folder)], cwd=ROOT, capture_output=True,
+                                     env=utf8_env(), encoding="utf-8", errors="replace")
+                if run.returncode != 0:
+                    raise PrepareError((run.stderr or run.stdout).strip()[-500:])
+                folders.append(folder)
+        prepare_runs(out, folders, audience="reviewer", name="all", episodes_root=episodes,
+                     label="All splits: five policies on 40 companies", validation=VALIDATION)
+        log("dashboard: train, dev and pairs bundle ready")
     except PrepareError as error:
-        log(f"dashboard: dev bundle unavailable: {error}")
+        log(f"dashboard: train, dev and pairs bundle unavailable: {error}")
     finally:
         shutil.rmtree(results, ignore_errors=True)
     write_index(out)
 
 
 def prepare_baselines(path, episodes=DEFAULT_EPISODES, log=print):
-    """Score the four baseline policies on every playable episode once, ahead of time."""
+    """Score the baseline policies on every playable episode once, ahead of time."""
     app = Playground(episodes)
     scores = {item["id"]: app.baselines(item) for item in app.episodes}
     Path(path).write_text(json.dumps(scores, separators=(",", ":")), encoding="utf-8", newline="\n")
@@ -83,6 +90,8 @@ def make_handler(app, dashboard_dir):
                 return
             if path.startswith("/dashboard/"):
                 return dashboard_respond(self, dashboard_dir, path[len("/dashboard"):], FRAME_ANCESTORS)
+            if path == "/api/features":
+                return self._json(HTTPStatus.OK, {"dashboard": True})
             return super().do_GET()
 
         def do_HEAD(self):

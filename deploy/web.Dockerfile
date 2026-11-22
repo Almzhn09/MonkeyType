@@ -15,6 +15,7 @@ COPY --chown=app dashboard/ dashboard/
 COPY --chown=app webapp/ webapp/
 COPY --chown=app episodes/ episodes/
 COPY --chown=app LICENSE ./
+COPY --chown=app submission/validation.json submission/validation.json
 USER app
 # Precompute the dashboard bundles and every baseline score at build time, so small free
 # instances start quickly and the first game on each company answers at once.

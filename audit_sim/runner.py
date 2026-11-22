@@ -112,8 +112,9 @@ def run_policy(directory, policy, *, private_directory=None, mode="closed", seed
     trajectory = []
     if policy == "oracle":
         env.step({"action": "submit", "findings": oracle_submission(env.episode)})
+        isolation = "evaluator"  # runs in the trusted process; it never sees an agent channel
     else:
-        _run_worker(env, policy, policy_seed, initial, trajectory)
+        isolation = _run_worker(env, policy, policy_seed, initial, trajectory)
     report = {
         "episode_id": env.episode_id,
         "policy": policy,
@@ -124,6 +125,7 @@ def run_policy(directory, policy, *, private_directory=None, mode="closed", seed
         "terminated": env.terminated,
         "truncated": env.truncated,
         "reason": env.reason,
+        "isolation": isolation,
         "submitted_findings": [] if env.submission is None else env.submission["findings"],
         **asdict(env.score),
     }
@@ -140,9 +142,12 @@ def _run_worker(env, policy, policy_seed, initial, trajectory):
         cwd=WORKER.anchor, env=_worker_environment(), close_fds=True,
     ) as process:
         reader = _LineReader(process.stdout)
+        isolation = "unknown"  # replaced by the worker's own report once it is isolated
         try:
-            if reader.read(env.deadline) != {"ready": True}:
+            hello = reader.read(env.deadline)
+            if not isinstance(hello, dict) or hello.get("ready") is not True or hello.get("isolation") not in ("seccomp", "audit-hook"):
                 raise WorkerProtocolError("Unexpected policy handshake")
+            isolation = hello["isolation"]
             send_message(process.stdin, {
                 "policy": policy, "policy_seed": policy_seed, "observation": initial,
             }, env.deadline)
@@ -172,3 +177,4 @@ def _run_worker(env, policy, policy_seed, initial, trajectory):
         finally:
             if process.poll() is None:
                 process.kill()
+    return isolation

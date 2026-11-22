@@ -11,6 +11,8 @@ from fingen.config import load_config_file
 
 from .data import Episode, load_json
 from .fixtures import dump_json, dump_jsonl
+from .policies import POLICIES
+from .runner import run_policy
 from .scoring import oracle_submission, score_submission
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -47,6 +49,29 @@ def check_oracle_pairs(dataset):
     return count
 
 
+PAIRED_POLICIES = ("reconcile", "simple")
+
+
+def check_policy_pairs(dataset, policies=PAIRED_POLICIES):
+    """Each policy must score the same TP/FP/FN/F1 on an episode and on its shuffled, renamed pair."""
+    sources = {public.name: (public, dataset / "private" / split / public.name)
+               for split in SPLITS for public in (dataset / "public" / split).iterdir()}
+    counts = dict.fromkeys(policies, 0)
+    for private in sorted((dataset / "private" / "pairs").iterdir()):
+        source = load_json(private / "id_map.json")["source_episode_id"]
+        original_public, original_private = sources[source]
+        paired_public = dataset / "public" / "pairs" / private.name
+        for policy in policies:
+            before, _ = run_policy(original_public, policy, private_directory=original_private)
+            after, _ = run_policy(paired_public, policy, private_directory=private)
+            fields = ("tp", "fp", "fn", "f1")
+            if any(before[name] != after[name] for name in fields):
+                raise ValueError(f"{policy} scored differently on {source} and its pair {private.name}: "
+                                 f"{[before[n] for n in fields]} vs {[after[n] for n in fields]}")
+            counts[policy] += 1
+    return counts
+
+
 def validate_configs(configs):
     seen = set()
     for split, path in zip(SPLITS, configs):
@@ -74,14 +99,18 @@ def prepare_release(evaluate, output=None):
             failures = [item.format() for item in verified if not item.ok]
             raise ValueError(f"Expected 40 valid originals and pairs: {problems + failures}")
         pairs = check_oracle_pairs(dataset)
+        paired_policies = check_policy_pairs(dataset)
 
         reports, summary, _ = evaluate(dataset, split="dev")
-        if len(reports) != 40 or any(
+        expected_runs = 10 * len(POLICIES)
+        if len(reports) != expected_runs or any(
             item["truncated"] or item["invalid_submission"] for item in reports
         ) or summary["oracle"]["mean_f1"] != 1:
-            raise ValueError("Expected 40 completed dev runs and correct oracle results")
+            raise ValueError(f"Expected {expected_runs} completed dev runs and correct oracle results")
         if summary["reconcile"]["mean_f1"] != 1 or summary["mark_all"]["mean_f1"] >= 0.1:
             raise ValueError("Reference reconciliation or negative control disagrees with the dev data")
+        if summary["simple"]["mean_f1"] >= summary["reconcile"]["mean_f1"]:
+            raise ValueError("The simple baseline should not match the reference reconciler")
         train_reports, _, trajectories = evaluate(
             dataset, split="train", choices=("reconcile",), mode="train",
         )
@@ -95,6 +124,7 @@ def prepare_release(evaluate, output=None):
 
         result = {
             "train_episodes": 10, "dev_episodes": 10, "verified_pairs": pairs,
+            "paired_policy_checks": {"oracle": pairs, **paired_policies},
             "dev_runs": len(reports), "recorded_train_steps": len(trajectories),
             "max_dev_episode_seconds": max(item["duration_seconds"] for item in reports),
             "dev": summary,

@@ -8,7 +8,7 @@ from fincheck.recompute import reconcile as check_public
 
 from .schema import ISSUE_TYPES, TABLES, V1_ISSUE_TYPES, record_id
 
-POLICIES = ("random", "reconcile", "mark_all", "oracle")
+POLICIES = ("random", "reconcile", "simple", "mark_all", "oracle")
 
 
 def finding(kind, affected, amount, currency, evidence, explanation):
@@ -121,6 +121,54 @@ def reconcile(request, initial, seed):
     return findings[:30]
 
 
+def simple(request, initial, seed):
+    """Naive baseline: surface pattern matching without the accounting rules.
+
+    It flags an invoice with more than one receivables debit as a duplicate, and any credit to
+    the unapplied account on a payment that names invoices as a misallocation. It never checks
+    exchange-rate dates, rounding, time zones or reporting periods, so it misses FX and period
+    errors and is fooled by legitimate partial allocations.
+    """
+    if str(initial["manifest"].get("schema_version")) != "1.0":
+        return []
+    budget = initial["steps_remaining"]
+    tables = {}
+    for table in ("invoices", "payments", "ledger"):
+        records, budget = rows(request, table, budget)
+        if records is None:
+            return []
+        tables[table] = records
+    accounts = initial["policy"].get("accounts", {})
+    receivables, unapplied = accounts.get("ar"), accounts.get("unapplied")
+    base = initial["manifest"]["base_currency"]
+    invoice_docs = {item["invoice_id"]: item["doc_id"] for item in tables["invoices"]}
+    payments = {item["payment_id"]: item for item in tables["payments"]}
+    findings = []
+    debits = defaultdict(list)
+    for row in tables["ledger"]:
+        if row["account"] == receivables and row["debit_minor"] > 0 and row["invoice_id"] and not row["payment_id"]:
+            debits[row["invoice_id"]].append(row)
+    for invoice_id, entries in sorted(debits.items()):
+        if len(entries) < 2 or invoice_id not in invoice_docs:
+            continue
+        entries.sort(key=lambda row: (row["timestamp"], row["row_id"]))
+        doc = invoice_docs[invoice_id]
+        amount = sum(row["debit_minor"] for row in entries[1:])
+        findings.append(finding(
+            "duplicate_invoice", [doc], amount, base, [doc] + [row["row_id"] for row in entries],
+            f"Invoice {invoice_id} has {len(entries)} receivables debits; extra = {amount}.",
+        ))
+    for row in tables["ledger"]:
+        payment = payments.get(row["payment_id"])
+        if row["account"] == unapplied and row["credit_minor"] > 0 and payment and payment.get("invoice_refs"):
+            findings.append(finding(
+                "payment_allocation", [payment["doc_id"]], row["credit_minor"], base,
+                [payment["doc_id"], row["row_id"]],
+                f"Payment {payment['payment_id']} names invoices but {row['credit_minor']} went to unapplied.",
+            ))
+    return findings[:30]
+
+
 def mark_all(request, initial, seed):
     records = page(request, "ledger").get("result", [])
     types = V1_ISSUE_TYPES if initial["manifest"]["schema_version"] == "1.0" else ISSUE_TYPES
@@ -132,4 +180,4 @@ def mark_all(request, initial, seed):
     ][:30]
 
 
-WORKER_POLICIES = {"random": random_explorer, "reconcile": reconcile, "mark_all": mark_all}
+WORKER_POLICIES = {"random": random_explorer, "reconcile": reconcile, "simple": simple, "mark_all": mark_all}

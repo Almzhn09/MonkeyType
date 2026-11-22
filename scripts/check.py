@@ -4,6 +4,8 @@ Stdlib only. A failed stage returns a nonzero exit code."""
 import argparse
 import json
 import os
+import platform
+import re
 import subprocess
 import sys
 import tempfile
@@ -12,8 +14,19 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 PY = sys.executable
-RESULTS = []
+RESULTS = []  # one dict per stage: name, status, seconds, covers, extra facts
 VERBOSE = False
+OFFICIAL = True  # without --quick, a skipped stage counts as a failure
+COVERS = {
+    "tests": "Unit and integration tests: generator, independent verifier, environment contract, grader, "
+             "policies, sandbox isolation, playground, dashboard and hosting.",
+    "fresh-seed": "A seed and error mix absent from train/dev: generate, verify independently, reference "
+                  "reconciler F1 = 1, and two builds byte-identical.",
+    "fresh-gen": "Every example config: generate within 60 s and 4 GB, then verify independently.",
+    "integrated-release": "Build train/dev with pairs twice and compare bytes; verify 20 originals and 20 "
+                          "shuffled, renamed pairs; oracle, reconcile and simple score identically on every "
+                          "pair; evaluate every policy on dev; record train trajectories.",
+}
 
 
 def run(args, **kw):
@@ -47,12 +60,17 @@ def stage(name):
     def deco(fn):
         def wrapper(*a, **k):
             t = time.perf_counter()
+            extra = {}
             try:
-                status, detail = fn(*a, **k)
+                status, detail, *rest = fn(*a, **k)
+                extra = rest[0] if rest else {}
             except Exception as e:  # noqa: BLE001
                 status, detail = "FAIL", f"exception: {e!r}"
+            if status == "SKIP" and OFFICIAL:
+                status = "FAIL"
+                detail = f"{detail or 'skipped'} (no stage may be skipped in the official run)"
             dt = time.perf_counter() - t
-            RESULTS.append((name, status))
+            RESULTS.append({"name": name, "status": status, "seconds": round(dt, 1), "covers": COVERS.get(name, ""), **extra})
             print(f"[{name}] {status} ({dt:.1f}s)")
             if detail and (status == "FAIL" or VERBOSE or status == "SKIP"):
                 print("    " + str(detail).strip().replace("\n", "\n    ")[-3000:])
@@ -68,7 +86,11 @@ def tail(p):
 @stage("tests")
 def st_tests():
     p = run(["-m", "unittest", "discover", "-s", "tests", "-t", "."])
-    return ("PASS" if p.returncode == 0 else "FAIL"), tail(p)
+    ran = re.search(r"Ran (\d+) tests?", tail(p))
+    skipped = re.search(r"skipped=(\d+)", tail(p))
+    extra = {"tests_run": int(ran.group(1)) if ran else 0, "tests_skipped": int(skipped.group(1)) if skipped else 0}
+    ok = p.returncode == 0 and extra["tests_run"] > 0
+    return ("PASS" if ok else "FAIL"), tail(p), extra
 
 
 def gen(cfg, out, index=None):
@@ -104,7 +126,7 @@ def st_fresh():
                 bad = True
                 lines.append(f"{cfg.name}: exceeds 60s/episode")
     print("    " + "\n    ".join(l for l in lines if "generate" in l))
-    return ("FAIL" if bad else "PASS"), "\n".join(l for l in lines if "generate" not in l)
+    return ("FAIL" if bad else "PASS"), "\n".join(l for l in lines if "generate" not in l), {"configs": len(cfgs)}
 
 
 @stage("fresh-seed")
@@ -160,25 +182,46 @@ def st_release(output):
     return "PASS", None
 
 
+def write_verification(output, quick):
+    """Record which stages ran, and what each covers, next to the release's own validation."""
+    path = output / "validation.json"
+    validation = json.loads(path.read_text(encoding="utf-8"))
+    validation["verification"] = {
+        "command": "python3 scripts/check.py" + (" --quick" if quick else ""),
+        "mode": "quick" if quick else "official",
+        "python": platform.python_version(),
+        "platform": sys.platform,
+        "stages": RESULTS,
+        "result": "OK" if all(item["status"] == "PASS" for item in RESULTS) else "FAIL",
+    }
+    path.write_text(json.dumps(validation, ensure_ascii=False, indent=2) + "\n", encoding="utf-8", newline="\n")
+
+
 def main():
-    global VERBOSE
+    global VERBOSE, OFFICIAL
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--quick", action="store_true", help="skip the extra example checks")
     ap.add_argument("--verbose", action="store_true")
     ap.add_argument("--output", type=Path, help="Export the source code, checked episodes and trajectories")
     a = ap.parse_args()
     VERBOSE = a.verbose
+    OFFICIAL = not a.quick
     sys.path.insert(0, str(ROOT))
     st_tests()
     st_fresh_seed()
     if a.quick:
         print("[fresh-gen] SKIP (--quick)")
+        RESULTS.append({"name": "fresh-gen", "status": "SKIP", "seconds": 0, "covers": COVERS["fresh-gen"],
+                        "reason": "--quick"})
     else:
         st_fresh()
-    can_export = all(status == "PASS" for _, status in RESULTS)
-    st_release(a.output.resolve() if a.output and can_export else None)
+    can_export = all(item["status"] in ("PASS", "SKIP") for item in RESULTS)
+    output = a.output.resolve() if a.output and can_export else None
+    st_release(output)
+    if output is not None and RESULTS[-1]["status"] == "PASS":
+        write_verification(output, a.quick)
     print(f"peak RSS (self+children): {format_rss()}")
-    failed = [n for n, s in RESULTS if s == "FAIL"]
+    failed = [item["name"] for item in RESULTS if item["status"] == "FAIL"]
     print("RESULT: " + ("FAIL (" + ", ".join(failed) + ")" if failed else "OK"))
     return 1 if failed else 0
 

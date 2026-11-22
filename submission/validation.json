@@ -2,9 +2,14 @@
   "train_episodes": 10,
   "dev_episodes": 10,
   "verified_pairs": 20,
-  "dev_runs": 40,
+  "paired_policy_checks": {
+    "oracle": 20,
+    "reconcile": 20,
+    "simple": 20
+  },
+  "dev_runs": 50,
   "recorded_train_steps": 222,
-  "max_dev_episode_seconds": 0.146476,
+  "max_dev_episode_seconds": 0.088316,
   "dev": {
     "random": {
       "episodes": 10,
@@ -13,7 +18,7 @@
       "mean_f1": 0.2,
       "mean_return": -0.6064,
       "mean_steps": 17,
-      "mean_seconds": 0.0750091,
+      "mean_seconds": 0.0545179,
       "truncated": 0,
       "invalid_submissions": 0
     },
@@ -24,7 +29,18 @@
       "mean_f1": 1.0,
       "mean_return": 0.961,
       "mean_steps": 20.5,
-      "mean_seconds": 0.0887411,
+      "mean_seconds": 0.0614794,
+      "truncated": 0,
+      "invalid_submissions": 0
+    },
+    "simple": {
+      "episodes": 10,
+      "mean_precision": 0.51,
+      "mean_recall": 0.39,
+      "mean_f1": 0.5315384615384615,
+      "mean_return": 0.04307692307692307,
+      "mean_steps": 17.1,
+      "mean_seconds": 0.0587614,
       "truncated": 0,
       "invalid_submissions": 0
     },
@@ -35,7 +51,7 @@
       "mean_f1": 0.0,
       "mean_return": -1.0,
       "mean_steps": 2,
-      "mean_seconds": 0.0688276,
+      "mean_seconds": 0.0533704,
       "truncated": 0,
       "invalid_submissions": 0
     },
@@ -46,9 +62,45 @@
       "mean_f1": 1.0,
       "mean_return": 1.0,
       "mean_steps": 1,
-      "mean_seconds": 0.0130063,
+      "mean_seconds": 0.0087079,
       "truncated": 0,
       "invalid_submissions": 0
     }
+  },
+  "verification": {
+    "command": "python3 scripts/check.py",
+    "mode": "official",
+    "python": "3.13.18",
+    "platform": "linux",
+    "stages": [
+      {
+        "name": "tests",
+        "status": "PASS",
+        "seconds": 40.0,
+        "covers": "Unit and integration tests: generator, independent verifier, environment contract, grader, policies, sandbox isolation, playground, dashboard and hosting.",
+        "tests_run": 205,
+        "tests_skipped": 0
+      },
+      {
+        "name": "fresh-seed",
+        "status": "PASS",
+        "seconds": 0.5,
+        "covers": "A seed and error mix absent from train/dev: generate, verify independently, reference reconciler F1 = 1, and two builds byte-identical."
+      },
+      {
+        "name": "fresh-gen",
+        "status": "PASS",
+        "seconds": 1.2,
+        "covers": "Every example config: generate within 60 s and 4 GB, then verify independently.",
+        "configs": 8
+      },
+      {
+        "name": "integrated-release",
+        "status": "PASS",
+        "seconds": 12.8,
+        "covers": "Build train/dev with pairs twice and compare bytes; verify 20 originals and 20 shuffled, renamed pairs; oracle, reconcile and simple score identically on every pair; evaluate every policy on dev; record train trajectories."
+      }
+    ],
+    "result": "OK"
   }
 }
