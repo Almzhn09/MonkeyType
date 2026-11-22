@@ -23,6 +23,23 @@ class TestAuditIntegration(unittest.TestCase):
         self.assertEqual(trajectory[-1]["reward"], 0)
         self.assertNotIn("seed", trajectory[0]["observation"])
 
+    def test_simple_reconciler_finds_the_duplicate_without_running_fx_checks(self):
+        reference, _ = run_policy(A08, "reconcile")
+        simple, trajectory = run_policy(A08, "simple")
+        self.assertEqual((reference["tp"], reference["fp"], reference["fn"]), (2, 0, 0))
+        self.assertEqual((simple["tp"], simple["fp"], simple["fn"]), (1, 0, 1))
+        self.assertEqual([item["type"] for item in simple["submitted_findings"]], ["duplicate_invoice"])
+        self.assertTrue(all(row["action"].get("table") != "fx" for row in trajectory))
+
+    def test_simple_reconciler_handles_payments_and_clean_books_in_base_currency(self):
+        with TemporaryDirectory() as temp:
+            for errors in ({}, {"payment_allocation": 1}):
+                with self.subTest(errors=errors):
+                    _, public, private = generate_episode({"seed": 100010, "base_currency": "KZT",
+                        "foreign_currencies": [], "errors": errors}, temp)
+                    result, _ = run_policy(Path(public), "simple", private_directory=Path(private))
+                    self.assertEqual((result["tp"], result["fp"], result["fn"]), (len(errors), 0, 0))
+
     def test_worker_respects_a_stricter_inherited_address_space_limit(self):
         program = """
 from pathlib import Path

@@ -37,6 +37,7 @@ CASES = (
 ZONES = ("Asia/Almaty", "Asia/Dubai", "Asia/Kolkata", "Asia/Tokyo", "America/Bogota", "Etc/UTC")
 CURRENCIES = ("KZT", "EUR", "USD", "JPY", "KWD", "CNY", "GBP")
 INVARIANT_METRICS = ("tp", "fp", "fn", "f1", "reward", "steps")
+PAIRED_POLICIES = ("reconcile", "oracle", "simple")
 
 
 def cohort_configs(seed, index):
@@ -90,7 +91,7 @@ def run_cohort(seed, index):
                     raise ValueError(f"{name} missed an issue in {result['episode_id']}")
                 metrics.append(result)
                 reference[name] = result
-            for name in ("reconcile", "oracle"):
+            for name in PAIRED_POLICIES:
                 result, _ = run_policy(
                     root / "public" / "pairs" / paired, name,
                     private_directory=root / "private" / "pairs" / paired, policy_seed=seed,
@@ -142,7 +143,7 @@ def benchmark(seed, batches, *, start_index=0, output=None, progress_every=1):
                 completed_cohorts=offset + 1,
                 verified_originals=(offset + 1) * COHORT_SIZE,
                 verified_pairs=(offset + 1) * COHORT_SIZE,
-                policy_checks=(offset + 1) * COHORT_SIZE * 6,
+                policy_checks=(offset + 1) * COHORT_SIZE * (len(POLICIES) + len(PAIRED_POLICIES)),
                 elapsed_seconds=round(monotonic() - start, 3),
                 policies={name: {
                     "runs": total["runs"], "mean_f1": total["f1_total"] / total["runs"],

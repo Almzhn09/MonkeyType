@@ -11,6 +11,7 @@ from fingen.config import load_config_file
 
 from .data import Episode, load_json
 from .fixtures import dump_json, dump_jsonl
+from .policies import POLICIES, POLICY_ROLES
 from .replay import replay
 from .report import write_report
 from .scoring import oracle_submission, score_submission
@@ -32,7 +33,7 @@ def evaluate_demo(evaluate, *, dataset=ROOT / "episodes", output=None):
             target = directory / scope / "demo"
             copytree(control / scope, target / DEMO_ERROR_ID)
             copytree(dataset / scope / "dev" / DEMO_CLEAN_ID, target / DEMO_CLEAN_ID)
-        return evaluate(directory, split="demo", choices=("reconcile", "mark_all"), output=output)
+        return evaluate(directory, split="demo", choices=("reconcile", "simple", "mark_all"), output=output)
 
 
 def check_oracle_pairs(dataset):
@@ -91,12 +92,12 @@ def prepare_release(evaluate, output=None):
         pairs = check_oracle_pairs(dataset)
 
         reports, summary, _ = evaluate(dataset, split="dev")
-        if len(reports) != 40 or any(
-            item["truncated"] or item["invalid_submission"] for item in reports
-        ) or summary["oracle"]["mean_f1"] != 1:
-            raise ValueError("Expected 40 completed dev runs and correct oracle results")
-        if summary["reconcile"]["mean_f1"] != 1 or summary["mark_all"]["mean_f1"] >= 0.1:
-            raise ValueError("Reference reconciliation or negative control disagrees with the dev data")
+        if len(reports) != 10 * len(POLICIES) or any(item["reason"] != "submitted" for item in reports):
+            raise ValueError("Expected every policy to complete the ten dev episodes")
+        if summary["oracle"]["mean_f1"] != 1 or summary["reconcile"]["mean_f1"] != 1:
+            raise ValueError("Oracle or the reference solvability check disagrees with the dev data")
+        if summary["mark_all"]["mean_f1"] >= 0.1:
+            raise ValueError("The mass-accusation control scored too high on dev")
         train_reports, _, trajectories = evaluate(
             dataset, split="train", choices=("reconcile",), mode="train",
         )
@@ -131,6 +132,7 @@ def prepare_release(evaluate, output=None):
             "dev_runs": len(reports), "recorded_train_steps": len(trajectories),
             "replayed_train_steps": replayed["steps"],
             "demo_runs": len(demo_reports),
+            "policy_roles": POLICY_ROLES,
             "max_dev_episode_seconds": max(item["duration_seconds"] for item in reports),
             "dev": summary,
         }

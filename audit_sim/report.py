@@ -16,7 +16,8 @@ from .replay import read_trajectory, replay_key
 from .scoring import validate_submission
 
 POLICY_LABELS = {
-    "reconcile": "Сверка",
+    "reconcile": "Эталонная сверка",
+    "simple": "Простая сверка",
     "mark_all": "Массовая пометка",
     "random": "Случайный агент",
     "oracle": "Oracle оценщика",
@@ -241,7 +242,11 @@ def render_report(reports, trajectories):
         if key not in keys:
             raise ValueError("Trajectory has no matching report")
         groups[key].append(row)
-    policies = sorted({key[1] for key in keys}, key=lambda key: (key != "reconcile", key))
+    policies = sorted({key[1] for key in keys}, key=lambda key: (key not in ("reconcile", "simple"), key))
+    comparison_note = (
+        '<p class="chart-key">Эталонная сверка проверяет разрешимость эпизодов по открытым данным.</p>'
+        if "reconcile" in policies and "simple" in policies else ""
+    )
     options = "".join(f'<option value="{escape(key)}">{escape(label(POLICY_LABELS, key))}</option>' for key in policies)
     metrics = "".join(f'<option value="{key}">{name}</option>' for key, name in COMPARE_METRICS.items())
     sessions = "".join(session_html(item, groups[replay_key(item)], opened=index == 0)
@@ -263,7 +268,7 @@ def render_report(reports, trajectories):
 <figure class="comparison"><div class="comparison-head"><figcaption>Среднее по выбранным прогонам</figcaption>
 <label class="metric-selector">Показатель<select id="metric">{metrics}</select></label></div>
 <div id="comparison-axis" class="comparison-axis" aria-hidden="true"></div><ul id="policy-chart" class="policy-chart" data-step-limit="{STEP_LIMIT}"></ul>
-<p id="comparison-empty" class="empty" hidden>Нет прогонов для выбранных фильтров.</p></figure></section>
+<p id="comparison-empty" class="empty" hidden>Нет прогонов для выбранных фильтров.</p>{comparison_note}</figure></section>
 <section aria-labelledby="runs"><h2 id="runs">Прогоны</h2>
 <p id="visible-count" aria-live="polite">Показано {len(reports)} из {len(reports)}</p>{sessions}</section>
 </main><script>{script}</script></body></html>

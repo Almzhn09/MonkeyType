@@ -8,7 +8,14 @@ from fincheck.recompute import reconcile as check_public
 
 from .schema import ISSUE_TYPES, TABLES, record_id
 
-POLICIES = ("random", "reconcile", "mark_all", "oracle")
+POLICY_ROLES = {
+    "random": "random_baseline",
+    "reconcile": "public_solvability_check",
+    "mark_all": "mass_accusation_control",
+    "oracle": "evaluator_answer_key",
+    "simple": "simple_baseline",
+}
+POLICIES = tuple(POLICY_ROLES)
 
 
 def finding(kind, affected, amount, currency, evidence, explanation):
@@ -54,16 +61,24 @@ def random_explorer(request, initial, seed):
     return []
 
 
-def reconcile(request, initial, seed):
+def read_tables(request, initial, names):
     tables = {}
     budget = initial["steps_remaining"]
-    v1 = initial["manifest"]["schema_version"] == "1.0"
-    names = ("invoices", "payments", "ledger", "fx") if v1 else ("invoices", "payments", "ledger")
     for table in names:
         records, budget = rows(request, table, budget)
         if records is None:
-            return []
+            return None
         tables[table] = records
+    return tables
+
+
+def reconcile(request, initial, seed):
+    """Reference solvability check on public records, with the legacy heuristic for v0."""
+    v1 = initial["manifest"]["schema_version"] == "1.0"
+    names = ("invoices", "payments", "ledger", "fx") if v1 else ("invoices", "payments", "ledger")
+    tables = read_tables(request, initial, names)
+    if tables is None:
+        return []
     if v1:
         public = Public(
             initial["manifest"], initial["policy"], tables["ledger"], tables["invoices"],
@@ -121,6 +136,51 @@ def reconcile(request, initial, seed):
     return findings[:30]
 
 
+def simple_reconcile(request, initial, seed):
+    """Compare postings with documents in the base currency using elementary checks."""
+    if initial["manifest"]["schema_version"] != "1.0":
+        return reconcile(request, initial, seed)
+    tables = read_tables(request, initial, ("invoices", "payments", "ledger"))
+    if tables is None:
+        return []
+    base = initial["manifest"]["base_currency"]
+    accounts = initial["policy"]["accounts"]
+    receivables = defaultdict(list)
+    unapplied = defaultdict(list)
+    for row in tables["ledger"]:
+        if row["currency"] != base:
+            continue
+        if row["payment_id"] is None and row["account"] == accounts["ar"] and row["debit_minor"] > 0:
+            receivables[row["invoice_id"]].append(row)
+        if row["payment_id"] is not None and row["account"] == accounts["unapplied"] and row["credit_minor"] > 0:
+            unapplied[row["payment_id"]].append(row)
+
+    results = []
+    for invoice in sorted(tables["invoices"], key=lambda document: document["doc_id"]):
+        if invoice["currency"] != base:
+            continue
+        amount = invoice["total_minor"]
+        postings = receivables[invoice["invoice_id"]]
+        if (len(postings) == 2 and postings[0]["entry_id"] != postings[1]["entry_id"]
+                and all(row["debit_minor"] == amount for row in postings)):
+            doc_id = invoice["doc_id"]
+            results.append(finding("duplicate_invoice", [doc_id], amount, base,
+                                   [doc_id, *sorted(row["row_id"] for row in postings)],
+                                   "Two full receivable postings reference the same invoice."))
+
+    for payment in sorted(tables["payments"], key=lambda document: document["doc_id"]):
+        if payment["currency"] != base or payment["amount_minor"] <= 0:
+            continue
+        intended = sum(ref["amount_minor"] for ref in payment["invoice_refs"])
+        postings = unapplied[payment["payment_id"]]
+        if intended == payment["amount_minor"] and 0 < len(postings) <= 9:
+            doc_id = payment["doc_id"]
+            results.append(finding("payment_allocation", [doc_id], sum(row["credit_minor"] for row in postings), base,
+                                   [doc_id, *sorted(row["row_id"] for row in postings)],
+                                   "A payment fully assigned to invoices has an unapplied balance."))
+    return results[:30]
+
+
 def mark_all(request, initial, seed):
     records = page(request, "ledger").get("result", [])
     if initial["manifest"]["schema_version"] == "1.0":
@@ -169,4 +229,4 @@ def mark_visible_documents(request, initial, records):
     return accusations[:30]
 
 
-WORKER_POLICIES = {"random": random_explorer, "reconcile": reconcile, "mark_all": mark_all}
+WORKER_POLICIES = {"random": random_explorer, "reconcile": reconcile, "mark_all": mark_all, "simple": simple_reconcile}
