@@ -1,6 +1,6 @@
 # Recap — Alan's part (Genesis FIN_CASE 2026)
 
-Status as of 19 Nov 2026. Branch `claude/gallant-ride-18rjlt`.
+Status as of 19 Nov 2026. Branch `alan/gallant-ride-18rjlt`.
 **18 of 25 tasks done** (ticked in [`README.md`](README.md)); the other 7 need Alimzhan's side.
 The single check command `python scripts/check.py` passes locally and in Docker
 (`--network none --cpus 2 --memory 4g`). 162 tests pass.
