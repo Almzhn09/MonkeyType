@@ -223,8 +223,14 @@ details[open] summary { margin-bottom: 8px; }
     <ul>
       <li><strong>Top</strong>: the outcome, F1, reward and steps, then TP (correct), FP (false alarms) and FN (missed). <span class="ui">Other Policies on …</span> compares every policy on the same company.</li>
       <li><strong>Findings</strong>: click a finding to see its <strong>evidence trail</strong>, a box for the finding with a line to each record it cites. Click a record to see its fields and linked records, then use <span class="ui">← Back to Finding</span>. <span class="ui">Copy ID</span> copies the ID.</li>
-      <li><strong>Activity</strong>: every step the policy took, in order. Open <span class="ui">Structured detail</span> for the raw data. Rewards show as 0 during a run on purpose; the final score appears only at the end.</li>
+      <li><strong>Activity</strong>: every step the policy took, in order, and what each read contained (for example which cited ledger rows and entries were on that page). The <strong>Agent’s View</strong> box at the top says how the policy was isolated and shows the result of an automatic scan proving no answer-key data reached it. Rewards show as 0 during a closed run on purpose; the final score appears only at the end.</li>
+      <li><strong>Duplicate invoices</strong> are shown as postings: each posting is one ledger entry with its debit and credit line, and the evidence trail labels them “Posting 1 of 2”, “Posting 2 of 2”.</li>
       <li><strong>Episode Records</strong>: browse the company’s full ledger, invoices, payments, FX rates and accounting rules.</li>
+    </ul>
+    <h3>Robustness and Verification</h3>
+    <ul>
+      <li><strong>Robustness</strong>: every company also exists as a twin with its rows shuffled and every ID renamed. This page puts each original next to its twin and confirms every policy scored them identically.</li>
+      <li><strong>Verification</strong>: which stages of the official check ran, what each covers and how many tests ran. In the official run a skipped stage counts as a failure.</li>
     </ul>
     <p>Your browser’s Back and Forward buttons work everywhere, and you can copy the address to share the exact view you’re looking at.</p>
 

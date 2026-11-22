@@ -146,8 +146,13 @@ async function render() {
   setNav(route.view);
   document.querySelectorAll("[data-nav]").forEach((a) => { a.href = href(a.dataset.nav, a.dataset.nav === "runs" ? {...ctxParams(ctx), ...S.runsQuery} : ctxParams(ctx)); });
 
+  const hasPairs = bundle.runs.some((r) => r.source_episode_id);
+  document.querySelector('[data-nav="robustness"]').hidden = !hasPairs;
+  document.querySelector('[data-nav="verification"]').hidden = !bundle.validation;
   if (route.view === "runs") renderRuns(bundle, ctx, route.params);
   else if (route.view === "run") await renderRun(bundle, ctx, route.params);
+  else if (route.view === "robustness") renderRobustness(bundle, ctx);
+  else if (route.view === "verification") renderVerification(bundle, ctx);
   else renderBenchmark(bundle, ctx, route.params);
 
   const sameRun = previous && previous.view === route.view && previous.params.r === route.params.r && route.view === "run" && previous.params.tab === route.params.tab;
@@ -253,7 +258,7 @@ function renderBenchmark(bundle, ctx, params) {
         ${ctx.modes.length > 1 ? "Closed and train mode score identically: they differ only in the Activity log, which records the reward in train mode and withholds it in closed mode." : ""}</div>
     </section>
     ${definitions()}
-    ${bundle.validation ? validationPanel(bundle.validation, full) : ""}
+    ${bundle.validation ? `<section class="panel"><div class="panel-body note">This source carries a verification record: <a href="${href("verification", ctxParams(ctx))}">which checks ran and what they cover</a>.${bundle.runs.some((r) => r.source_episode_id) ? ` Shuffled, renamed twins of every company: <a href="${href("robustness", ctxParams(ctx))}">Robustness</a>.` : ""}</div></section>` : ""}
     ${notesPanel(bundle)}`;
   main.querySelector("#full").onchange = (e) => go("benchmark", {...ctxParams({...ctx, full: e.target.checked}), c: params.c}, {replace: true, focus: "#full"});
 }
@@ -353,6 +358,67 @@ function validationPanel(v, full) {
       <tbody>${policies.map((p) => { const d = dev[p] || {}; return `<tr><th scope="row">${esc(p)}</th><td class="num">${esc(d.episodes ?? "—")}</td><td class="num">${metric(d.mean_f1, full)}</td><td class="num">${metric(d.mean_return, full)}</td><td class="num">${d.mean_steps ?? "—"}</td><td class="num col-opt">${d.truncated ?? "—"}</td><td class="num col-opt">${d.invalid_submissions ?? "—"}</td></tr>`; }).join("")}</tbody>
     </table></div>` : ""}
   </section>`;
+}
+
+const ISOLATION = {
+  seccomp: ["seccomp", "Linux kernel syscall filter: the policy process cannot open files, sockets or start processes"],
+  "audit-hook": ["audit hook", "Python audit hook (macOS/Windows): blocks files, sockets, processes and native code inside the interpreter"],
+  evaluator: ["evaluator side", "Oracle runs inside the trusted evaluator and never talks to an agent channel"],
+};
+
+function twinLink(bundle, ctx, run) {
+  if (run.source_episode_id) {
+    const original = bundle.runs.find((r) => r.episode_id === run.source_episode_id && r.policy === run.policy && r.mode === run.mode);
+    return `<li>Twin of <b>${original ? `<a class="mono" translate="no" href="${href("run", {...ctxParams(ctx), r: original.key})}">${esc(run.source_episode_id)}</a>` : `<span class="mono" translate="no">${esc(run.source_episode_id)}</span>`}</b></li>`;
+  }
+  const twin = bundle.runs.find((r) => r.source_episode_id === run.episode_id && r.policy === run.policy && r.mode === run.mode);
+  return twin ? `<li>Shuffled, renamed twin <b><a class="mono" translate="no" href="${href("run", {...ctxParams(ctx), r: twin.key})}">${esc(twin.episode_id)}</a></b></li>` : "";
+}
+
+function renderRobustness(bundle, ctx) {
+  const twins = bundle.runs.filter((r) => r.source_episode_id && r.mode === ctx.m);
+  const byKey = new Map(bundle.runs.filter((r) => r.mode === ctx.m).map((r) => [`${r.episode_id}|${r.policy}`, r]));
+  const policies = policyOrder(twins.map((r) => r.policy));
+  const pairs = [...new Set(twins.map((r) => `${r.source_episode_id}|${r.episode_id}`))].map((k) => k.split("|"));
+  pairs.sort((a, b) => a[0].localeCompare(b[0]));
+  const same = (a, b) => a && b && a.metrics && b.metrics && ["tp", "fp", "fn", "f1"].every((k) => a.metrics[k] === b.metrics[k]);
+  let total = 0, equal = 0;
+  const rows = pairs.map(([orig, twin]) => {
+    const cells = policies.map((p) => {
+      const a = byKey.get(`${orig}|${p}`), b = byKey.get(`${twin}|${p}`);
+      if (!a || !b || !a.metrics) return `<td class="muted">—</td>`;
+      total += 1; const ok = same(a, b); if (ok) equal += 1;
+      const m = (r) => `${r.metrics.tp}/${r.metrics.fp}/${r.metrics.fn}`;
+      return `<td class="num"><a href="${href("run", {...ctxParams(ctx), r: b.key})}">${m(a)}</a> <span class="status ${ok ? "good" : "bad"}">${ok ? "same" : `twin ${m(b)}`}</span></td>`;
+    }).join("");
+    const meta = bundle.episodes[`${byKey.get(`${orig}|${policies[0]}`)?.split || ""}/${orig}`] || {};
+    return `<tr><th scope="row"><span class="mono" translate="no">${esc(orig)}</span><div class="role">${esc(meta.company || "")}</div></th><td class="mono" translate="no">${esc(twin)}</td>${cells}</tr>`;
+  }).join("");
+  const checks = bundle.validation && bundle.validation.paired_policy_checks;
+  main.innerHTML = `${noticeHtml()}
+    <div class="page-head"><div><p class="eyebrow">${esc(bundle.label)}</p><h1>Robustness</h1></div></div>
+    <p class="lede">Every company also exists as a twin with its rows shuffled and every ID renamed. A sound environment and an honest policy score the twin exactly like the original.</p>
+    <section class="panel"><div class="panel-head"><h2>${equal} of ${total} policy runs identical</h2><span class="note">${esc(ctx.m)} mode · TP/FP/FN and F1 compared · cells show the original’s TP/FP/FN; open a cell for the twin’s run</span></div>
+      ${pairs.length ? `<div class="table-wrap"><table><thead><tr><th scope="col">Original</th><th scope="col">Twin</th>${policies.map((p) => `<th scope="col" class="num" translate="no">${esc(p)}</th>`).join("")}</tr></thead><tbody>${rows}</tbody></table></div>` : `<div class="empty"><h2>No Twins in This Source</h2><p>Choose the “All splits” source.</p></div>`}
+      ${checks ? `<div class="panel-body note">The release check enforces the same property independently: ${Object.entries(checks).map(([p, n]) => `<span translate="no">${esc(p)}</span> on ${esc(n)} pairs`).join(", ")} (<a href="${href("verification", ctxParams(ctx))}">Verification</a>).</div>` : ""}
+    </section>`;
+}
+
+function renderVerification(bundle, ctx) {
+  const v = bundle.validation;
+  if (!v) { main.innerHTML = `<div class="page-head"><div><h1>Verification</h1></div></div><div class="callout warn">This source has no verification record. Create one with <code>python3 scripts/check.py --output DIR</code> and import it as a release.</div>`; return; }
+  const ver = v.verification;
+  const stages = ver ? ver.stages.map((s) => `<tr><th scope="row" translate="no">${esc(s.name)}</th><td><span class="status ${s.status === "PASS" ? "good" : s.status === "SKIP" ? "warn" : "bad"}">${esc(s.status)}</span></td>
+      <td class="wrap">${esc(s.covers || "")}${s.tests_run ? ` <b>${s.tests_run} tests run${s.tests_skipped ? `, ${s.tests_skipped} skipped` : ""}.</b>` : ""}${s.configs ? ` <b>${s.configs} configs.</b>` : ""}${s.reason ? ` Skipped: ${esc(s.reason)}.` : ""}</td><td class="num">${esc(s.seconds)} s</td></tr>`).join("") : "";
+  const checks = v.paired_policy_checks;
+  main.innerHTML = `${noticeHtml()}
+    <div class="page-head"><div><p class="eyebrow">${esc(bundle.label)}</p><h1>Verification</h1></div></div>
+    ${ver ? `<p class="lede">${ver.result === "OK" ? `Every stage of <code>${esc(ver.command)}</code> ran and passed${ver.mode === "official" ? "; in official mode a skipped stage counts as a failure" : ", in quick mode"}.` : "The recorded check did not pass."}</p>
+    <section class="panel"><div class="panel-head"><h2>Stages</h2><span class="note">${esc(ver.mode)} mode · Python ${esc(ver.python)} on ${esc(ver.platform)} · recorded in validation.json when the release was built</span></div>
+      <div class="table-wrap"><table><thead><tr><th scope="col">Stage</th><th scope="col">Result</th><th scope="col">What it covers</th><th scope="col" class="num">Time</th></tr></thead><tbody>${stages}</tbody></table></div></section>`
+    : `<div class="callout warn">This validation.json predates stage recording, so it cannot show which stages ran. Rebuild it with <code>python3 scripts/check.py --output DIR</code>.</div>`}
+    ${checks ? `<section class="panel"><div class="panel-head"><h2>Paired-Variant Checks</h2><span class="note">Rows shuffled and IDs renamed; TP/FP/FN/F1 must not change</span></div><div class="panel-body"><ul class="facts">${Object.entries(checks).map(([p, n]) => `<li><span translate="no">${esc(p)}</span> <b>${esc(n)} pairs identical</b></li>`).join("")}</ul>${bundle.runs.some((r) => r.source_episode_id) ? `<p class="note" style="margin:0">See them side by side under <a href="${href("robustness", ctxParams(ctx))}">Robustness</a>.</p>` : ""}</div></section>` : ""}
+    ${validationPanel(v, ctx.full)}`;
 }
 
 function notesPanel(bundle) {
@@ -474,6 +540,8 @@ async function renderRun(bundle, ctx, params) {
       <li>Inspection steps <b>${run.inspection_steps ?? "—"}</b></li>
       <li>Elapsed <b>${elapsed(run.duration_seconds)}</b></li>
       <li>Split <b>${esc(splitLabel(run.split))}</b></li><li>Mode <b>${esc(run.mode)}</b></li>
+      ${run.isolation ? `<li title="${esc(ISOLATION[run.isolation]?.[1] || "")}">Isolation <b>${esc(ISOLATION[run.isolation]?.[0] || run.isolation)}</b></li>` : ""}
+      ${twinLink(bundle, ctx, run)}
     </ul>
     ${run.clean_established ? `<div class="callout info">The evaluator report shows TP 0, FP 0 and FN 0 for an empty, valid submission, so this episode has no planted issues. Under this scorer that gives F1 = 1 while precision and recall are 0; reward is reduced only by inspection steps.</div>` : ""}`;
 
@@ -565,20 +633,24 @@ function inspectorHtml(run, runParams, f, fIndex, evidenceId, episode) {
 /** Finding → cited records. One straight orthogonal connector per record, each with its own attach point. */
 function evidenceTrail(f, fIndex, runParams, selected, ep, exp) {
   const LIMIT = 8, ROW = 56, GAP = 8, PITCH = ROW + GAP;
-  const shown = f.evidence_ids.slice(0, LIMIT), rest = f.evidence_ids.slice(LIMIT);
+  const all = f.evidence_ids.map((id) => ({id, hit: ep ? ep.resolve(id) : null}));
+  // A duplicate is a whole extra posting, so cited ledger rows are grouped by their entry.
+  const postings = f.type === "duplicate_invoice" && ep ? groupPostings(all, ep) : null;
+  const items = postings ? postings.items : all;
+  const shown = items.slice(0, LIMIT), rest = items.slice(LIMIT).map((n) => n.id);
   const height = shown.length * PITCH - GAP;
-  const nodes = shown.map((id) => ({id, hit: ep ? ep.resolve(id) : null}));
+  const nodes = shown;
   const connectors = nodes.map((n, i) => {
     const y = i * PITCH + ROW / 2;
     return `<path class="${n.hit ? "" : "missing"}" d="M0 ${y} H34"/><path class="tip" d="M34 ${y - 4} L40 ${y} L34 ${y + 4} Z"/>`;
   }).join("");
   const link = (id) => href("run", {...runParams, tab: "findings", f: fIndex, e: id});
-  const item = ({id, hit}) => {
-    const d = hit ? nodeText(hit, ep) : {kind: ep ? "Unavailable" : "Records unavailable", name: "Record unavailable in this bundle", sub: id};
+  const item = ({id, hit, posting}) => {
+    const d = posting || (hit ? nodeText(hit, ep) : {kind: ep ? "Unavailable" : "Records unavailable", name: "Record unavailable in this bundle", sub: id});
     return `<li><a class="node ${hit ? "" : "missing"}" href="${link(id)}" data-ev="${esc(id)}" ${id === selected ? 'aria-current="true"' : ""}>
       <span class="eyebrow">${esc(d.kind)}</span><span class="name">${esc(d.name)}</span><span class="sub" translate="no">${esc(d.sub)}</span></a></li>`;
   };
-  return `<div class="trail">
+  return `${postings ? `<p class="callout info" style="margin:0 0 10px">${esc(postings.caption)}</p>` : ""}<div class="trail">
       <div class="trail-source" style="height:${height}px"><span class="eyebrow">Finding ${fIndex}</span><b>${esc(typeLabel(f.type))}</b><span class="mono" translate="no">${esc(money(f.claimed_amount_minor, exp))} ${esc(f.currency)}</span></div>
       <svg viewBox="0 0 40 ${height}" height="${height}" preserveAspectRatio="none" aria-hidden="true" focusable="false">${connectors}</svg>
       <ol aria-label="Cited evidence">${nodes.map(item).join("")}</ol>
@@ -589,8 +661,30 @@ function nodeText(hit, ep) {
   const r = hit.record, m = (v, c) => `${money(v, ep.exponent(c))} ${c}`;
   if (hit.kind === "invoice") return {kind: "Invoice", name: `${r.invoice_id}${r.entity_id ? ` · ${r.entity_id}` : ""}`, sub: `${r.doc_id} · ${m(r.total_minor, r.currency)}`};
   if (hit.kind === "payment") return {kind: "Payment", name: `${r.payment_id}${r.entity_id ? ` · ${r.entity_id}` : ""}`, sub: `${r.doc_id} · ${m(r.amount_minor, r.currency)}`};
-  if (hit.kind === "ledger") return {kind: "Ledger row", name: accountText(ep, r.account), sub: `${r.row_id} · ${r.debit_minor ? "Dr " + m(r.debit_minor, r.currency) : "Cr " + m(r.credit_minor, r.currency)}`};
+  if (hit.kind === "ledger") return {kind: `Ledger row · entry ${r.entry_id}`, name: `${accountText(ep, r.account)} · ${r.debit_minor ? "Dr " + m(r.debit_minor, r.currency) : "Cr " + m(r.credit_minor, r.currency)}`, sub: `${r.row_id} · ${timestamp(r.timestamp)}`};
   return {kind: "FX rate", name: `${r.source_currency} → ${r.target_currency} on ${r.date}`, sub: `rate ${r.rate}`};
+}
+
+/** Cited rows of a duplicate become one node per posting (entry), listing that entry's Dr/Cr lines. */
+function groupPostings(nodes, ep) {
+  const items = [], seen = new Map();
+  for (const node of nodes) {
+    if (!node.hit || node.hit.kind !== "ledger") { items.push(node); continue; }
+    const entry = node.hit.record.entry_id;
+    if (seen.has(entry)) continue;
+    const rows = [...(ep.ledgerByEntry.get(entry) || [node.hit.record])].sort((x, y) => (y.debit_minor ? 1 : 0) - (x.debit_minor ? 1 : 0));
+    const m = (v, c) => `${money(v, ep.exponent(c))} ${c}`;
+    const lines = rows.map((row) => `${row.debit_minor ? "Dr" : "Cr"} ${accountText(ep, row.account).replace(/^\S+ /, "")} ${row.debit_minor ? m(row.debit_minor, row.currency) : m(row.credit_minor, row.currency)}`);
+    const item = {id: node.id, hit: node.hit, entry, posting: {kind: "", name: lines.join(" / "), sub: `entry ${entry} · ${timestamp(rows[0].timestamp)} · rows ${rows.map((r) => r.row_id).join(", ")}`}};
+    seen.set(entry, item); items.push(item);
+  }
+  const posts = items.filter((n) => n.entry);
+  posts.forEach((n, i) => { n.posting.kind = `Posting ${i + 1} of ${posts.length}`; });
+  const invoice = posts[0] && posts[0].hit.record.invoice_id;
+  const caption = posts.length > 1
+    ? `Invoice ${invoice} was posted ${posts.length} times. Each posting is one entry: a Dr Receivables line with its Cr Revenue line. The error is the extra posting as a whole, not a debit/credit pair inside one entry.`
+    : `The cited rows belong to one posting (entry ${posts[0] ? posts[0].entry : "—"}).`;
+  return {items, caption};
 }
 
 function accountText(ep, code) {
@@ -617,13 +711,13 @@ function recordPanel(id, ep, linkFor, backHref, backLabel) {
   const cur = r.currency;
   const m = (v) => `${esc(money(v, ep.exponent(cur)))} ${esc(cur)}`;
   const link = (rid) => `<a class="mono" translate="no" href="${linkFor(rid)}">${esc(rid)}</a>`;
-  const ledgerTable = (rows, title) => rows && rows.length ? `<h3 class="eyebrow sect-title" style="margin-top:16px">${esc(title)}</h3><div class="table-wrap"><table class="mini"><thead><tr><th scope="col">Row</th><th scope="col">Local time</th><th scope="col">Account</th><th scope="col" class="num">Debit</th><th scope="col" class="num">Credit</th></tr></thead><tbody>${rows.map((row) => `<tr><td>${link(row.row_id)}</td><td class="mono" translate="no">${esc(timestamp(row.timestamp))}</td><td>${esc(accountText(ep, row.account))}</td><td class="num">${row.debit_minor ? esc(money(row.debit_minor, ep.exponent(row.currency))) : ""}</td><td class="num">${row.credit_minor ? esc(money(row.credit_minor, ep.exponent(row.currency))) : ""}</td></tr>`).join("")}</tbody></table></div>` : `<p class="note" style="margin-top:12px">${esc(title)}: none.</p>`;
+  const ledgerTable = (rows, title) => rows && rows.length ? `<h3 class="eyebrow sect-title" style="margin-top:16px">${esc(title)}</h3><div class="table-wrap"><table class="mini"><thead><tr><th scope="col">Row</th><th scope="col">Entry</th><th scope="col">Local time</th><th scope="col">Account</th><th scope="col" class="num">Debit</th><th scope="col" class="num">Credit</th></tr></thead><tbody>${rows.map((row) => `<tr><td>${link(row.row_id)}</td><td class="mono" translate="no">${esc(row.entry_id)}</td><td class="mono" translate="no">${esc(timestamp(row.timestamp))}</td><td>${esc(accountText(ep, row.account))}</td><td class="num">${row.debit_minor ? esc(money(row.debit_minor, ep.exponent(row.currency))) : ""}</td><td class="num">${row.credit_minor ? esc(money(row.credit_minor, ep.exponent(row.currency))) : ""}</td></tr>`).join("")}</tbody></table></div>` : `<p class="note" style="margin-top:12px">${esc(title)}: none.</p>`;
   let fields = "", extra = "";
   const kind = {invoice: "Invoice", payment: "Payment", ledger: "Ledger row", fx: "FX rate"}[hit.kind];
   if (hit.kind === "invoice") {
     fields = kv([["Document", `<span class="mono" translate="no">${esc(r.doc_id)}</span>`], ["Invoice number", `<span class="mono" translate="no">${esc(r.invoice_id)}</span>`], ["Counterparty", esc(r.entity_id ?? "—")], ["Issued (local)", `<span class="mono" translate="no">${esc(timestamp(r.issued_at))}</span>`], ["Due (local)", `<span class="mono" translate="no">${esc(timestamp(r.due_at))}</span>`], ["Total", m(r.total_minor)]]);
     extra = `<h3 class="eyebrow sect-title" style="margin-top:16px">Line items</h3><div class="table-wrap"><table class="mini"><thead><tr><th scope="col">Line</th><th scope="col">Description</th><th scope="col" class="num">Qty</th><th scope="col" class="num">Unit price</th><th scope="col" class="num">Amount</th></tr></thead><tbody>${(r.line_items || []).map((l) => `<tr><td class="mono" translate="no">${esc(l.line_id)}</td><td>${esc(l.description)}</td><td class="num">${esc(l.quantity)}</td><td class="num">${esc(money(l.unit_price_minor, ep.exponent(cur)))}</td><td class="num">${esc(money(l.amount_minor, ep.exponent(cur)))}</td></tr>`).join("")}</tbody></table></div>`
-      + ledgerTable(ep.ledgerByInvoice.get(r.invoice_id), "Ledger rows referencing this invoice")
+      + ledgerTable(ep.ledgerByInvoice.get(r.invoice_id), (() => { const n = new Set((ep.ledgerByInvoice.get(r.invoice_id) || []).map((x) => x.entry_id)).size; return `Ledger rows referencing this invoice · ${n} posting${n === 1 ? "" : "s"}`; })())
       + (() => { const pays = ep.paymentsByInvoice.get(r.invoice_id) || []; return `<h3 class="eyebrow sect-title" style="margin-top:16px">Payments allocating to this invoice</h3>${pays.length ? `<ul class="cites">${pays.map((p) => `<li>${link(p.payment.doc_id)} Payment ${esc(p.payment.payment_id)} · ref ${p.order + 1} · ${esc(money(p.ref.amount_minor, ep.exponent(p.payment.currency)))} ${esc(p.payment.currency)}</li>`).join("")}</ul>` : `<p class="note">None.</p>`}`; })();
   } else if (hit.kind === "payment") {
     fields = kv([["Document", `<span class="mono" translate="no">${esc(r.doc_id)}</span>`], ["Payment number", `<span class="mono" translate="no">${esc(r.payment_id)}</span>`], ["Counterparty", esc(r.entity_id ?? "—")], ["Received (local)", `<span class="mono" translate="no">${esc(timestamp(r.timestamp))}</span>`], ["Amount", m(r.amount_minor)]]);
@@ -634,7 +728,7 @@ function recordPanel(id, ep, linkFor, backHref, backLabel) {
     fields = kv([["Row", `<span class="mono" translate="no">${esc(r.row_id)}</span>`], ["Entry", `<span class="mono" translate="no">${esc(r.entry_id)}</span>`], ["Local time", `<span class="mono" translate="no">${esc(timestamp(r.timestamp))}</span>`], ["Account", esc(accountText(ep, r.account))], ["Debit", r.debit_minor ? m(r.debit_minor) : "0"], ["Credit", r.credit_minor ? m(r.credit_minor) : "0"], ["Counterparty", esc(r.entity_id ?? "—")],
       ["Invoice", r.invoice_id ? (inv ? `${link(inv.doc_id)} ${esc(r.invoice_id)}` : `<span class="mono" translate="no">${esc(r.invoice_id)}</span> <span class="muted">not in this episode</span>`) : "—"],
       ["Payment", r.payment_id ? (pay ? `${link(pay.doc_id)} ${esc(r.payment_id)}` : `<span class="mono" translate="no">${esc(r.payment_id)}</span> <span class="muted">not in this episode</span>`) : "—"]]);
-    extra = ledgerTable((ep.ledgerByEntry.get(r.entry_id) || []).filter((row) => row.row_id !== r.row_id), `Other rows in entry ${r.entry_id}`);
+    extra = ledgerTable((ep.ledgerByEntry.get(r.entry_id) || []).filter((row) => row.row_id !== r.row_id), `The rest of this posting (entry ${r.entry_id}): its debit and credit belong together`);
   } else {
     const fx = ep.data.policy && ep.data.policy.fx;
     fields = kv([["Date", `<span class="mono" translate="no">${esc(r.date)}</span>`], ["Pair", `${esc(r.source_currency)} → ${esc(r.target_currency)}`], ["Rate", `<span class="mono" translate="no">${esc(r.rate)}</span>`], ["Meaning", `1 ${esc(r.source_currency)} = ${esc(r.rate)} ${esc(r.target_currency)}${fx && fx.date_rule ? ` · date rule <code>${esc(fx.date_rule)}</code>` : ""}`]]);
@@ -750,15 +844,44 @@ async function renderActivity(body, bundle, run) {
   const rows = await loadActivity(bundle, run);
   if (!rows) { body.innerHTML = `<div class="callout error" style="margin-top:16px">The activity file for this run could not be loaded.</div>`; return; }
   const closed = run.mode === "closed";
+  const cited = citedIndex(run);
+  const check = run.observation_check;
   body.innerHTML = `
-    ${closed ? `<div class="callout info" style="margin-top:16px">Closed mode: the environment withholds reward during the run, so every recorded step shows reward 0. The final evaluator reward is in the run metrics above.</div>` : `<div class="callout info" style="margin-top:16px">Train mode: the terminal step records the episode reward; inspection steps record 0.</div>`}
+    <section class="panel" style="margin-top:16px"><div class="panel-head"><h2>Agent’s View</h2><span class="note">${run.isolation ? `Isolation: ${esc(ISOLATION[run.isolation]?.[0] || run.isolation)}` : ""}</span></div>
+      <div class="panel-body"><p>This log is every response the policy received after its opening observation (the task, the company manifest and its accounting rules, shown under Episode Records). Nothing else reached it: the policy ${run.isolation === "seccomp" ? "ran under a Linux kernel syscall filter that blocks files, sockets and new processes" : run.isolation === "audit-hook" ? "ran under a Python audit hook that blocks files, sockets, processes and native code" : "ran in a separate process"} and spoke to the environment only through this channel.
+        ${closed ? "In closed mode the environment withholds the reward, so every step records 0; the final score exists only in the evaluator’s report above." : "In train mode the final step records the episode reward; inspection steps record 0."} The answer key is never part of an observation.</p>
+        ${check ? `<p style="margin:8px 0 0"><span class="status ${check.answer_key_hits || check.closed_rewards_nonzero ? "bad" : "good"}">${check.answer_key_hits || check.closed_rewards_nonzero ? "Check failed" : "Automatic check passed"}</span> <span class="note">${check.observations} observation${check.observations === 1 ? "" : "s"} scanned for answer-key fields (issue IDs, expected amounts, evidence sets, tolerances, provenance)${check.known_issues_checked ? ` and for this company’s ${check.known_issues_checked} answer-key issue ID${check.known_issues_checked === 1 ? "" : "s"}` : ""}: ${check.answer_key_hits} found.${closed ? ` Non-zero rewards in closed mode: ${check.closed_rewards_nonzero}.` : ""} Run when this source was prepared.</span></p>` : ""}
+      </div></section>
     ${state === "partial" ? `<div class="callout warn">This log is partial: ${rows.length} step${rows.length === 1 ? "" : "s"} recorded, the report counts ${esc(run.steps ?? "unknown")}. Missing steps are not shown.</div>` : ""}
     <div class="panel"><div class="panel-head"><h2>Recorded Actions</h2><span class="note">${rows.length} step${rows.length === 1 ? "" : "s"}, ordered by step number</span></div>
     <ol class="activity">${rows.map((row) => `<li><span class="n">${row.step}</span><div>
       <div><span class="act">${esc(actionSummary(row.action))}</span></div>
       <div class="obs">${esc(observationSummary(row))}</div>
+      ${readSummary(row, cited)}
       <details><summary>Structured detail</summary><pre>${esc(JSON.stringify({action: row.action, observation: row.observation, reward: row.reward, terminated: row.terminated, truncated: row.truncated}, null, 2))}</pre></details>
     </div></li>`).join("")}</ol></div>`;
+}
+
+function citedIndex(run) {
+  const map = new Map();
+  (run.findings || []).forEach((f, i) => { for (const id of f.evidence_ids.concat(f.affected_ids)) { if (!map.has(id)) map.set(id, []); if (!map.get(id).includes(i + 1)) map.get(id).push(i + 1); } });
+  return map;
+}
+
+/** What a read returned that matters: the records later cited in findings, with entry and invoice. */
+function readSummary(row, cited) {
+  const result = row.observation && row.observation.result;
+  const list = Array.isArray(result) ? result : result && typeof result === "object" ? [result] : [];
+  if (!list.length) return "";
+  const table = row.action && row.action.table;
+  const idOf = (r) => r.row_id || r.doc_id || (r.date ? `FX:${r.date}:${r.source_currency}:${r.target_currency}` : null);
+  const entries = new Set(list.map((r) => r.entry_id).filter(Boolean));
+  const head = `${table || "record"}: ${list.length} ${table === "ledger" ? `row${list.length === 1 ? "" : "s"} in ${entries.size} entr${entries.size === 1 ? "y" : "ies"}` : `record${list.length === 1 ? "" : "s"}`}`;
+  const hits = list.filter((r) => cited.has(idOf(r))).map((r) => {
+    const id = idOf(r), where = [r.entry_id ? `entry ${r.entry_id}` : "", r.invoice_id && table === "ledger" ? `invoice ${r.invoice_id}` : "", r.payment_id && table === "ledger" ? `payment ${r.payment_id}` : ""].filter(Boolean).join(", ");
+    return `<span class="mono" translate="no">${esc(id)}</span>${where ? ` (${esc(where)})` : ""} → finding ${cited.get(id).join(", ")}`;
+  });
+  return `<div class="obs">${esc(head)}${hits.length ? `; contains ${hits.length} cited record${hits.length === 1 ? "" : "s"}: ${hits.join("; ")}` : ""}</div>`;
 }
 
 function actionSummary(a) {

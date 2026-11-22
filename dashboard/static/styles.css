@@ -115,6 +115,7 @@ th:first-child, td:first-child { padding-left: var(--s5); }
 th:last-child, td:last-child { padding-right: var(--s5); }
 thead th { font-family: var(--mono); font-weight: 500; font-size: 10.5px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--soft); background: var(--node); position: sticky; top: 0; z-index: 1; }
 tbody th { font-weight: 600; }
+td.wrap { white-space: normal; min-width: 280px; }
 tbody tr { transition: background-color var(--t-standard) var(--ease); }
 tbody tr:hover { background: color-mix(in srgb, var(--paper-2) 55%, transparent); transition-duration: 90ms; }
 tr.is-selected, tr.is-selected:hover { background: var(--accent-tint); }

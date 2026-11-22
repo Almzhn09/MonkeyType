@@ -30,8 +30,8 @@ def request(action):
 
 
 def main():
-    enter_worker_sandbox()
-    send({"ready": True})
+    isolation = enter_worker_sandbox()
+    send({"ready": True, "isolation": isolation})
     initial = receive()
     observation = initial["observation"]
     policy = WORKER_POLICIES[initial["policy"]]
