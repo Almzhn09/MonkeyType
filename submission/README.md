@@ -1,6 +1,6 @@
 # Комплект сдачи Genesis
 
-[Архив genesis-submission.zip](genesis-submission.zip) содержит исходники, лицензию, Dockerfile, инструкции, 10 train- и 10 dev-эпизодов, 20 парных вариантов, результаты проверки и обучающие траектории. В архив также входят игровой режим (`playground/`), панель проверяющего (`dashboard/`) и файлы для публичного размещения (`webapp/`, `deploy/`, `render.yaml`). Архив собран 21 ноября командой `python3 scripts/check.py --output` и проходит эту же проверку после распаковки. Список проверок и измерения находятся в [validation.json](validation.json).
+[Архив genesis-submission.zip](genesis-submission.zip) содержит исходники, лицензию, Dockerfile, инструкции, 10 train- и 10 dev-эпизодов, 20 парных вариантов, результаты проверки и обучающие траектории. В архив также входят игровой режим (`playground/`), панель проверяющего (`dashboard/`) и файлы для публичного размещения (`webapp/`, `deploy/`, `render.yaml`). Архив собран 22 ноября командой `python3 scripts/check.py --output` и проходит эту же проверку после распаковки. Список проверок и измерения находятся в [validation.json](validation.json).
 
 Онлайн-версия: https://monkeytype-audit.onrender.com (панель проверяющего — `/dashboard/`). Проверка работает на Linux, macOS и Windows.
 
