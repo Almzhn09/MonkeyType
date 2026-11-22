@@ -34,15 +34,21 @@ MAX_SAFE_INT = 2**53 - 1
 # Splits whose data is synthetic and may carry evaluator metrics in a reviewer export.
 REVIEWER_SPLITS = ("demo", "train", "dev", "pairs")
 POLICY_ROLES = {
-    "reconcile": "Reference policy",
-    "random": "Baseline",
+    "reconcile": "Reference reconciler",
+    "simple": "Simple baseline",
+    "random": "Random baseline",
     "mark_all": "Negative control",
     "oracle": "Evaluator control",
 }
 ISSUE_TYPES = ("duplicate_invoice", "payment_allocation", "fx_conversion", "wrong_period")
 
 RUN_FIELDS = ("episode_id", "policy", "mode", "steps", "inspection_steps", "duration_seconds",
-              "terminated", "truncated", "reason")
+              "terminated", "truncated", "reason", "isolation")
+# Answer-key vocabulary that must never appear in anything a policy received.
+ANSWER_KEY_FIELDS = ("issues", "issue_id", "evidence_sets", "expected_amount_minor", "tolerance_minor",
+                     "provenance", "truth", "id_map")
+VALIDATION_FIELDS = ("train_episodes", "dev_episodes", "verified_pairs", "paired_policy_checks", "dev_runs",
+                     "recorded_train_steps", "max_dev_episode_seconds", "dev", "verification")
 METRIC_FIELDS = ("tp", "fp", "fn", "precision", "recall", "f1", "reward")
 FINDING_FIELDS = ("type", "affected_ids", "claimed_amount_minor", "currency", "evidence_ids", "explanation")
 MANIFEST_FIELDS = ("schema_version", "episode_id", "company", "base_currency", "currency_exponents",
@@ -160,6 +166,60 @@ def _finding(item):
     return finding
 
 
+def _private_for(public_dir):
+    """The trusted-side sibling of a public episode folder (…/public/… → …/private/…), if any."""
+    if public_dir is None:
+        return None
+    parts = list(Path(public_dir).parts)
+    for index in range(len(parts) - 1, -1, -1):
+        if parts[index] == "public":
+            parts[index] = "private"
+            return Path(*parts)
+    return None
+
+
+def _issue_ids(public_dir):
+    """Issue IDs from the answer key, read on the trusted side only to scan observations for them."""
+    private = _private_for(public_dir)
+    try:
+        truth = json.loads((private / "truth.json").read_text(encoding="utf-8"))
+        return {issue["issue_id"] for issue in truth.get("issues", []) if isinstance(issue.get("issue_id"), str)}
+    except (OSError, TypeError, ValueError, AttributeError):
+        return None
+
+
+def _pair_source(public_dir):
+    private = _private_for(public_dir)
+    try:
+        source = json.loads((private / "id_map.json").read_text(encoding="utf-8")).get("source_episode_id")
+    except (OSError, TypeError, ValueError, AttributeError):
+        return None
+    return source if isinstance(source, str) and SAFE.match(source) else None
+
+
+def scan_observations(rows, mode, issue_ids):
+    """Count answer-key content in what a policy received. Only counts leave this function."""
+    hits, nonzero = 0, 0
+    def walk(value):
+        nonlocal hits
+        if isinstance(value, dict):
+            for key, item in value.items():
+                if key in ANSWER_KEY_FIELDS:
+                    hits += 1
+                walk(item)
+        elif isinstance(value, list):
+            for item in value:
+                walk(item)
+        elif isinstance(value, str) and issue_ids and value in issue_ids:
+            hits += 1
+    for row in rows:
+        walk(row.get("observation"))
+        if mode == "closed" and row.get("reward") not in (0, 0.0, None):
+            nonzero += 1
+    return {"observations": len(rows), "answer_key_hits": hits, "known_issues_checked": len(issue_ids or ()),
+            "closed_rewards_nonzero": nonzero}
+
+
 # ----------------------------------------------------------------------------- records
 
 def project_episode(public_dir):
@@ -264,7 +324,7 @@ def build_bundle(*, bundle_id, label, kind, audience, reports, episode_dirs, tra
         for row in trajectories:
             policy, episode = row.get("policy"), row.get("episode_id")
             if isinstance(policy, str) and isinstance(episode, str):
-                grouped.setdefault((episode, policy), []).append(row)
+                grouped.setdefault((episode, policy, row.get("mode")), []).append(row)
 
     runs, activity_files = [], {}
     for (split, episode, policy, mode), items in sorted(keys.items()):
@@ -303,7 +363,13 @@ def build_bundle(*, bundle_id, label, kind, audience, reports, episode_dirs, tra
         elif trajectories is None:
             run["activity_state"] = trajectory_note or "missing"
         else:
-            rows = _activity_rows(grouped.get((episode, policy), []), reviewer)
+            raw = grouped.get((episode, policy, mode)) or grouped.get((episode, policy, None), [])
+            if raw:
+                check = scan_observations(raw, mode, _issue_ids(episode_dirs.get((split, episode))))
+                if not reviewer:
+                    del check["known_issues_checked"]  # equals the number of planted errors
+                run["observation_check"] = check
+            rows = _activity_rows(raw, reviewer)
             steps = [row["step"] for row in rows]
             complete = (steps == list(range(1, len(steps) + 1)) and rows
                         and (rows[-1]["terminated"] or rows[-1]["truncated"])
@@ -326,6 +392,11 @@ def build_bundle(*, bundle_id, label, kind, audience, reports, episode_dirs, tra
             episodes[ref] = project_episode(episode_dirs.get(ref))
         run["records"] = episodes[ref]["status"]
 
+    for run in runs:
+        if run["split"] == "pairs":
+            source = _pair_source(episode_dirs.get(("pairs", run["episode_id"])))
+            if source:
+                run["source_episode_id"] = source
     splits = sorted({run["split"] for run in runs})
     bundle = {
         "format": BUNDLE_FORMAT,
@@ -469,6 +540,37 @@ def prepare_run(out, results, *, audience, name, episodes_root=None, split=None,
     return write_bundle(out, *bundle)
 
 
+def _validation(path, notes):
+    if path is None or not Path(path).is_file():
+        return None
+    raw = _read_json(path, "validation.json")
+    if not isinstance(raw, dict):
+        notes.append("validation.json is not an object; verification context is unavailable.")
+        return None
+    return {name: raw[name] for name in VALIDATION_FIELDS if name in raw}
+
+
+def prepare_runs(out, results_dirs, *, audience, name, episodes_root, label, validation=None):
+    """Merge several `audit_sim run --output` folders (e.g. per split and mode) into one bundle."""
+    notes, resolved, dirs, trajectories = [], [], {}, []
+    for results in map(Path, results_dirs):
+        reports = _load_reports(results / "reports.json", f"{results.name}/reports.json", notes)
+        modes = {row["mode"] for row in reports}
+        rows = _read_jsonl(results / "trajectories.jsonl", f"{results.name}/trajectories.jsonl", notes) or []
+        mode = modes.pop() if len(modes) == 1 else None
+        trajectories.extend(dict(row, mode=mode) if mode else row for row in rows)
+        for row in reports:
+            row_split, public = _split_for(row["episode_id"], episodes_root, None)
+            resolved.append((row, row_split))
+            dirs[(row_split, row["episode_id"])] = public
+    bundle = build_bundle(
+        bundle_id=name, label=label, kind="run", audience=audience,
+        reports=resolved, episode_dirs=dirs, trajectories=trajectories, notes=notes,
+        validation=_validation(validation, notes),
+    )
+    return write_bundle(out, *bundle)
+
+
 def prepare_release(out, release, *, audience, name, label=None):
     """Import ``audit_sim release --output DIR`` (or ``scripts/check.py --output DIR``)."""
     release = Path(release)
@@ -476,11 +578,7 @@ def prepare_release(out, release, *, audience, name, label=None):
     reports = _load_reports(release / "dev-reports.json", "dev-reports.json", notes)
     validation = None
     if (release / "validation.json").is_file():
-        raw = _read_json(release / "validation.json", "validation.json")
-        if isinstance(raw, dict):
-            validation = {name: raw[name] for name in (
-                "train_episodes", "dev_episodes", "verified_pairs", "dev_runs", "recorded_train_steps",
-                "max_dev_episode_seconds", "dev") if name in raw}
+        validation = _validation(release / "validation.json", notes)
     else:
         notes.append("validation.json was not found; release validation context is unavailable.")
     train_rows = _read_jsonl(release / "trajectories.jsonl", "trajectories.jsonl", notes)
