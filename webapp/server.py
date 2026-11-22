@@ -20,12 +20,14 @@ from dashboard.projection import ROOT, PrepareError, prepare_demo, prepare_runs,
 from dashboard.server import respond as dashboard_respond
 from playground.server import DEFAULT_EPISODES, Playground, make_handler as playground_handler
 
+# Verification record written by `python3 scripts/check.py --output` and committed with the code.
+VALIDATION = ROOT / "submission" / "validation.json"
 # Spaces show the app inside an iframe on huggingface.co, so allow exactly that embedding.
 FRAME_ANCESTORS = "https://huggingface.co https://*.hf.space"
 
 
 def prepare_dashboard(out, episodes=DEFAULT_EPISODES, log=print):
-    """Demo bundle plus every policy on the train and dev splits in closed and train mode."""
+    """Demo bundle plus every policy on the train, dev and pairs splits in closed and train mode."""
     out = Path(out)
     out.mkdir(parents=True, exist_ok=True)
     try:
@@ -36,7 +38,7 @@ def prepare_dashboard(out, episodes=DEFAULT_EPISODES, log=print):
     results = Path(tempfile.mkdtemp(prefix="runs-"))
     try:
         folders = []
-        for split in ("train", "dev"):
+        for split in ("train", "dev", "pairs"):
             for mode in ("closed", "train"):
                 folder = results / f"{split}-{mode}"
                 run = subprocess.run([sys.executable, "-m", "audit_sim", "run", str(episodes), "--split", split,
@@ -46,10 +48,10 @@ def prepare_dashboard(out, episodes=DEFAULT_EPISODES, log=print):
                     raise PrepareError((run.stderr or run.stdout).strip()[-500:])
                 folders.append(folder)
         prepare_runs(out, folders, audience="reviewer", name="all", episodes_root=episodes,
-                     label="Train and dev: five policies on 20 companies")
-        log("dashboard: train and dev bundle ready")
+                     label="All splits: five policies on 40 companies", validation=VALIDATION)
+        log("dashboard: train, dev and pairs bundle ready")
     except PrepareError as error:
-        log(f"dashboard: train and dev bundle unavailable: {error}")
+        log(f"dashboard: train, dev and pairs bundle unavailable: {error}")
     finally:
         shutil.rmtree(results, ignore_errors=True)
     write_index(out)

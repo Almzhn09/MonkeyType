@@ -11,7 +11,7 @@ from urllib.error import HTTPError
 from urllib.request import urlopen
 
 from audit_sim.policies import POLICIES
-from dashboard.projection import PrepareError, prepare_release, prepare_run, prepare_runs, project_episode
+from dashboard.projection import PrepareError, prepare_release, prepare_run, prepare_runs, project_episode, scan_observations
 from dashboard.server import make_server
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -71,12 +71,19 @@ class TestDashboardProjection(unittest.TestCase):
             run = by_key[f"dev~{report['episode_id']}~{report['policy']}~closed"]
             self.assertEqual(run["metrics"]["reward"], report["reward"])
             self.assertEqual(run["metrics"]["f1"], report["f1"])
+            self.assertEqual(run["isolation"], report["isolation"])
             if report["policy"] == "oracle":
                 self.assertNotIn("findings", run)
                 self.assertEqual(run["activity_state"], "oracle")
+                self.assertEqual(run["isolation"], "evaluator")
             else:
                 self.assertEqual(len(run["findings"]), len(report["submitted_findings"]))
                 self.assertEqual(run["activity_state"], "available")
+                self.assertIn(run["isolation"], ("seccomp", "audit-hook"))
+                check = run["observation_check"]
+                self.assertEqual((check["answer_key_hits"], check["closed_rewards_nonzero"]), (0, 0))
+                self.assertEqual(check["observations"], report["steps"])
+                self.assertEqual(check["known_issues_checked"], report["tp"] + report["fn"])
                 rows = json.loads((out / "bundles" / "dev" / "activity" / "dev" / report["episode_id"]
                                    / f"{report['policy']}__closed.json").read_text(encoding="utf-8"))
                 self.assertEqual([row["step"] for row in rows], list(range(1, report["steps"] + 1)))
@@ -96,7 +103,7 @@ class TestDashboardProjection(unittest.TestCase):
         self.assertEqual(len(bundle["runs"]), 10 * (len(POLICIES) - 1))
         self.assertFalse(any(run["policy"] == "oracle" for run in bundle["runs"]))
         text = "".join(path.read_text(encoding="utf-8") for path in files(out))
-        for word in ('"metrics"', '"reward"', '"tp"', '"f1"', "clean_established", "oracle"):
+        for word in ('"metrics"', '"reward"', '"tp"', '"f1"', "clean_established", "oracle", "known_issues_checked"):
             self.assertNotIn(word, text)
         self.assert_no_leaks(out)
 
@@ -172,6 +179,16 @@ class TestDashboardProjection(unittest.TestCase):
         self.assertEqual(logs["closed"][-1]["reward"], 0)
         self.assertNotEqual(logs["train"][-1]["reward"], 0)
 
+    def test_observation_scan_detects_answer_key_content(self):
+        clean = [{"observation": {"result": [{"row_id": "R1"}]}, "reward": 0}]
+        self.assertEqual(scan_observations(clean, "closed", {"ISS-1"})["answer_key_hits"], 0)
+        self.assertNotIn("issue_id", json.dumps(scan_observations(clean, "closed", {"ISS-1"})))
+        leaked = [{"observation": {"result": [{"issue_id": "X"}]}, "reward": 0},
+                  {"observation": {"result": "ISS-1"}, "reward": 0.5}]
+        found = scan_observations(leaked, "closed", {"ISS-1"})
+        self.assertEqual(found["answer_key_hits"], 2)
+        self.assertEqual(found["closed_rewards_nonzero"], 1)
+
     def test_record_status_unsupported_and_invalid(self):
         source = ROOT / "episodes" / "public" / "dev" / "EP-0CMTEHMK3Z"
         old = self.temp / "old-episode"
@@ -199,6 +216,7 @@ class TestDashboardProjection(unittest.TestCase):
         self.assertEqual(len(bundle["runs"]), 10 * len(POLICIES))
         self.assertEqual(bundle["splits"], ["dev"])
         self.assertEqual(bundle["validation"]["dev_runs"], 10 * len(POLICIES))
+        self.assertEqual(bundle["validation"]["paired_policy_checks"], {"oracle": 20, "reconcile": 20, "simple": 20})
         self.assertTrue(all(run["activity_state"] in ("release_dev", "oracle") for run in bundle["runs"]))
         self.assertFalse((out / "bundles" / "release" / "activity").exists())
         self.assert_no_leaks(out)
