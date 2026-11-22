@@ -9,7 +9,7 @@
   },
   "dev_runs": 50,
   "recorded_train_steps": 222,
-  "max_dev_episode_seconds": 0.091468,
+  "max_dev_episode_seconds": 0.100983,
   "dev": {
     "random": {
       "episodes": 10,
@@ -18,7 +18,7 @@
       "mean_f1": 0.2,
       "mean_return": -0.6064,
       "mean_steps": 17,
-      "mean_seconds": 0.0594984,
+      "mean_seconds": 0.0516026,
       "truncated": 0,
       "invalid_submissions": 0
     },
@@ -29,7 +29,7 @@
       "mean_f1": 1.0,
       "mean_return": 0.961,
       "mean_steps": 20.5,
-      "mean_seconds": 0.0624438,
+      "mean_seconds": 0.0563191,
       "truncated": 0,
       "invalid_submissions": 0
     },
@@ -40,7 +40,7 @@
       "mean_f1": 0.5315384615384615,
       "mean_return": 0.04307692307692307,
       "mean_steps": 17.1,
-      "mean_seconds": 0.059573,
+      "mean_seconds": 0.0562611,
       "truncated": 0,
       "invalid_submissions": 0
     },
@@ -51,7 +51,7 @@
       "mean_f1": 0.0,
       "mean_return": -1.0,
       "mean_steps": 2,
-      "mean_seconds": 0.0533109,
+      "mean_seconds": 0.053311,
       "truncated": 0,
       "invalid_submissions": 0
     },
@@ -62,7 +62,7 @@
       "mean_f1": 1.0,
       "mean_return": 1.0,
       "mean_steps": 1,
-      "mean_seconds": 0.0095139,
+      "mean_seconds": 0.010231,
       "truncated": 0,
       "invalid_submissions": 0
     }
@@ -76,28 +76,28 @@
       {
         "name": "tests",
         "status": "PASS",
-        "seconds": 41.7,
+        "seconds": 40.7,
         "covers": "Unit and integration tests: generator, independent verifier, environment contract, grader, policies, sandbox isolation, playground, dashboard and hosting.",
-        "tests_run": 205,
+        "tests_run": 207,
         "tests_skipped": 0
       },
       {
         "name": "fresh-seed",
         "status": "PASS",
-        "seconds": 0.5,
+        "seconds": 0.4,
         "covers": "A seed and error mix absent from train/dev: generate, verify independently, reference reconciler F1 = 1, and two builds byte-identical."
       },
       {
         "name": "fresh-gen",
         "status": "PASS",
-        "seconds": 1.2,
+        "seconds": 1.0,
         "covers": "Every example config: generate within 60 s and 4 GB, then verify independently.",
         "configs": 8
       },
       {
         "name": "integrated-release",
         "status": "PASS",
-        "seconds": 13.6,
+        "seconds": 12.3,
         "covers": "Build train/dev with pairs twice and compare bytes; verify 20 originals and 20 shuffled, renamed pairs; oracle, reconcile and simple score identically on every pair; evaluate every policy on dev; record train trajectories."
       }
     ],
