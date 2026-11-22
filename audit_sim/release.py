@@ -11,6 +11,7 @@ from fingen.config import load_config_file
 
 from .data import Episode, load_json
 from .fixtures import dump_json, dump_jsonl
+from .policies import POLICIES
 from .scoring import oracle_submission, score_submission
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -76,12 +77,15 @@ def prepare_release(evaluate, output=None):
         pairs = check_oracle_pairs(dataset)
 
         reports, summary, _ = evaluate(dataset, split="dev")
-        if len(reports) != 40 or any(
+        expected_runs = 10 * len(POLICIES)
+        if len(reports) != expected_runs or any(
             item["truncated"] or item["invalid_submission"] for item in reports
         ) or summary["oracle"]["mean_f1"] != 1:
-            raise ValueError("Expected 40 completed dev runs and correct oracle results")
+            raise ValueError(f"Expected {expected_runs} completed dev runs and correct oracle results")
         if summary["reconcile"]["mean_f1"] != 1 or summary["mark_all"]["mean_f1"] >= 0.1:
             raise ValueError("Reference reconciliation or negative control disagrees with the dev data")
+        if summary["simple"]["mean_f1"] >= summary["reconcile"]["mean_f1"]:
+            raise ValueError("The simple baseline should not match the reference reconciler")
         train_reports, _, trajectories = evaluate(
             dataset, split="train", choices=("reconcile",), mode="train",
         )

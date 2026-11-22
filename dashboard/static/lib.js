@@ -1,8 +1,8 @@
 // Pure formatting and aggregation helpers. No DOM access, so they can be tested in Node.
 
-export const POLICY_ORDER = ["reconcile", "random", "mark_all", "oracle"];
+export const POLICY_ORDER = ["reconcile", "simple", "random", "mark_all", "oracle"];
 export const POLICY_ROLES = {
-  reconcile: "Reference policy", random: "Baseline", mark_all: "Negative control", oracle: "Evaluator control",
+  reconcile: "Reference reconciler", simple: "Simple baseline", random: "Random baseline", mark_all: "Negative control", oracle: "Evaluator control",
 };
 export const TYPE_LABELS = {
   duplicate_invoice: "Duplicate invoice",

@@ -12,7 +12,7 @@
 :root {
   --paper: #f5f5f5; --paper-2: #ececec; --node: #ffffff; --ink: #2d3142; --muted: #4f5d75; --soft: #5a6580;
   --rule: rgba(45, 49, 66, 0.12); --rule-solid: #bfc0c0; --accent: #bf4520; --accent-tint: rgba(191, 69, 32, 0.08);
-  --link: #2e5aa8; --grid: rgba(45, 49, 66, 0.08); --axis: rgba(45, 49, 66, 0.25); --bar-fill: rgba(79, 93, 117, 0.15);
+  --link: #bf4520; --on-accent: #ffffff; --accent-hover: #9c3517; --grid: rgba(45, 49, 66, 0.08); --axis: rgba(45, 49, 66, 0.25); --bar-fill: rgba(79, 93, 117, 0.15);
   --ink-hover: #12151f;
   --serif: "Instrument Serif", "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
   --sans: "Geist", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
@@ -25,7 +25,7 @@
   :root {
     --paper: #2d3142; --paper-2: #393e53; --node: #333849; --ink: #f5f5f5; --muted: #bfc0c0; --soft: #a3acbf;
     --rule: rgba(245, 245, 245, 0.12); --rule-solid: rgba(191, 192, 192, 0.25); --accent: #f08a59;
-    --accent-tint: rgba(240, 138, 89, 0.10); --link: #8db3ee; --grid: rgba(245, 245, 245, 0.08);
+    --accent-tint: rgba(240, 138, 89, 0.10); --link: #f08a59; --on-accent: #1b1d26; --accent-hover: #f6a47f; --grid: rgba(245, 245, 245, 0.08);
     --axis: rgba(245, 245, 245, 0.20); --bar-fill: rgba(191, 192, 192, 0.15); --ink-hover: #ffffff;
   }
 }
@@ -50,18 +50,18 @@ button, input, select, textarea { font: inherit; color: inherit; touch-action: m
 
 /* ---- Buttons: solid square primary, underlined text secondary, joined segmented tabs ---- */
 .btn { display: inline-flex; align-items: center; gap: 10px; height: 36px; padding: 0 16px; border: 0; border-radius: 2px;
-  background: var(--ink); color: var(--paper); font: 500 13px/1 var(--sans); cursor: pointer; text-decoration: none; white-space: nowrap;
+  background: var(--accent); color: var(--on-accent); font: 500 13px/1 var(--sans); cursor: pointer; text-decoration: none; white-space: nowrap;
   transition: background-color 160ms var(--ease), transform 120ms var(--ease); }
-.btn:hover { background: var(--ink-hover); transition-duration: 90ms; }
+.btn:hover { background: var(--accent-hover); transition-duration: 90ms; }
 .btn:active { transform: scale(0.98); transition-duration: 60ms; }
 .btn:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
 .btn .arrow { font-family: var(--mono); }
 .btn .cost { font-family: var(--mono); font-size: 11px; opacity: 0.75; }
 .btn.small { height: 30px; padding: 0 12px; font-size: 12.5px; }
 .quiet { display: inline-flex; align-items: baseline; gap: 6px; border: 0; background: none; padding: 4px 0; cursor: pointer; color: var(--ink);
-  font: 500 13px/1.3 var(--sans); text-decoration: underline; text-decoration-color: var(--rule-solid); text-decoration-thickness: 1px; text-underline-offset: 4px;
+  font: 500 13px/1.3 var(--sans); text-decoration: underline; text-decoration-color: var(--accent); text-decoration-thickness: 1px; text-underline-offset: 4px;
   transition: text-decoration-color 160ms var(--ease), color 160ms var(--ease); white-space: nowrap; }
-.quiet:hover { text-decoration-color: currentColor; transition-duration: 90ms; }
+.quiet:hover { text-decoration-color: currentColor; color: var(--accent); transition-duration: 90ms; }
 .quiet:disabled { color: var(--soft); text-decoration-color: transparent; cursor: not-allowed; }
 .quiet .cost { font-family: var(--mono); font-size: 11px; color: var(--soft); text-decoration: none; display: inline-block; }
 .quiet.danger { color: var(--accent); }
@@ -70,7 +70,7 @@ button, input, select, textarea { font: inherit; color: inherit; touch-action: m
   transition: background-color 160ms var(--ease), color 160ms var(--ease); }
 .segmented button:last-child { border-right: 0; }
 .segmented button:hover { color: var(--ink); transition-duration: 90ms; }
-.segmented button[aria-pressed="true"], .segmented button[aria-selected="true"] { background: var(--ink); color: var(--paper); }
+.segmented button[aria-pressed="true"], .segmented button[aria-selected="true"] { background: var(--accent); color: var(--on-accent); }
 .segmented .n { font-family: var(--mono); font-size: 11px; margin-left: 6px; opacity: 0.8; }
 
 /* Fields */
@@ -81,7 +81,7 @@ input[type=text], input[type=search], select, textarea { width: 100%; border: 0;
 select { cursor: pointer; }
 select option { background: var(--node); color: var(--ink); }
 input:hover, select:hover, textarea:hover { border-bottom-color: var(--muted); }
-input:focus-visible, select:focus-visible, textarea:focus-visible { outline: none; border-bottom: 1px solid var(--ink); box-shadow: 0 1px 0 var(--ink); }
+input:focus-visible, select:focus-visible, textarea:focus-visible { outline: none; border-bottom: 1px solid var(--accent); box-shadow: 0 1px 0 var(--accent); }
 textarea { resize: vertical; min-height: 64px; }
 .hint { font-size: 12px; color: var(--soft); margin-top: 4px; }
 .error { color: var(--accent); font-size: 12.5px; }
@@ -780,7 +780,7 @@ window.addEventListener("beforeunload", (e) => { if (S && !$("workspace").classL
 
 renderTypeHelp();
 loadEpisodes();
-fetch("dashboard/data/index.json", {method: "HEAD"}).then((r) => { if (r.ok) $("dashboard-link").classList.remove("hidden"); }).catch(() => {});
+api("/api/features").then((f) => { if (f.dashboard) $("dashboard-link").classList.remove("hidden"); }).catch(() => {});
 </script>
 </body>
 </html>
